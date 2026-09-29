@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -114,7 +114,7 @@
       <form id="search-form" action="{{ pathto('search') }}" method="get">
         <i class="icon fa fa-search"></i>
         <input type="search" class="form-control" id="search-input" name="q"
-               placeholder="Search the docs..." autocomplete="off" />
+               placeholder="문서 검색..." autocomplete="off" />
       </form>
     </div>
     <div class="nav-left" role="navigation" aria-label="Main">
@@ -140,19 +140,19 @@
     </div>
     <div class="prev-next-area">
       {%- if prev %}
-      <a class="left-prev" id="prev-link" href="{{ prev.link|e }}" title="previous page">
+      <a class="left-prev" id="prev-link" href="{{ prev.link|e }}" title="이전 페이지">
         <i class="fa fa-angle-left"></i>
         <div class="prev-next-info">
-          <p class="prev-next-subtitle">Previous:</p>
+          <p class="prev-next-subtitle">이전:</p>
           <p class="prev-next-title">{{ prev.title|striptags|e }}</p>
         </div>
       </a>
       {%- endif %}
       <div class='expander'></div>
       {%- if next %}
-      <a class="right-next" id="next-link" href="{{ next.link|e }}" title="next page">
+      <a class="right-next" id="next-link" href="{{ next.link|e }}" title="다음 페이지">
         <div class="prev-next-info">
-          <p class="prev-next-subtitle">Next:</p>
+          <p class="prev-next-subtitle">다음:</p>
           <p class="prev-next-title">{{ next.title|striptags|e }}</p>
         </div>
         <i class="fa fa-angle-right"></i>

@@ -20,6 +20,7 @@ project = 'Flame'
 copyright = '2021, Blue Fire Team'
 author = 'Blue Fire Team'
 root_doc = "index"
+language = "ko"
 
 
 # -- General configuration ---------------------------------------------------
@@ -36,6 +37,7 @@ extensions = [
     'extensions.flutter_app',
     'extensions.package',
     'extensions.yarn_lexer',
+    'extensions.anchor_aliases',
     'sphinxcontrib.jquery',
     'sphinx_copybutton'
 ]
@@ -81,7 +83,7 @@ dartdoc_roots = {
 # The theme to use for HTML and HTML Help pages.
 html_theme = "flames"
 html_theme_options = {}
-html_title = "Flame"
+html_title = "Flame 한국어 문서"
 html_logo = "images/logo_flame.png"
 html_favicon = "images/favicon.ico"
 
@@ -131,7 +133,7 @@ def get_local_toc(document):
     del titles[0]  # remove the <h1> title
 
     html_text = "<div id='toc-local' class='list-group'>\n"
-    html_text += " <div class='header'><i class='fa fa-list'></i> Contents</div>\n"
+    html_text += " <div class='header'><i class='fa fa-list'></i> 목차</div>\n"
     for title, node_id, level in titles:
         if level <= 1:
             return document.reporter.error("More than one <h1> title on the page")
