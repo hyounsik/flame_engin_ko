@@ -39,7 +39,8 @@ extensions = [
     'extensions.yarn_lexer',
     'extensions.anchor_aliases',
     'sphinxcontrib.jquery',
-    'sphinx_copybutton'
+    'sphinx_copybutton',
+    'sphinx_sitemap',
 ]
 
 # Configuration options for MyST:
@@ -84,6 +85,16 @@ dartdoc_roots = {
 html_theme = "flames"
 html_theme_options = {}
 html_title = "Flame 한국어 문서"
+html_baseurl = "https://hyounsik.github.io/flame_engin_ko/"
+html_extra_path = ["extra"]
+html_context = {
+    "meta_description": "Flame 게임 엔진 공식 문서의 한국어 번역. "
+                        "Flutter로 2D 게임을 만드는 방법을 한국어로 읽어 보세요.",
+}
+
+# The default scheme prefixes URLs with the language code ("ko/"), which
+# does not exist on this single-language site.
+sitemap_url_scheme = "{link}"
 html_logo = "images/logo_flame.png"
 html_favicon = "images/favicon.ico"
 
