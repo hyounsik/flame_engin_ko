@@ -2,45 +2,45 @@ import 'package:jenny/jenny.dart';
 import 'package:jenny/src/structure/dialogue_entry.dart';
 import 'package:jenny/src/structure/line_content.dart';
 
-/// The **DialogueLine** class represents a single line of text within the
-/// dialogue [[Line]].
+/// **DialogueLine** 클래스는 대화 [[Line]] 안의 텍스트 한 줄을
+/// 나타냅니다.
 ///
-/// The `DialogueLine` objects will be delivered to your [DialogueView] with
-/// methods `onLineStart()`, `onLineSignal()`, `onLineStop()`, and
-/// `onLineFinish()`.
+/// `DialogueLine` 객체는 `onLineStart()`, `onLineSignal()`, `onLineStop()`,
+/// `onLineFinish()` 메서드를 통해 [DialogueView]에
+/// 전달됩니다.
 ///
-/// A dialogue line may contain a [character] (the name of the entity who is
-/// speaking), and [tags] -- a list of hashtag tokens that specify some meta
-/// information about the line.
+/// 대사에는 [character](말하는 주체의 이름)와 [tags](대사에 대한
+/// 메타 정보를 지정하는 해시태그 토큰 목록)가 포함될 수
+/// 있습니다.
 ///
-/// Example of a dialogue line in yarn script:
+/// yarn 스크립트에서 대사의 예시는 다음과 같습니다.
 /// ```yarn
 /// Hermione: Holy cricket! You're Harry Potter.  #surprised
 /// ```
-/// Here the [character] is "Hermione", the [text] of the line is "Holy
-/// cricket! You're Harry Potter.", and the [tags] list will contain a single
-/// entry "#surprised".
+/// 여기서 [character]는 "Hermione"이고, 대사의 [text]는 "Holy
+/// cricket! You're Harry Potter."이며, [tags] 목록에는 "#surprised"라는
+/// 항목 하나가 들어갑니다.
 ///
-/// A dialogue line may also contain inline expressions, which will be
-/// re-evaluated every time the line is executed by the dialogue runner:
+/// 대사에는 인라인 표현식도 포함될 수 있으며, 이 표현식은 대화 러너가
+/// 대사를 실행할 때마다 다시 평가됩니다:
 /// ```yarn
 /// Jenny: My favorite color is {$favoriteColor}, what about you?
 /// ```
-/// After evaluation, the resulting string may be "My favorite color is
-/// vantablack, what about you?".
+/// 평가 후 결과 문자열은 "My favorite color is
+/// vantablack, what about you?"가 될 수 있습니다.
 ///
-/// Lastly, a dialogue line may have markup attributes. These are similar to
-/// HTML tags, only they use square brackets:
+/// 마지막으로 대사에는 마크업 속성이 있을 수 있습니다. 이는 HTML 태그와
+/// 비슷하지만 대괄호를 사용합니다:
 /// ```yarn
 /// Jenny: My [i]favorite[/i] color is [bb color=$color]{$color}[/bb].
 /// ```
-/// These markup attributes will not be visible in the output (i.e. the
-/// resulting text is still "My favorite color is vantablack"), but they can be
-/// queried in the [attributes] list, which will specify that there is an
-/// attribute `[i]` around the word "favorite", and another attribute `[bb]`
-/// with parameter `color` around the word "vantablack".
+/// 이 마크업 속성은 출력에 보이지 않지만(즉 결과 텍스트는 여전히
+/// "My favorite color is vantablack"입니다), [attributes] 목록에서
+/// 조회할 수 있습니다. 이 목록은 "favorite"이라는 단어를 감싸는
+/// `[i]` 속성과, "vantablack"이라는 단어를 감싸며 `color` 파라미터를 가진
+/// 또 다른 `[bb]` 속성이 있음을 알려줍니다.
 ///
-/// Inline expressions cannot contain markup attributes.
+/// 인라인 표현식에는 마크업 속성을 포함할 수 없습니다.
 class DialogueLine extends DialogueEntry {
   DialogueLine({
     required this._content,
@@ -53,35 +53,35 @@ class DialogueLine extends DialogueEntry {
   final LineContent _content;
   String? _value;
 
-  /// The content of this Line.
+  /// 이 대사(Line)의 내용입니다.
   LineContent? get content => _content;
 
-  /// The character who is speaking the line. This can be null if the line does
-  /// not contain a speaker.
+  /// 이 대사를 말하는 캐릭터입니다. 대사에 화자가 없으면
+  /// null일 수 있습니다.
   Character? get character => _character;
 
-  /// The computed text of the line, after substituting all inline expressions,
-  /// stripping the markup, and processing the escape sequences.
+  /// 모든 인라인 표현식을 치환하고, 마크업을 제거하고, 이스케이프 시퀀스를
+  /// 처리한 뒤 계산된 대사 텍스트입니다.
   ///
-  /// This value can only be accessed after the line was [evaluate]d. It may
-  /// change upon subsequent re-evaluations of the line (which occur each time
-  /// the line goes through a [DialogueRunner]).
+  /// 이 값은 대사가 [evaluate]된 후에만 접근할 수 있습니다. 이후 대사가
+  /// 다시 평가되면 값이 바뀔 수 있습니다(재평가는 대사가 [DialogueRunner]를
+  /// 거칠 때마다 일어납니다).
   String get text {
     assert(_value != null, 'Line was not evaluated');
     return _value!;
   }
 
-  /// The list of hashtags associated with the line. If there are no hashtags,
-  /// the list will be empty.
+  /// 대사에 연결된 해시태그 목록입니다. 해시태그가 없으면
+  /// 목록은 비어 있습니다.
   ///
-  /// Each value in the list will start with the `#` symbol.
+  /// 목록의 각 값은 `#` 기호로 시작합니다.
   List<String> get tags => _tags ?? const [];
 
-  /// The list of markup spans associated with the line.
+  /// 대사에 연결된 마크업 스팬 목록입니다.
   List<MarkupAttribute> get attributes => _content.attributes ?? const [];
 
-  /// True if the line will never change upon subsequent reruns. That is, when
-  /// the line does not depend on any dynamic expressions.
+  /// 이후 다시 실행해도 대사가 절대 바뀌지 않으면 true입니다. 즉
+  /// 대사가 어떤 동적 표현식에도 의존하지 않는 경우입니다.
   bool get isConst => _content.isConst;
 
   @override
@@ -90,13 +90,13 @@ class DialogueLine extends DialogueEntry {
     return dialogueRunner.deliverLine(this);
   }
 
-  /// Computes the [text] of the line, substituting the current values of all
-  /// inline expressions.
+  /// 현재 모든 인라인 표현식의 값을 치환하여 대사의 [text]를
+  /// 계산합니다.
   ///
-  /// Normally, you wouldn't need to call this method manually -- the
-  /// [DialogueRunner] will take care to do that for you. However, it may be
-  /// necessary to call this if you need to access `DialogueLine`s outside of
-  /// a dialogue runner.
+  /// 보통은 이 메서드를 직접 호출할 필요가 없습니다 --
+  /// [DialogueRunner]가 대신 처리해 줍니다. 하지만 대화 러너 밖에서
+  /// `DialogueLine`에 접근해야 한다면 이 메서드를 호출해야
+  /// 할 수도 있습니다.
   void evaluate() {
     _value = _content.evaluate();
   }

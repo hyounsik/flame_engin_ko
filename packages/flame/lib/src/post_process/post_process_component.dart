@@ -5,30 +5,30 @@ import 'package:flame/src/camera/camera_component.dart';
 import 'package:flame/src/game/notifying_vector2.dart';
 import 'package:meta/meta.dart';
 
-/// A [PositionComponent] that applies a post-processing effect to its children.
-/// This component is useful for applying effects such as bloom, blur, other
-/// fragment shader effects to a group of components.
+/// 자식들에게 후처리(post-processing) 이펙트를 적용하는 [PositionComponent]입니다.
+/// 이 컴포넌트는 블룸, 블러 및 기타 프래그먼트 셰이더 이펙트를
+/// 여러 컴포넌트에 한꺼번에 적용할 때 유용합니다.
 ///
-/// As opposed to [CameraComponent.postProcess], this only applies the post
-/// process to the children of this component. This means that if you want to
-/// apply a post process to the whole screen, you should use
-/// [CameraComponent.postProcess] instead.
+/// [CameraComponent.postProcess]와 달리 이 컴포넌트는 후처리를
+/// 자신의 자식들에게만 적용합니다. 따라서 전체 화면에
+/// 후처리를 적용하려면 대신
+/// [CameraComponent.postProcess]를 사용해야 합니다.
 ///
-/// During the rendering process, children of this component can verify if they
-/// are being rendered within a post process by using
-/// [PostProcessingContextFinder.findPostProcessFromContext].
+/// 렌더링 과정에서 이 컴포넌트의 자식들은
+/// [PostProcessingContextFinder.findPostProcessFromContext]를 사용해 자신이
+/// 후처리 안에서 렌더링되고 있는지 확인할 수 있습니다.
 ///
-/// If a specific [size] is provided the component will be rendered with that
-/// size, otherwise it will calculate the size based on the bounding box of
-/// its children.
+/// 특정 [size]를 지정하면 컴포넌트가 그 크기로 렌더링되고,
+/// 그렇지 않으면 자식들의 바운딩 박스를 기준으로
+/// 크기를 계산합니다.
 ///
-/// See also:
-/// - [PostProcess] for the base class for post processes and more information
-/// about how to create them.
-/// - [PostProcessGroup] for a group of post processes that will be applied
-/// in parallel
-/// - [CameraComponent.postProcess] for a way to apply post processes to the
-/// whole screen.
+/// 함께 보기:
+/// - [PostProcess]: 후처리의 기본 클래스이며, 후처리를 만드는 방법에 대한
+/// 자세한 정보가 있습니다.
+/// - [PostProcessGroup]: 병렬로 적용되는 후처리들의
+/// 그룹입니다.
+/// - [CameraComponent.postProcess]: 전체 화면에 후처리를
+/// 적용하는 방법입니다.
 class PostProcessComponent<T extends PostProcess> extends PositionComponent {
   PostProcessComponent({
     required this.postProcess,

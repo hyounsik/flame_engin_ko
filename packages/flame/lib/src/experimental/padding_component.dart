@@ -3,24 +3,24 @@ import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/rendering.dart';
 
-/// A padding component akin to Flutter's Padding widget.
-/// Use [padding] as you would Flutter's counterpart.
-/// While this component is designed to shrink or expand to its child's
-/// dimensions, it is fine to set its size explicitly. The child will simply be
-/// offset by the padding dimensions.
+/// Flutter의 Padding 위젯과 비슷한 패딩 컴포넌트입니다.
+/// [padding]은 Flutter의 대응 위젯에서와 같은 방식으로 사용합니다.
+/// 이 컴포넌트는 자식의 크기에 맞춰 줄어들거나 늘어나도록 설계되었지만,
+/// 크기를 명시적으로 설정해도 괜찮습니다. 이 경우 자식은 단순히
+/// 패딩 크기만큼 오프셋됩니다.
 ///
-/// Set the child of this component with [child]. Avoid using [add] directly on
-/// an instance of [PaddingComponent] because its behavior is undefined with
-/// multiple children. It is designed only for one child.
+/// 이 컴포넌트의 자식은 [child]로 설정합니다. [PaddingComponent] 인스턴스에
+/// [add]를 직접 사용하는 것은 피하세요. 자식이 여러 개일 때의
+/// 동작은 정의되어 있지 않으며, 자식 하나만을 위해 설계되었습니다.
 ///
-/// You may set [padding] as well as the [child] after the fact, and it will
-/// cause the layout to refresh.
+/// [padding]과 [child]는 나중에 설정할 수도 있으며, 그러면
+/// 레이아웃이 갱신됩니다.
 ///
-/// If [inflateChild] is true, [resetSize] sets the child's size to fill up
-/// available space via [syncChildSize]. If the child is a [LayoutComponent]
-/// descendant, then [resetSize] uses the [LayoutComponent.setLayoutSize].
+/// [inflateChild]가 true이면 [resetSize]는 [syncChildSize]를 통해 자식의 크기를
+/// 사용 가능한 공간을 채우도록 설정합니다. 자식이 [LayoutComponent]의
+/// 하위 클래스이면 [resetSize]는 [LayoutComponent.setLayoutSize]를 사용합니다.
 ///
-/// Example usage:
+/// 사용 예시:
 /// ```dart
 /// PaddingComponent(
 ///   padding: EdgeInsets.all(10),

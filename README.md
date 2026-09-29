@@ -29,6 +29,8 @@ open doc/_build/html/index.html
 
 1. 원문 저장소를 받아 `git diff <UPSTREAM_COMMIT>..HEAD -- doc CONTRIBUTING.md`로 바뀐 파일을 확인합니다.
 2. 바뀐 부분만 [번역 가이드](TRANSLATION_GUIDE.md)에 따라 번역합니다.
+   `{dartdoc}` 페이지의 API 설명은 `packages/` 아래 Dart 파일의 `///` 주석에서 만들어지므로,
+   원문의 해당 Dart 파일이 바뀌었다면 새로 복사한 뒤 `///` 주석만 번역합니다.
 3. `.venv/bin/python tools/check_translation.py <원문>/doc --fix-anchors`로 코드 블록과 앵커를 검사합니다.
 4. `UPSTREAM_COMMIT`과 이 README의 번역 기준 표를 갱신합니다.
 

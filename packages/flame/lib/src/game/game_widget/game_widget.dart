@@ -9,12 +9,12 @@ import 'package:flame/src/game/game_widget/gesture_detector_builder.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-/// The **GameWidget** is a Flutter widget which is used to insert a [Game]
-/// instance into the Flutter widget tree.
+/// **GameWidget**은 [Game] 인스턴스를 Flutter 위젯 트리에 삽입하는 데
+/// 사용하는 Flutter 위젯입니다.
 ///
-/// The `GameWidget` is sufficiently feature-rich to run as the root of your
-/// Flutter application. Thus, the simplest way to use `GameWidget` is like
-/// this:
+/// `GameWidget`은 Flutter 애플리케이션의 루트로 실행할 수 있을 만큼 기능이
+/// 충분합니다. 따라서 `GameWidget`을 사용하는 가장 간단한 방법은
+/// 다음과 같습니다.
 /// ```dart
 /// void main() {
 ///   runApp(
@@ -23,29 +23,29 @@ import 'package:flutter/widgets.dart';
 /// }
 /// ```
 ///
-/// At the same time, `GameWidget` is a regular Flutter widget, and can be
-/// inserted arbitrarily deep into the widget tree, including the possibility
-/// of having multiple `GameWidget`s within a single app.
+/// 동시에 `GameWidget`은 일반 Flutter 위젯이므로 위젯 트리의 원하는 깊이
+/// 어디에든 삽입할 수 있으며, 하나의 앱 안에 여러 개의 `GameWidget`을
+/// 둘 수도 있습니다.
 ///
-/// The layout behavior of this widget is that it will expand to fill all
-/// available space. Thus, when used as a root widget it will make the app
-/// full-screen. Inside any other layout widget it will take as much space as
-/// possible.
+/// 이 위젯은 사용 가능한 모든 공간을 채우도록 확장되는 레이아웃 동작을
+/// 합니다. 따라서 루트 위젯으로 사용하면 앱이 전체 화면이 됩니다.
+/// 다른 레이아웃 위젯 안에서는 가능한 한 많은 공간을
+/// 차지합니다.
 ///
-/// In addition to hosting a [Game] instance, the `GameWidget` also provides
-/// some structural support, with the following features:
+/// [Game] 인스턴스를 호스팅하는 것 외에도 `GameWidget`은 다음과 같은
+/// 구조적 지원 기능을 제공합니다.
 ///
-/// - [loadingBuilder] to display something while the game is loading;
-/// - [errorBuilder] shown if the game throws an error;
-/// - [backgroundBuilder] to draw some decoration behind the game;
-/// - [overlayBuilderMap] to draw one or more widgets on top of the game.
+/// - [loadingBuilder]: 게임이 로딩되는 동안 무언가를 표시합니다.
+/// - [errorBuilder]: 게임에서 오류가 발생하면 표시됩니다.
+/// - [backgroundBuilder]: 게임 뒤에 장식을 그립니다.
+/// - [overlayBuilderMap]: 게임 위에 하나 이상의 위젯을 그립니다.
 ///
-/// It should be noted that `GameWidget` does not clip the content of its
-/// canvas, which means the game can potentially draw outside of its boundaries
-/// (not always, depending on which camera is used). If this is not desired,
-/// then consider wrapping the widget in Flutter's [ClipRect].
+/// `GameWidget`은 캔버스의 내용을 잘라내지(clip) 않는다는 점에 유의해야
+/// 합니다. 즉, 게임이 자신의 경계 밖에도 그려질 수 있습니다
+/// (사용하는 카메라에 따라 항상 그런 것은 아닙니다). 이를 원하지 않는다면
+/// 위젯을 Flutter의 [ClipRect]로 감싸는 것을 고려하세요.
 class GameWidget<T extends Game> extends StatefulWidget {
-  /// Renders the provided [game] instance.
+  /// 전달된 [game] 인스턴스를 렌더링합니다.
   GameWidget({
     required T this.game,
     this.textDirection,
@@ -64,12 +64,12 @@ class GameWidget<T extends Game> extends StatefulWidget {
     _initializeGame(game!);
   }
 
-  /// A `GameWidget` which will create and own a `Game` instance, using the
-  /// provided [gameFactory].
+  /// 전달된 [gameFactory]를 사용해 `Game` 인스턴스를 생성하고 소유하는
+  /// `GameWidget`입니다.
   ///
-  /// This constructor can be useful when you want to put `GameWidget` into
-  /// another widget, but would like to avoid the need to store the game's
-  /// instance yourself. For example:
+  /// 이 생성자는 `GameWidget`을 다른 위젯 안에 넣고 싶지만 게임
+  /// 인스턴스를 직접 저장하고 싶지 않을 때 유용합니다.
+  /// 예를 들면 다음과 같습니다.
   /// ```dart
   /// class MyWidget extends StatelessWidget {
   ///   @override
@@ -99,36 +99,36 @@ class GameWidget<T extends Game> extends StatefulWidget {
     super.key,
   }) : game = null;
 
-  /// The game instance which this widget will render, if it was provided with
-  /// the default constructor. Otherwise, if the [GameWidget.managed]
-  /// constructor was used, this will always be `null`.
+  /// 기본 생성자로 전달된 경우, 이 위젯이 렌더링할 게임 인스턴스입니다.
+  /// 반면 [GameWidget.managed]
+  /// 생성자를 사용했다면 이 값은 항상 `null`입니다.
   final T? game;
 
-  /// A function that creates a [Game] that this widget will render.
+  /// 이 위젯이 렌더링할 [Game]을 생성하는 함수입니다.
   final GameFactory<T>? gameFactory;
 
-  /// The text direction to be used in text elements in a game.
+  /// 게임 안의 텍스트 요소에 사용할 텍스트 방향입니다.
   final TextDirection? textDirection;
 
-  /// Builder to provide a widget which will be displayed while the game is
-  /// loading. By default this is an empty `Container`.
+  /// 게임이 로딩되는 동안 표시할 위젯을 제공하는 빌더입니다.
+  /// 기본값은 빈 `Container`입니다.
   ///
-  /// For a [FlameGame], the game counts as loading until the whole initial
-  /// component tree has been loaded and mounted, so the game does not start
-  /// until every component added during [Game.onLoad] is ready.
+  /// [FlameGame]의 경우 초기 컴포넌트 트리 전체가 로드되고 마운트될
+  /// 때까지 게임이 로딩 중인 것으로 간주되므로, [Game.onLoad]에서 추가한
+  /// 모든 컴포넌트가 준비될 때까지 게임이 시작되지 않습니다.
   final GameLoadingWidgetBuilder? loadingBuilder;
 
-  /// If set, errors during the game loading will be caught and this widget
-  /// will be shown. If not provided, errors are propagated normally.
+  /// 설정하면 게임 로딩 중 발생한 오류를 잡아서 이 위젯을
+  /// 표시합니다. 제공하지 않으면 오류가 평소대로 전파됩니다.
   final GameErrorWidgetBuilder? errorBuilder;
 
-  /// Builder to provide a widget tree to be built between the game elements and
-  /// the background color provided via [Game.backgroundColor].
+  /// 게임 요소와 [Game.backgroundColor]로 지정한 배경색 사이에 빌드될
+  /// 위젯 트리를 제공하는 빌더입니다.
   final WidgetBuilder? backgroundBuilder;
 
-  /// A collection of widgets that can be displayed over the game's surface.
-  /// These widgets can be turned on-and-off dynamically from within the game
-  /// via the [Game.overlays] property.
+  /// 게임 화면 위에 표시할 수 있는 위젯 모음입니다.
+  /// 이 위젯들은 [Game.overlays] 속성을 통해 게임 안에서
+  /// 동적으로 켜고 끌 수 있습니다.
   ///
   /// ```dart
   /// void main() {
@@ -149,41 +149,41 @@ class GameWidget<T extends Game> extends StatefulWidget {
   /// ```
   final Map<String, OverlayWidgetBuilder<T>>? overlayBuilderMap;
 
-  /// The list of overlays that will be shown when the game starts (but after
-  /// it was loaded).
+  /// 게임이 시작될 때(단, 로드가 끝난 후) 표시할
+  /// 오버레이 목록입니다.
   final List<String>? initialActiveOverlays;
 
-  /// The [FocusNode] to control the games focus to receive event inputs.
-  /// If omitted, defaults to an internally controlled focus node.
+  /// 이벤트 입력을 받기 위해 게임의 포커스를 제어하는 [FocusNode]입니다.
+  /// 생략하면 내부에서 제어하는 포커스 노드를 기본으로 사용합니다.
   final FocusNode? focusNode;
 
-  /// Whether the [focusNode] requests focus once the game is mounted.
-  /// Defaults to true.
+  /// 게임이 마운트되었을 때 [focusNode]가 포커스를 요청할지 여부입니다.
+  /// 기본값은 true입니다.
   final bool autofocus;
 
-  /// The shape of the mouse cursor when it is hovering over the game canvas.
-  /// This property can be changed dynamically via [Game.mouseCursor].
+  /// 마우스 커서가 게임 캔버스 위에 있을 때의 커서 모양입니다.
+  /// 이 속성은 [Game.mouseCursor]를 통해 동적으로 변경할 수 있습니다.
   final MouseCursor? mouseCursor;
 
-  /// Whether the game should assume the behavior of a [RepaintBoundary],
-  /// defaults to `true`.
+  /// 게임이 [RepaintBoundary]처럼 동작할지 여부이며,
+  /// 기본값은 `true`입니다.
   final bool addRepaintBoundary;
 
-  /// How the game widget behaves during hit testing.
+  /// 히트 테스트 중 게임 위젯이 어떻게 동작할지 지정합니다.
   ///
-  /// - [HitTestBehavior.opaque] (default): the game absorbs all pointer
-  ///   events on its surface, preventing widgets behind it from receiving them.
-  /// - [HitTestBehavior.deferToChild]: the game only intercepts events at
-  ///   positions where a component with event callbacks (e.g. [TapCallbacks])
-  ///   exists. Events at other positions pass through to widgets behind.
-  /// - [HitTestBehavior.translucent]: the game receives events where it has
-  ///   event-handling components, but always allows widgets behind it to be
-  ///   hit-tested as well.
+  /// - [HitTestBehavior.opaque] (기본값): 게임이 자신의 영역에서 발생하는 모든
+  ///   포인터 이벤트를 흡수하여 뒤에 있는 위젯이 이벤트를 받지 못하게 합니다.
+  /// - [HitTestBehavior.deferToChild]: 이벤트 콜백을 가진 컴포넌트(예:
+  ///   [TapCallbacks])가 있는 위치에서만 게임이 이벤트를 가로챕니다.
+  ///   다른 위치의 이벤트는 뒤에 있는 위젯으로 전달됩니다.
+  /// - [HitTestBehavior.translucent]: 게임은 이벤트 처리 컴포넌트가 있는 곳에서
+  ///   이벤트를 받지만, 뒤에 있는 위젯도 항상
+  ///   히트 테스트될 수 있도록 허용합니다.
   final HitTestBehavior behavior;
 
-  /// Renders a [game] in a flutter widget tree alongside widgets overlays.
+  /// Flutter 위젯 트리에서 위젯 오버레이와 함께 [game]을 렌더링합니다.
   ///
-  /// To use overlays, the game subclass has to be mixed with HasWidgetsOverlay.
+  /// 오버레이를 사용하려면 게임 서브클래스에 HasWidgetsOverlay를 믹스인해야 합니다.
   @override
   GameWidgetState<T> createState() => GameWidgetState<T>();
 
@@ -229,40 +229,40 @@ class GameWidgetState<T extends Game> extends State<GameWidget<T>> {
     }
   })();
 
-  /// Whether the loader that captured [gameGeneration] is no longer current,
-  /// either because the widget was disposed or because the game instance was
-  /// swapped since then. A generation counter is used instead of comparing
-  /// game identities, so that swapping to another game and back to the
-  /// original one while it is still loading also invalidates the old loader.
+  /// [gameGeneration]을 캡처한 로더가 더 이상 최신이 아닌지 여부입니다.
+  /// 위젯이 dispose되었거나 그 이후 게임 인스턴스가 교체된 경우가
+  /// 해당합니다. 게임의 동일성을 비교하는 대신 세대(generation) 카운터를 사용하므로,
+  /// 원래 게임이 아직 로딩 중일 때 다른 게임으로 교체했다가 다시
+  /// 원래 게임으로 돌아와도 이전 로더가 무효화됩니다.
   bool _isStale(int gameGeneration) =>
       !mounted || gameGeneration != _gameGeneration;
 
-  /// Incremented every time [initCurrentGame] installs a game instance.
+  /// [initCurrentGame]이 게임 인스턴스를 설치할 때마다 증가합니다.
   int _gameGeneration = 0;
 
   Future<void>? _loaderFuture;
 
   late FocusNode _focusNode;
 
-  /// The number of `build()` functions currently executing.
+  /// 현재 실행 중인 `build()` 함수의 개수입니다.
   int _buildDepth = 0;
 
-  /// If true, then a fresh build will be scheduled after the current one
-  /// completes. This should only be set to true when the [_buildDepth] is
-  /// non-zero.
+  /// true이면 현재 빌드가 끝난 후 새 빌드가 예약됩니다.
+  /// 이 값은 [_buildDepth]가 0이 아닐 때만
+  /// true로 설정해야 합니다.
   bool _requiresRebuild = false;
 
-  /// Helper method that arranges to have `_buildDepth > 0` while the [build] is
-  /// executing, and then schedules a re-build if [_requiresRebuild] flag was
-  /// raised during the build.
+  /// [build]가 실행되는 동안 `_buildDepth > 0`이 되도록 하고, 빌드 중에
+  /// [_requiresRebuild] 플래그가 설정되었다면 다시 빌드를 예약하는
+  /// 헬퍼 메서드입니다.
   ///
-  /// This is needed because our build function invokes user code, which in turn
-  /// may change some of the [Game]'s properties which would require the
-  /// [GameWidget] to be rebuilt. However, Flutter doesn't allow widgets to be
-  /// marked dirty while they are building. So, this method is needed to avoid
-  /// such a limitation and ensure that the user code can set [Game]'s
-  /// properties freely, and that they will be propagated to the [GameWidget]
-  /// at the earliest opportunity.
+  /// 이 메서드가 필요한 이유는 build 함수가 사용자 코드를 호출하고, 그 코드가
+  /// [Game]의 속성을 변경하여 [GameWidget]을 다시 빌드해야 할 수 있기
+  /// 때문입니다. 하지만 Flutter는 빌드 중인 위젯을 dirty로 표시하는 것을
+  /// 허용하지 않습니다. 그래서 이 메서드로 이러한 제약을 피하고, 사용자 코드가
+  /// [Game]의 속성을 자유롭게 설정할 수 있으며 그 변경이 가능한 한 빨리
+  /// [GameWidget]에 전파되도록
+  /// 보장합니다.
   Widget _protectedBuild(Widget Function() build) {
     late final Widget result;
     try {
@@ -297,7 +297,7 @@ class GameWidgetState<T extends Game> extends State<GameWidget<T>> {
     _loaderFuture = null;
   }
 
-  /// Visible for testing for
+  /// 다음 이슈의 테스트를 위해 공개되어 있습니다:
   /// https://github.com/flame-engine/flame/issues/2771.
   @visibleForTesting
   static void initGameStateListener(
@@ -311,9 +311,9 @@ class GameWidgetState<T extends Game> extends State<GameWidget<T>> {
     currentGame.lifecycleStateChange(AppLifecycleState.resumed);
   }
 
-  /// [disposeCurrentGame] is called by two flutter events - `didUpdateWidget`
-  /// and `dispose`.  When the parameter [callGameOnDispose] is true, the
-  /// `currentGame`'s `onDispose` method will be called; otherwise, it will not.
+  /// [disposeCurrentGame]은 두 가지 Flutter 이벤트인 `didUpdateWidget`과
+  /// `dispose`에서 호출됩니다. [callGameOnDispose] 파라미터가 true이면
+  /// `currentGame`의 `onDispose` 메서드가 호출되고, 그렇지 않으면 호출되지 않습니다.
   void disposeCurrentGame({bool callGameOnDispose = false}) {
     currentGame.removeGameStateListener(_onGameStateChange);
     currentGame.lifecycleStateChange(AppLifecycleState.paused);

@@ -2,23 +2,23 @@ import 'package:flame/components.dart';
 import 'package:flame/src/effects/provider_interfaces.dart';
 import 'package:flutter/widgets.dart';
 
-/// **AlignComponent** is a layout component that positions its child within
-/// itself using relative placement. It is similar to Flutter's [Align] widget.
+/// **AlignComponent**는 상대 배치를 사용해 자식을 자신 안에 배치하는
+/// 레이아웃 컴포넌트입니다. Flutter의 [Align] 위젯과 비슷합니다.
 ///
-/// The component requires a single [child], which will be the target of this
-/// component's alignment. Of course, other children can be added to this
-/// component too, but only the initial [child] will be aligned.
+/// 이 컴포넌트에는 정렬 대상이 될 단일 [child]가 필요합니다.
+/// 물론 이 컴포넌트에 다른 자식들을 추가할 수도 있지만,
+/// 처음 지정한 [child]만 정렬됩니다.
 ///
-/// The [alignment] parameter describes where the child should be placed within
-/// the current component. For example, if the [alignment] is `Anchor.center`,
-/// then the child will be centered.
+/// [alignment] 파라미터는 현재 컴포넌트 안에서 자식이 놓일 위치를 나타냅니다.
+/// 예를 들어 [alignment]가 `Anchor.center`이면
+/// 자식이 가운데에 배치됩니다.
 ///
-/// Normally, this component's size will match the size of its parent. However,
-/// if you provide properties [widthFactor] or [heightFactor], then the size of
-/// this component in that direction will be equal to the size of the child
-/// times the corresponding factor. For example, if you set [heightFactor] to
-/// 1 then the width of this component will be equal to the width of the parent,
-/// but the height will match the height of the child.
+/// 일반적으로 이 컴포넌트의 크기는 부모의 크기와 같습니다. 하지만
+/// [widthFactor]나 [heightFactor] 속성을 지정하면, 해당 방향의
+/// 이 컴포넌트 크기는 자식의 크기에
+/// 해당 계수를 곱한 값이 됩니다. 예를 들어 [heightFactor]를
+/// 1로 설정하면 이 컴포넌트의 너비는 부모의 너비와 같아지지만,
+/// 높이는 자식의 높이와 같아집니다.
 ///
 /// ```dart
 /// AlignComponent(
@@ -27,15 +27,15 @@ import 'package:flutter/widgets.dart';
 /// );
 /// ```
 ///
-/// By default, the child's anchor is set equal to the [alignment] value. This
-/// achieves traditional alignment behavior: for example, the center of the
-/// child will be placed at the center of the current component, or bottom
-/// right corner of the child can be placed in the bottom right corner of the
-/// component. However, it is also possible to achieve more extravagant
-/// placement by giving the child a different anchor and setting
-/// [keepChildAnchor] to true. For example, if you set `alignment` to
-/// `topCenter`, and child's anchor to `bottomCenter`, then the child will
-/// effectively be placed above the current component:
+/// 기본적으로 자식의 앵커는 [alignment] 값과 같게 설정됩니다. 이렇게 하면
+/// 전통적인 정렬 동작이 됩니다. 예를 들어 자식의 중심이
+/// 현재 컴포넌트의 중심에 놓이거나, 자식의 오른쪽 아래
+/// 모서리가 컴포넌트의 오른쪽 아래 모서리에 놓일 수 있습니다.
+/// 하지만 자식에게 다른 앵커를 지정하고
+/// [keepChildAnchor]를 true로 설정하면 더 독특한 배치도 할 수 있습니다.
+/// 예를 들어 `alignment`를
+/// `topCenter`로, 자식의 앵커를 `bottomCenter`로 설정하면 자식이
+/// 사실상 현재 컴포넌트의 위쪽에 배치됩니다.
 /// ```dart
 /// PlayerSprite().add(
 ///   AlignComponent(
@@ -46,12 +46,12 @@ import 'package:flutter/widgets.dart';
 /// );
 /// ```
 class AlignComponent extends PositionComponent {
-  /// Creates a component that keeps its [child] positioned according to the
-  /// [alignment] within this component's bounding box.
+  /// [alignment]에 따라 이 컴포넌트의 바운딩 박스 안에 [child]를 배치해 두는
+  /// 컴포넌트를 생성합니다.
   ///
-  /// More precisely, the child will be placed at [alignment] relative position
-  /// within the current component's bounding box. The child's anchor will also
-  /// be set to the [alignment], unless [keepChildAnchor] parameter is true.
+  /// 정확히 말하면 자식은 현재 컴포넌트의 바운딩 박스 안에서 [alignment]
+  /// 상대 위치에 놓입니다. [keepChildAnchor] 파라미터가 true가 아니면
+  /// 자식의 앵커도 [alignment]로 설정됩니다.
   AlignComponent({
     PositionComponent? child,
     Anchor alignment = Anchor.topLeft,
@@ -66,8 +66,8 @@ class AlignComponent extends PositionComponent {
 
   PositionComponent? _child;
 
-  /// The component that will be positioned by this component. The [child] will
-  /// be automatically mounted to the current component.
+  /// 이 컴포넌트가 배치할 컴포넌트입니다. [child]는
+  /// 현재 컴포넌트에 자동으로 마운트됩니다.
   PositionComponent? get child => _child;
 
   set child(PositionComponent? value) {
@@ -82,11 +82,11 @@ class AlignComponent extends PositionComponent {
 
   late Anchor _alignment;
 
-  /// How the [child] will be positioned within the current component.
+  /// 현재 컴포넌트 안에서 [child]를 배치하는 방식입니다.
   ///
-  /// Note: unlike Flutter's [Alignment], the top-left corner of the component
-  /// has relative coordinates `(0, 0)`, while the bottom-right corner has
-  /// coordinates `(1, 1)`.
+  /// 참고: Flutter의 [Alignment]와 달리 컴포넌트의 왼쪽 위 모서리는
+  /// 상대 좌표 `(0, 0)`이고, 오른쪽 아래 모서리는
+  /// 좌표 `(1, 1)`입니다.
   Anchor get alignment => _alignment;
 
   set alignment(Anchor value) {
@@ -95,19 +95,19 @@ class AlignComponent extends PositionComponent {
     _updateChildPosition();
   }
 
-  /// If `null`, then the component's width will be equal to the width of the
-  /// parent. Otherwise, the width will be equal to the child's width multiplied
-  /// by this factor.
+  /// `null`이면 컴포넌트의 너비가 부모의 너비와 같습니다.
+  /// 그렇지 않으면 너비는 자식의 너비에
+  /// 이 계수를 곱한 값이 됩니다.
   final double? widthFactor;
 
-  /// If `null`, then the component's height will be equal to the height of the
-  /// parent. Otherwise, the height will be equal to the child's height
-  /// multiplied by this factor.
+  /// `null`이면 컴포넌트의 높이가 부모의 높이와 같습니다.
+  /// 그렇지 않으면 높이는 자식의 높이에
+  /// 이 계수를 곱한 값이 됩니다.
   final double? heightFactor;
 
-  /// If `false` (default), then the child's `anchor` will be kept equal to the
-  /// [alignment] value. If `true`, then the [child] will be allowed to have
-  /// its own `anchor` value independent from the parent.
+  /// `false`(기본값)이면 자식의 `anchor`가
+  /// [alignment] 값과 같게 유지됩니다. `true`이면 [child]가
+  /// 부모와 독립적인 자신만의 `anchor` 값을 가질 수 있습니다.
   final bool keepChildAnchor;
 
   @override

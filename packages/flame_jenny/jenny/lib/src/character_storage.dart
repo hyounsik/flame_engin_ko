@@ -1,26 +1,26 @@
 import 'package:jenny/src/character.dart';
 import 'package:meta/meta.dart';
 
-/// The **CharacterStorage** is a cache for all [Character]s defined in your
-/// yarn scripts. This container is populated from the `<<character>>`
-/// commands as the YarnProject parses the input scripts.
+/// **CharacterStorage**는 yarn 스크립트에 정의된 모든 [Character]의 캐시입니다.
+/// 이 컨테이너는 YarnProject가 입력 스크립트를 파싱할 때
+/// `<<character>>` 명령으로부터 채워집니다.
 class CharacterStorage {
   final Map<String, Character> _cache = {};
 
   bool get isEmpty => _cache.isEmpty;
   bool get isNotEmpty => _cache.isNotEmpty;
 
-  /// Returns `true` if a character with the given name or alias was defined.
+  /// 주어진 이름 또는 별칭을 가진 캐릭터가 정의되어 있으면 `true`를 반환합니다.
   bool contains(String name) => _cache.containsKey(name);
 
-  /// Retrieves the character with the given name/alias, or returns `null` if
-  /// such character was not present.
+  /// 주어진 이름/별칭을 가진 캐릭터를 가져오고, 해당 캐릭터가 없으면
+  /// `null`을 반환합니다.
   Character? operator [](String name) => _cache[name];
 
-  /// Adds a new [character] to the container.
+  /// 새 [character]를 컨테이너에 추가합니다.
   ///
-  /// This is intended for internal use; in yarn scripts use command
-  /// `<<character>>` to declare characters.
+  /// 이 메서드는 내부용입니다. yarn 스크립트에서는
+  /// `<<character>>` 명령으로 캐릭터를 선언하세요.
   @internal
   void add(Character character) {
     _cache[character.name] = character;
@@ -29,19 +29,19 @@ class CharacterStorage {
     }
   }
 
-  /// Clear all characters from storage.
+  /// 저장소의 모든 캐릭터를 지웁니다.
   ///
-  /// This could be used between scenes in preparation for loading a new
-  /// set of characters. It would not generally be used while a dialog is
-  /// in progress.
+  /// 새로운 캐릭터 집합을 로드하기 위해 장면 사이에 사용할 수
+  /// 있습니다. 일반적으로 대화가 진행 중일 때는
+  /// 사용하지 않습니다.
   void clear() {
     _cache.clear();
   }
 
-  /// Remove a character by name. Its aliases will also be removed.
+  /// 이름으로 캐릭터를 제거합니다. 해당 캐릭터의 별칭도 함께 제거됩니다.
   ///
-  /// This could be used if you are certain a character is no longer required.
-  /// It would not generally be used while a dialog is in progress.
+  /// 캐릭터가 더 이상 필요 없다고 확신할 때 사용할 수 있습니다.
+  /// 일반적으로 대화가 진행 중일 때는 사용하지 않습니다.
   void remove(String name) {
     final character = _cache[name];
     if (character != null) {

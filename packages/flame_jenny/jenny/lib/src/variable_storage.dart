@@ -58,13 +58,13 @@ class VariableStorage {
     variables[name] = value;
   }
 
-  /// Clear all variables. By default node visit counts will not be cleared.
-  /// To remove node visit counts as well, set [clearNodeVisits] to `true`.
+  /// 모든 변수를 지웁니다. 기본적으로 노드 방문 횟수는 지워지지 않습니다.
+  /// 노드 방문 횟수까지 제거하려면 [clearNodeVisits]를 `true`로 설정하세요.
   ///
-  /// Note that node visit variable names are prefixed with an @ symbol.
-  /// If you have custom variables that start with an @ symbol these will
-  /// also be retained if [clearNodeVisits] is `false`. These will need to be
-  /// removed individually using [remove].
+  /// 노드 방문 변수 이름에는 @ 기호가 접두사로 붙는다는 점에 유의하세요.
+  /// @ 기호로 시작하는 사용자 정의 변수가 있다면, [clearNodeVisits]가
+  /// `false`일 때 이 변수들도 유지됩니다. 이런 변수는
+  /// [remove]를 사용해 개별적으로 제거해야 합니다.
   void clear({bool clearNodeVisits = false}) {
     if (!clearNodeVisits) {
       variables.removeWhere((key, _) => !key.startsWith('@'));
@@ -73,7 +73,7 @@ class VariableStorage {
     }
   }
 
-  /// Remove a variable by [name].
+  /// [name]으로 변수를 제거합니다.
   void remove(String name) {
     variables.remove(name);
   }

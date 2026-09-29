@@ -11,31 +11,31 @@ import 'package:jenny/src/structure/node.dart';
 import 'package:jenny/src/yarn_project.dart';
 import 'package:meta/meta.dart';
 
-/// The **DialogueRunner** is the engine that executes Jenny's dialogue at
-/// runtime.
+/// **DialogueRunner**는 런타임에 Jenny의 대화를
+/// 실행하는 엔진입니다.
 ///
-/// If you imagine [YarnProject] as a "program", consisting of multiple [Node]s
-/// as "functions", then `DialogueRunner` is a virtual machine, capable of
-/// executing a single "function" in that "program".
+/// [YarnProject]를 여러 [Node]를 "함수"로 가지는 "프로그램"이라고 상상하면,
+/// `DialogueRunner`는 그 "프로그램"의 "함수" 하나를 실행할 수 있는
+/// 가상 머신입니다.
 ///
-/// A single `DialogueRunner` may only execute one dialogue node at a time. It
-/// is an error to try to run another node before the first one concludes.
-/// However, it is possible to create multiple `DialogueRunner`s for the same
-/// [YarnProject], and then they would be able to execute multiple dialogues
-/// simultaneously (for example, in a crowded room there could be multiple
-/// dialogues occurring at once within different groups of people).
+/// 하나의 `DialogueRunner`는 한 번에 하나의 대화 노드만 실행할 수 있습니다.
+/// 첫 번째 노드가 끝나기 전에 다른 노드를 실행하려고 하면 오류입니다.
+/// 하지만 같은 [YarnProject]에 대해 여러 `DialogueRunner`를 만들 수 있으며,
+/// 그러면 여러 대화를 동시에 실행할 수 있습니다
+/// (예를 들어 붐비는 방에서는 서로 다른 무리의 사람들 사이에서
+/// 여러 대화가 한꺼번에 오갈 수 있습니다).
 ///
-/// The job of a `DialogueRunner` is to fetch the dialogue lines in the correct
-/// order and at the appropriate pace, to execute the logic in dialogue
-/// scripts, and to branch according to user input in [DialogueChoice]s. The
-/// output of a `DialogueRunner`, therefore, is a stream of dialogue statements
-/// that need to be presented to the player. Such presentation, is handled by
-/// [DialogueView]s.
+/// `DialogueRunner`의 역할은 대화 대사를 올바른 순서와 적절한 속도로
+/// 가져오고, 대화 스크립트의 로직을 실행하며, [DialogueChoice]에서의
+/// 사용자 입력에 따라 분기하는 것입니다. 따라서
+/// `DialogueRunner`의 출력은 플레이어에게 보여줘야 할 대화 구문의 스트림입니다.
+/// 이러한 표시는
+/// [DialogueView]가 담당합니다.
 class DialogueRunner {
-  /// Creates a `DialogueRunner` for executing the [yarnProject]. The dialogue
-  /// will be delivered to all the provided [_dialogueViews]. Each of these
-  /// dialogue views may only be assigned to a single `DialogueRunner` at a
-  /// time.
+  /// [yarnProject]를 실행하기 위한 `DialogueRunner`를 생성합니다. 대화는
+  /// 제공된 모든 [_dialogueViews]에 전달됩니다. 각 대화 뷰는
+  /// 한 번에 하나의 `DialogueRunner`에만 할당될 수
+  /// 있습니다.
   DialogueRunner({
     required YarnProject yarnProject,
     required this._dialogueViews,
@@ -48,12 +48,12 @@ class DialogueRunner {
   String? _initialNodeName;
   String? _nextNode;
 
-  /// The `YarnProject` that this dialogue runner is executing.
+  /// 이 대화 러너가 실행 중인 `YarnProject`입니다.
   final YarnProject project;
 
-  /// Starts the dialogue with the node [nodeName], and returns a future that
-  /// completes once the dialogue finishes running. While this future is
-  /// pending, the `DialogueRunner` cannot start any other dialogue.
+  /// [nodeName] 노드로 대화를 시작하고, 대화 실행이 끝나면 완료되는 future를
+  /// 반환합니다. 이 future가 대기 중인 동안에는
+  /// `DialogueRunner`가 다른 대화를 시작할 수 없습니다.
   Future<void> startDialogue(String nodeName) async {
     try {
       if (_initialNodeName != null) {
@@ -83,13 +83,13 @@ class DialogueRunner {
     }
   }
 
-  /// Delivers the given [signal] to all dialogue views, in the form of a
-  /// [DialogueView] method `onLineSignal(line, signal)`. This can be used, for
-  /// example, as a means of communication between the dialogue views.
+  /// 주어진 [signal]을 [DialogueView]의 `onLineSignal(line, signal)` 메서드
+  /// 형태로 모든 대화 뷰에 전달합니다. 이는 예를 들어
+  /// 대화 뷰들 사이의 통신 수단으로 사용할 수 있습니다.
   ///
-  /// The [signal] object here is completely arbitrary, and it is up to the
-  /// implementations to decide which signals to send and to receive.
-  /// Implementations should ignore any signals they do not understand.
+  /// 여기서 [signal] 객체는 완전히 임의의 값이며, 어떤 신호를 보내고 받을지는
+  /// 구현에서 결정합니다.
+  /// 구현은 이해하지 못하는 신호를 무시해야 합니다.
   void sendSignal(dynamic signal) {
     assert(_linePipeline != null);
     final line = _linePipeline!.line;
@@ -98,9 +98,9 @@ class DialogueRunner {
     }
   }
 
-  /// Requests (via `onLineStop()`) that the presentation of the current line
-  /// be finished as quickly as possible. The dialogue will then proceed
-  /// normally to the next line.
+  /// 현재 대사의 표시를 가능한 한 빨리 끝내도록 (`onLineStop()`을 통해)
+  /// 요청합니다. 그 후 대화는 정상적으로
+  /// 다음 대사로 진행됩니다.
   void stopLine() {
     _linePipeline?.stop();
   }
@@ -214,11 +214,11 @@ class DialogueRunner {
     _currentIterator!.diveInto(block);
   }
 
-  /// Stops the current node, and then starts running [nodeName]. If [nodeName]
-  /// is null, then stops the dialogue completely.
+  /// 현재 노드를 멈추고 [nodeName] 실행을 시작합니다. [nodeName]이
+  /// null이면 대화를 완전히 멈춥니다.
   ///
-  /// This command is synchronous, i.e. it does not wait for the node to
-  /// *actually* finish (which calls the `onNodeFinish` callback).
+  /// 이 명령은 동기적입니다. 즉 노드가 *실제로* 끝나기를(이때
+  /// `onNodeFinish` 콜백이 호출됨) 기다리지 않습니다.
   @internal
   void jumpToNode(String? nodeName) {
     _currentIterator = null;
@@ -234,7 +234,7 @@ class DialogueRunner {
     _currentIterator = iterator;
   }
 
-  /// Similar to `Future.wait()`, but accepts `FutureOr`s.
+  /// `Future.wait()`와 비슷하지만 `FutureOr`를 받습니다.
   FutureOr<void> _combineFutures(List<FutureOr<void>> maybeFutures) {
     final futures = maybeFutures.whereType<Future<void>>().toList();
     if (futures.isNotEmpty) {

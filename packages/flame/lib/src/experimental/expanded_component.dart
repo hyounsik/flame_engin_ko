@@ -1,26 +1,26 @@
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 
-/// Warning: Experimental. API and behavior may change.
+/// 경고: 실험적 기능입니다. API와 동작이 변경될 수 있습니다.
 ///
-/// Works similarly to flutter's Expanded widget.
-/// This component must be a direct child of a [LinearLayoutComponent].
-/// While this component does not do much on its own, it allows its parent
-/// [LinearLayoutComponent] to alter its computations and allow it to take up
-/// any free space in the main axis.
+/// Flutter의 Expanded 위젯과 비슷하게 동작합니다.
+/// 이 컴포넌트는 반드시 [LinearLayoutComponent]의 직접적인 자식이어야 합니다.
+/// 이 컴포넌트 자체는 하는 일이 많지 않지만, 부모
+/// [LinearLayoutComponent]가 계산 방식을 바꿔 이 컴포넌트가
+/// 주축의 남는 공간을 차지할 수 있게 해 줍니다.
 ///
-/// If its [parent] [LinearLayoutComponent] shrink-wraps in the main axis, then
-/// this component isn't expanded.
+/// 부모([parent])인 [LinearLayoutComponent]가 주축 방향으로 shrink-wrap하면
+/// 이 컴포넌트는 확장되지 않습니다.
 ///
-/// ExpandedComponent never tries to shrink-wrap. It only ever reports
-/// [intrinsicSize] to its parent, and receives sizing information from its
-/// parent.
+/// ExpandedComponent는 절대 shrink-wrap하려 하지 않습니다. 부모에게는 오직
+/// [intrinsicSize]만 보고하고, 부모로부터 크기 정보를
+/// 받습니다.
 ///
-/// However, it does need to report to its parent when its child changes size.
-/// This is less important along the main-axis, and more important along the
-/// cross-axis.
+/// 하지만 자식의 크기가 바뀌면 이를 부모에게 알려야 합니다.
+/// 이는 주축 방향에서는 덜 중요하고,
+/// 교차축 방향에서 더 중요합니다.
 ///
-/// Example usage:
+/// 사용 예시:
 /// ```dart
 /// ColumnComponent(
 ///   children: [
