@@ -1,20 +1,21 @@
-# Drag Events
+<a id="drag-events"></a>
 
-**Drag events** occur when the user moves their finger across the screen of the device, or when they
-move the mouse while holding its button down.
+# 드래그 이벤트
 
-Multiple drag events can occur at the same time, if the user is using multiple fingers. Such cases
-will be handled correctly by Flame, and you can even keep track of the events by using their
-`pointerId` property.
+**드래그 이벤트**는 사용자가 기기 화면 위에서 손가락을 움직이거나, 마우스 버튼을 누른 채로
+마우스를 움직일 때 발생합니다.
 
-For those components that you want to respond to drags, add the `DragCallbacks` mixin.
+사용자가 여러 손가락을 사용하면 여러 드래그 이벤트가 동시에 발생할 수 있습니다. 이런 경우는
+Flame이 올바르게 처리하며, 이벤트의 `pointerId` 속성을 사용해 각 이벤트를 추적할 수도 있습니다.
 
-- This mixin adds four overridable methods to your component: `onDragStart`, `onDragUpdate`,
-  `onDragEnd`, and `onDragCancel`. By default, these methods do nothing; they need to be overridden
-  in order to perform any function.
-- In addition, the component must implement the `containsLocalPoint()` method (already implemented
-  in `PositionComponent`, so most of the time you don't need to do anything here). This method
-  allows Flame to know whether the event occurred within the component or not.
+드래그에 반응하게 하려는 컴포넌트에는 `DragCallbacks` 믹스인을 추가합니다.
+
+- 이 믹스인은 컴포넌트에 오버라이드 가능한 메서드 네 개를 추가합니다: `onDragStart`,
+  `onDragUpdate`, `onDragEnd`, `onDragCancel`. 기본적으로 이 메서드들은 아무 일도 하지 않으므로,
+  어떤 기능을 수행하려면 오버라이드해야 합니다.
+- 또한 컴포넌트는 `containsLocalPoint()` 메서드를 구현해야 합니다(`PositionComponent`에 이미
+  구현되어 있으므로 대부분의 경우 여기서 따로 할 일은 없습니다). 이 메서드를 통해 Flame은
+  이벤트가 컴포넌트 안에서 발생했는지 여부를 알 수 있습니다.
 
 ```dart
 class MyComponent extends PositionComponent with DragCallbacks {
@@ -22,16 +23,18 @@ class MyComponent extends PositionComponent with DragCallbacks {
 
    @override
    void onDragStart(DragStartEvent event) {
-     // Do something in response to a drag event
+     // 드래그 이벤트에 반응하여 무언가를 수행합니다
    }
 }
 ```
 
 
-## Demo
+<a id="demo"></a>
 
-In this example you can use drag gestures to either drag star-like shapes across the screen, or to
-draw curves inside the magenta rectangle.
+## 데모
+
+이 예제에서는 드래그 제스처를 사용해 별 모양 도형을 화면 위에서 끌어 옮기거나, 자홍색 사각형
+안에 곡선을 그릴 수 있습니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -40,106 +43,107 @@ draw curves inside the magenta rectangle.
 ```
 
 
-## Drag anatomy
+<a id="drag-anatomy"></a>
+
+## 드래그의 구조
 
 
 ### onDragStart
 
-This is the first event that occurs in a drag sequence. Usually, the event will be delivered to the
-topmost component at the point of touch with the `DragCallbacks` mixin. However, by setting the flag
-`event.continuePropagation` to true, you can allow the event to propagate to the components below.
+드래그 시퀀스에서 가장 먼저 발생하는 이벤트입니다. 보통 이 이벤트는 터치 지점에 있으면서
+`DragCallbacks` 믹스인을 가진 가장 위쪽 컴포넌트에 전달됩니다. 하지만
+`event.continuePropagation` 플래그를 true로 설정하면 이벤트가 아래에 있는 컴포넌트로 전파되도록
+할 수 있습니다.
 
-The `DragStartEvent` object associated with this event will contain the coordinate of the point
-where the event has originated. This point is available in multiple coordinate system:
-`devicePosition` is given in the coordinate system of the entire device, `canvasPosition` is in the
-coordinate system of the game widget, and `localPosition` provides the position in the component's
-local coordinate system.
+이 이벤트와 연관된 `DragStartEvent` 객체에는 이벤트가 시작된 지점의 좌표가 담겨 있습니다. 이
+지점은 여러 좌표계로 제공됩니다:
+`devicePosition`은 기기 전체의 좌표계, `canvasPosition`은 게임 위젯의 좌표계,
+`localPosition`은 컴포넌트의 로컬 좌표계에서의 위치를 제공합니다.
 
-Any component that receives `onDragStart` will later be receiving `onDragUpdate` and `onDragEnd`
-events as well.
+`onDragStart`를 받은 컴포넌트는 이후 `onDragUpdate`와 `onDragEnd` 이벤트도 받게 됩니다.
 
-A drag only starts once the pointer has moved further than the platform's touch slop from the
-point where it went down, so a tap with a slightly wobbling finger is still delivered as a tap and
-not as a drag. When the drag starts, the movement accumulated before that point is delivered in the
-first `onDragUpdate`.
+드래그는 포인터가 눌린 지점에서 플랫폼의 touch slop보다 멀리 움직인 뒤에야 시작됩니다. 따라서
+손가락이 살짝 흔들린 탭은 드래그가 아닌 탭으로 전달됩니다. 드래그가 시작되면 그 시점까지 누적된
+움직임은 첫 번째 `onDragUpdate`에서 전달됩니다.
 
 
 ### onDragUpdate
 
-This event is fired continuously as user drags their finger across the screen. It will not fire if
-the user is holding their finger still.
+이 이벤트는 사용자가 화면 위에서 손가락을 드래그하는 동안 계속 발생합니다. 사용자가 손가락을
+움직이지 않고 있으면 발생하지 않습니다.
 
-The default implementation delivers this event to all the components that received the previous
-`onDragStart` with the same pointer id. Moving the finger off the component **does not** stop
-the drag, and the local coordinates are still computed (potentially outside the component bounds).
+기본 구현은 이 이벤트를 이전에 같은 포인터 id로 `onDragStart`를 받은 모든 컴포넌트에 전달합니다.
+손가락이 컴포넌트 밖으로 벗어나도 드래그는 멈추지 **않으며**, 로컬 좌표는 계속 계산됩니다(컴포넌트
+경계 밖일 수도 있습니다).
 
-The exception is when hit testing stops reaching the component altogether while it still holds the
-drag, for example if an ancestor turns on `IgnoreEvents` mid-gesture. The component still receives
-the event, but with an empty `event.renderingTrace` behind it, so reading `localStartPosition`,
-`localEndPosition` or `localDelta` throws. `canvasStartPosition`, `canvasEndPosition`,
-`deviceStartPosition` and `deviceEndPosition` never depend on the trace and remain valid.
+예외는 컴포넌트가 아직 드래그를 가지고 있는 동안 히트 테스트가 해당 컴포넌트에 아예 도달하지
+않게 되는 경우입니다. 예를 들어 제스처 도중 조상이 `IgnoreEvents`를 켜는 경우입니다. 이때
+컴포넌트는 여전히 이벤트를 받지만 `event.renderingTrace`가 비어 있으므로, `localStartPosition`,
+`localEndPosition`, `localDelta`를 읽으면 예외가 발생합니다. `canvasStartPosition`,
+`canvasEndPosition`, `deviceStartPosition`, `deviceEndPosition`은 trace에 의존하지 않으므로 계속
+유효합니다.
 
-In addition, the `DragUpdateEvent` will contain `delta`, the amount the finger has moved since
-the previous `onDragUpdate`, or since the `onDragStart` if this is the first drag-update after
-a drag-start.
+또한 `DragUpdateEvent`에는 `delta`가 담겨 있습니다. 이는 이전 `onDragUpdate` 이후, 또는
+drag-start 후 첫 번째 drag-update라면 `onDragStart` 이후 손가락이 이동한 양입니다.
 
-The `event.timestamp` property measures the time elapsed since the beginning of the drag. It can be
-used, for example, to compute the speed of the movement.
+`event.timestamp` 속성은 드래그가 시작된 이후 경과한 시간을 측정합니다. 예를 들어 움직임의 속도를
+계산하는 데 사용할 수 있습니다.
 
 
 ### onDragEnd
 
-This event is fired when the user lifts their finger and thus stops the drag gesture. There is no
-position associated with this event.
+이 이벤트는 사용자가 손가락을 떼어 드래그 제스처를 멈출 때 발생합니다. 이 이벤트에는 연관된
+위치가 없습니다.
 
 
 ### onDragCancel
 
-This event is fired when the drag gesture is interrupted before it ends naturally, for example when
-another gesture recognizer wins the gesture arena or a second pointer triggers a scale takeover.
-Unlike `onDragEnd` it carries no velocity information. The default implementation simply resets the
-drag state; override it and call `onDragEnd(event.toDragEnd())` yourself if you want a cancellation
-handled identically to a natural drag end.
+이 이벤트는 드래그 제스처가 자연스럽게 끝나기 전에 중단될 때 발생합니다. 예를 들어 다른 제스처
+인식기가 gesture arena에서 이기거나, 두 번째 포인터가 스케일로 전환을 일으키는 경우입니다.
+`onDragEnd`와 달리 속도 정보는 담고 있지 않습니다. 기본 구현은 단순히 드래그 상태를 초기화합니다.
+취소를 자연스러운 드래그 종료와 똑같이 처리하고 싶다면, 이 메서드를 오버라이드하고 직접
+`onDragEnd(event.toDragEnd())`를 호출하세요.
 
 
-## Mixins
+<a id="mixins"></a>
+
+## 믹스인
 
 
 ### DragCallbacks
 
-The `DragCallbacks` mixin can be added to any `Component` in order for that component to start
-receiving drag events.
+`DragCallbacks` 믹스인은 어떤 `Component`에든 추가할 수 있으며, 추가하면 그 컴포넌트가 드래그
+이벤트를 받기 시작합니다.
 
-This mixin adds methods `onDragStart`, `onDragUpdate`, `onDragEnd`, and `onDragCancel` to the
-component, which by default don't do anything, but can be overridden to implement any real
-functionality.
+이 믹스인은 컴포넌트에 `onDragStart`, `onDragUpdate`, `onDragEnd`, `onDragCancel` 메서드를
+추가합니다. 이 메서드들은 기본적으로 아무 일도 하지 않지만, 오버라이드하여 실제 기능을 구현할 수
+있습니다.
 
-Another crucial detail is that a component will only receive drag events that originate *within*
-that component, as judged by the `containsLocalPoint()` function. The commonly-used
-`PositionComponent` class provides such an implementation based on its `size` property. Thus, if
-your component derives from a `PositionComponent`, then make sure that you set its size correctly.
-If, however, your component derives from the bare `Component`, then the `containsLocalPoint()`
-method must be implemented manually.
+또 하나 중요한 점은, 컴포넌트는 `containsLocalPoint()` 함수로 판단했을 때 그 컴포넌트 *안에서*
+시작된 드래그 이벤트만 받는다는 것입니다. 흔히 사용하는 `PositionComponent` 클래스는 `size`
+속성을 기반으로 이 구현을 제공합니다. 따라서 컴포넌트가 `PositionComponent`를 상속한다면 크기를
+올바르게 설정했는지 확인하세요. 반면 컴포넌트가 기본 `Component`를 상속한다면
+`containsLocalPoint()` 메서드를 직접 구현해야 합니다.
 
-If your component is a part of a larger hierarchy, then it will only receive drag events if its
-ancestors have all implemented the `containsLocalPoint` correctly.
+컴포넌트가 더 큰 계층 구조의 일부라면, 그 조상들이 모두 `containsLocalPoint`를 올바르게 구현한
+경우에만 드래그 이벤트를 받습니다.
 
 
 ### isDragged
 
-The `DragCallbacks` mixin provides an `isDragged` getter that returns `true` while the component is
-actively being dragged. This is set to `true` at `onDragStart` and back to `false` at `onDragEnd`.
-It can be used, for example, to change the component's visual appearance during a drag.
+`DragCallbacks` 믹스인은 컴포넌트가 드래그되고 있는 동안 `true`를 반환하는 `isDragged` getter를
+제공합니다. 이 값은 `onDragStart`에서 `true`로 설정되고 `onDragEnd`에서 다시 `false`로 돌아갑니다.
+예를 들어 드래그 중에 컴포넌트의 외형을 바꾸는 데 사용할 수 있습니다.
 
 
 ### allowsMultiPointerDrag
 
-Drags are tracked per pointer, so a component that is already being dragged will start a second,
-independent drag when another finger touches it. That is what you want when each drag manipulates
-something of its own, but not when they all drive a single piece of state (such as a camera or
-a draggable object), where a second finger just fights the first.
+드래그는 포인터별로 추적되므로, 이미 드래그되고 있는 컴포넌트를 다른 손가락이 터치하면 두 번째의
+독립적인 드래그가 시작됩니다. 각 드래그가 각자의 대상을 조작할 때는 이것이 원하는 동작이지만,
+모든 드래그가 하나의 상태(카메라나 드래그 가능한 객체 등)를 조작할 때는 두 번째 손가락이 첫 번째
+손가락과 충돌할 뿐입니다.
 
-Override `allowsMultiPointerDrag` to `false` to accept only one drag at a time:
+한 번에 하나의 드래그만 받으려면 `allowsMultiPointerDrag`를 `false`로 오버라이드하세요.
 
 ```dart
 class MagnifyingGlass extends PositionComponent with DragCallbacks {
@@ -153,21 +157,23 @@ class MagnifyingGlass extends PositionComponent with DragCallbacks {
 }
 ```
 
-While a drag is in progress, no other pointer gets an `onDragStart` on this component, and no
-`onDragUpdate`, `onDragEnd` or `onDragCancel` follow for it either; the event is offered to the
-components below instead. Once the accepted drag ends or is cancelled, the component is free to
-accept a new one.
+드래그가 진행 중인 동안에는 다른 포인터가 이 컴포넌트에서 `onDragStart`를 받지 않으며, 그 포인터에
+대한 `onDragUpdate`, `onDragEnd`, `onDragCancel`도 뒤따르지 않습니다. 대신 이벤트는 아래에 있는
+컴포넌트들에 제공됩니다. 받아들인 드래그가 끝나거나 취소되면 컴포넌트는 다시 새 드래그를 받을 수
+있습니다.
 
-Control is not handed over: if the accepted pointer is lifted while another is still down, the drag
-ends rather than continuing on the remaining finger.
+제어권은 넘겨지지 않습니다. 받아들인 포인터를 뗐을 때 다른 포인터가 아직 눌려 있더라도, 드래그는
+남은 손가락으로 이어지지 않고 끝납니다.
 
-This only gates drags. A component that also uses `ScaleCallbacks` keeps receiving scale events
-normally, so one-finger drag plus two-finger pinch still works.
+이 설정은 드래그에만 적용됩니다. `ScaleCallbacks`도 사용하는 컴포넌트는 계속 스케일 이벤트를
+정상적으로 받으므로, 한 손가락 드래그와 두 손가락 핀치는 여전히 동작합니다.
 
 
-## Combining with ScaleCallbacks
+<a id="combining-with-scalecallbacks"></a>
 
-`DragCallbacks` and `ScaleCallbacks` can be used at the same time: single-finger gestures produce
-drag events, and two-finger gestures produce both drag and scale events. See
-[Combining with DragCallbacks](scale_events.md#combining-with-dragcallbacks) for how to make the two
-work together, both on a component and for panning and zooming the camera.
+## ScaleCallbacks와 함께 사용하기
+
+`DragCallbacks`와 `ScaleCallbacks`는 동시에 사용할 수 있습니다. 한 손가락 제스처는 드래그 이벤트를,
+두 손가락 제스처는 드래그 이벤트와 스케일 이벤트를 모두 생성합니다. 컴포넌트에서, 그리고 카메라
+이동과 줌에서 둘을 함께 동작하게 하는 방법은
+[DragCallbacks와 함께 사용하기](scale_events.md#combining-with-dragcallbacks)를 참고하세요.

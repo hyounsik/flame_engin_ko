@@ -1,5 +1,4 @@
 # Character
-
 ```{dartdoc}
 :package: jenny
 :symbol: Character
@@ -9,9 +8,11 @@
 ```
 
 
-## See Also
+<a id="see-also"></a>
 
-- [CharacterStorage]: the container where all Character objects within a YarnProject are cached.
+## 함께 보기
+
+- [CharacterStorage]: YarnProject 안의 모든 Character 객체가 캐시되는 컨테이너입니다.
 
 
 [CharacterStorage]: character_storage.md

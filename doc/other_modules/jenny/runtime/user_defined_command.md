@@ -1,37 +1,39 @@
 # UserDefinedCommand
 
-The **UserDefinedCommand** class represents a single invocation of a custom (non-built-in) command
-within a yarn script. Objects of this type will be delivered to a [DialogueView] in its
-`.onCommand()` method.
+**UserDefinedCommand** 클래스는 yarn 스크립트 안에서 커스텀(내장이 아닌) 명령이 한 번 호출되는 것을
+나타냅니다. 이 타입의 객체는 [DialogueView]의 `.onCommand()` 메서드를 통해 전달됩니다.
 
 
-## Properties
+<a id="properties"></a>
+
+## 속성
 
 **name** `String`
-: The name of the command, without the angle brackets. For example, if the command is `<<smile>>`
-  in the yarn script, then its name will be `"smile"`.
+: 꺾쇠괄호를 제외한 명령의 이름입니다. 예를 들어 yarn 스크립트의 명령이 `<<smile>>`이라면 이름은
+  `"smile"`입니다.
 
 **argumentString** `String`
-: Command arguments, as a single string. For example, if the command is `<<move Hippo {$delta}>>`,
-  and the value of variable `$delta` is `3.17`, then the argument string will be `"Hippo 3.17"`.
+: 하나의 문자열로 된 명령 인자입니다. 예를 들어 명령이 `<<move Hippo {$delta}>>`이고 변수 `$delta`의 값이
+  `3.17`이라면, 인자 문자열은 `"Hippo 3.17"`이 됩니다.
 
-  The `argumentString` is re-evaluated every time the command is executed, however, it is an error
-  to access this property before the command was executed by the dialogue runner.
+  `argumentString`은 명령이 실행될 때마다 다시 평가되지만, 대화 러너가 명령을 실행하기 전에 이 속성에
+  접근하는 것은 오류입니다.
 
 **arguments** `List<dynamic>?`
-: Command arguments, as a list of parsed values. This property will be null if the command was
-  declared without a signature (i.e. as an "orphaned command"). However, if the command was linked
-  as an external function, then the number and types of arguments in the list will correspond to
-  the arguments of that function.
+: 파싱된 값의 목록으로 된 명령 인자입니다. 명령이 시그니처 없이(즉, "orphaned command"로) 선언되었다면 이
+  속성은 null입니다. 하지만 명령이 외부 함수에 연결되었다면, 목록의 인자 개수와 타입은 그 함수의 인자와
+  일치합니다.
 
-  In the same example as above, the `arguments` will be `['Hippo', 3.17]`, assuming the linked Dart
-  function is `move(String target, double distance)`.
+  위와 같은 예에서 연결된 Dart 함수가 `move(String target, double distance)`라면 `arguments`는
+  `['Hippo', 3.17]`이 됩니다.
 
 
-## See also
+<a id="see-also"></a>
 
-- The description of [User-defined Commands] in the YarnSpinner language.
-- The guide on how to register a new custom command in the [CommandStorage] document.
+## 함께 보기
+
+- YarnSpinner 언어의 [사용자 정의 명령][User-defined Commands]에 대한 설명.
+- [CommandStorage] 문서에 있는, 새 커스텀 명령을 등록하는 방법에 대한 가이드.
 
 
 [CommandStorage]: command_storage.md

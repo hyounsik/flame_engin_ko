@@ -1,11 +1,9 @@
 # `<<set>>`
 
-The **\<\<set\>\>** command is used to update the value of an existing variable. The variable
-must be declared with [\<\<declare\>\>][declare] or [\<\<local\>\>][local] before it can be used
-in `<<set>>`.
+**\<\<set\>\>** 명령은 기존 변수의 값을 갱신하는 데 사용합니다. 변수는 `<<set>>`에서 사용하기 전에
+[\<\<declare\>\>][declare]나 [\<\<local\>\>][local]로 선언되어 있어야 합니다.
 
-The command `<<set>>` allows either regular assignment, or modifying assignment, like follows:
-
+`<<set>>` 명령은 다음과 같이 일반 할당이나 수정 할당을 할 수 있습니다.
 ```yarn
 // Regular assignment
 <<set $VARIABLE = EXPRESSION>>
@@ -26,12 +24,13 @@ The command `<<set>>` allows either regular assignment, or modifying assignment,
 <<set $VARIABLE = $VARIABLE % EXPRESSION>>
 ```
 
-In all cases, the `EXPRESSION` must have the same type as the `$VARIABLE`. If not, a compile-time
-error will be thrown.
+모든 경우에 `EXPRESSION`은 `$VARIABLE`과 같은 타입이어야 합니다. 그렇지 않으면 컴파일 타임 오류가
+발생합니다.
 
 
-## Examples
+<a id="examples"></a>
 
+## 예제
 ```yarn
 <<declare $favorite_color as String>>
 

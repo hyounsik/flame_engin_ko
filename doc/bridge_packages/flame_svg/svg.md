@@ -1,21 +1,25 @@
 # Flame SVG
 
-flame_svg provides a simple API for rendering SVG images in your game.
+flame_svg는 게임에서 SVG 이미지를 렌더링하기 위한 간단한 API를 제공합니다.
 
 
-## Installation
+<a id="installation"></a>
 
-Svg support is provided by the `flame_svg` bridge package, be sure to put it in your pubspec file
-to use it.
+## 설치
 
-If you want to know more about the installation visit
-[flame_svg on pub.dev](https://pub.dev/packages/flame_svg/install).
+SVG 지원은 `flame_svg` 브릿지 패키지가 제공하므로, 사용하려면 반드시 pubspec 파일에
+추가하세요.
+
+설치에 대해 더 알고 싶다면
+[pub.dev의 flame_svg](https://pub.dev/packages/flame_svg/install)를 방문하세요.
 
 
-## How to use flame_svg
+<a id="how-to-use-flame_svg"></a>
 
-To use it just import the `Svg` class from `'package:flame_svg/flame_svg.dart'`, and use the
-following snippet to render it on the canvas:
+## flame_svg 사용 방법
+
+사용하려면 `'package:flame_svg/flame_svg.dart'`에서 `Svg` 클래스를 import하고, 다음 코드를 사용해
+캔버스에 렌더링하면 됩니다.
 
 ```dart
 final svgInstance = await Svg.load('assets/android.svg');
@@ -26,7 +30,7 @@ final size = Vector2(300, 300);
 svgInstance.renderPosition(canvas, position, size);
 ```
 
-or use the `SvgComponent` and add it to the component tree:
+또는 `SvgComponent`를 사용해 컴포넌트 트리에 추가할 수도 있습니다.
 
 ```dart
 class MyGame extends FlameGame {

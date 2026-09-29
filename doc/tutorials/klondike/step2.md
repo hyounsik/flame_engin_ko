@@ -1,18 +1,20 @@
-# 2. Scaffolding
+<a id="2-scaffolding"></a>
 
-In this section we will use broad strokes to outline the main elements of the
-game. This includes the main game class, and the general layout.
+# 2. 뼈대 잡기
+
+이 섹션에서는 게임의 주요 요소를 큰 틀에서 개략적으로 잡아 봅니다. 여기에는
+메인 게임 클래스와 전체 레이아웃이 포함됩니다.
 
 
 ## KlondikeGame
 
-In Flame universe, the **FlameGame** class is the cornerstone of most games.
-This class runs the game loop, dispatches events, owns all the components that
-comprise the game (the component tree), and usually also serves as the central
-repository for the game's state.
+Flame 세계에서 **FlameGame** 클래스는 대부분의 게임에서 초석이 되는 클래스입니다.
+이 클래스는 게임 루프를 실행하고, 이벤트를 전달하며, 게임을 구성하는 모든 컴포넌트
+(컴포넌트 트리)를 소유하고, 보통은 게임 상태를 담는 중앙 저장소
+역할도 합니다.
 
-So, create a new file called `klondike_game.dart` inside the `lib/` folder, and
-declare the `KlondikeGame` class inside:
+그럼 `lib/` 폴더 안에 `klondike_game.dart`라는 새 파일을 만들고,
+그 안에 `KlondikeGame` 클래스를 선언하세요.
 
 ```dart
 import 'package:flame/game.dart';
@@ -26,23 +28,22 @@ class KlondikeGame extends FlameGame {
 }
 ```
 
-For now we only declared the `onLoad` method, which is a special handler that
-is called when the game instance is attached to the Flutter widget tree for the
-first time. You can think of it as a delayed asynchronous constructor.
-Currently, the only thing that `onLoad` does is that it loads the sprites image
-into the game; but we will be adding more soon. Any image or other resource that
-you want to use in the game needs to be loaded first, which is a relatively slow
-I/O operation, hence the need for `await` keyword.
+지금은 `onLoad` 메서드만 선언했습니다. 이 메서드는 게임 인스턴스가 Flutter 위젯 트리에
+처음 붙을 때 호출되는 특별한 핸들러입니다. 지연된 비동기 생성자라고
+생각해도 됩니다.
+현재 `onLoad`가 하는 일은 스프라이트 이미지를 게임에 불러오는 것뿐이지만,
+곧 더 많은 내용을 추가할 것입니다. 게임에서 사용하려는 이미지나 기타 리소스는
+모두 먼저 불러와야 하는데, 이는 비교적 느린 I/O 작업이므로
+`await` 키워드가 필요합니다.
 
-I am loading the image into the global `Flame.images` cache here. An alternative
-approach is to load it into the `Game.images` cache instead, but then it would
-have been more difficult to access that image from other classes.
+여기서는 이미지를 전역 `Flame.images` 캐시에 불러오고 있습니다. 대안으로
+`Game.images` 캐시에 불러올 수도 있지만, 그러면 다른 클래스에서
+그 이미지에 접근하기가 더 어려워집니다.
 
-Also note that I am `await`ing the image to finish loading before initializing
-anything else in the game. This is for convenience: it means that by the time
-all other components are initialized, they can assume the sprite sheet is already
-loaded. We can even add a helper function to extract a sprite from the common
-sprite sheet:
+또한 게임의 다른 부분을 초기화하기 전에 이미지 로딩이 끝나기를 `await`하고
+있다는 점에 주목하세요. 이는 편의를 위한 것입니다. 다른 모든 컴포넌트가
+초기화될 즈음에는 스프라이트 시트가 이미 로드되었다고 가정할 수 있다는 뜻이기 때문입니다.
+공통 스프라이트 시트에서 스프라이트를 추출하는 헬퍼 함수를 추가할 수도 있습니다.
 
 ```dart
 Sprite klondikeSprite(double x, double y, double width, double height) {
@@ -54,13 +55,13 @@ Sprite klondikeSprite(double x, double y, double width, double height) {
 }
 ```
 
-This helper function won't be needed in this chapter, but will be used
-extensively in the next.
+이 헬퍼 함수는 이번 장에서는 필요하지 않지만, 다음 장에서
+많이 사용됩니다.
 
-Let's incorporate this class into the project so that it isn't orphaned. Open
-the `main.dart` find the line which says `final game = FlameGame();` and replace
-the `FlameGame` with `KlondikeGame`. You will need to import the class too.
-After all is done, the file should look like this:
+이 클래스가 고립되지 않도록 프로젝트에 포함시켜 봅시다.
+`main.dart`를 열어 `final game = FlameGame();`이라고 적힌 줄을 찾아
+`FlameGame`을 `KlondikeGame`으로 바꾸세요. 클래스도 import해야 합니다.
+모두 마치면 파일은 다음과 같아야 합니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -74,21 +75,23 @@ void main() {
 ```
 
 
-## Other classes
+<a id="other-classes"></a>
 
-So far we have the main `KlondikeGame` class, and now we need to create objects
-that we will add to the game. In Flame these objects are called *components*,
-and when added to the game they form a "game component tree". All entities that
-exist in the game must be components.
+## 다른 클래스들
 
-As we already mentioned in the previous chapter, our game mainly consists of
-`Card` components. However, since drawing the cards will take some effort, we
-will defer implementation of that class to the next chapter.
+지금까지 메인 `KlondikeGame` 클래스를 만들었으니, 이제 게임에 추가할 객체들을
+만들어야 합니다. Flame에서는 이러한 객체를 *컴포넌트*라고 부르며,
+게임에 추가되면 "게임 컴포넌트 트리"를 이룹니다. 게임에 존재하는
+모든 개체는 컴포넌트여야 합니다.
 
-For now, let's create the container classes, as shown on the sketch. These are:
-`Stock`, `Waste`, `Pile` and `Foundation`. Inside the `lib/` folder create a
-sub-directory `components`, and then the file `lib/components/stock.dart`. In that
-file write
+앞 장에서 이미 언급했듯이, 우리 게임은 주로
+`Card` 컴포넌트로 구성됩니다. 하지만 카드를 그리는 데는 어느 정도 품이 들기 때문에,
+그 클래스의 구현은 다음 장으로 미루겠습니다.
+
+지금은 스케치에 표시된 컨테이너 클래스들을 만들어 봅시다. 바로
+`Stock`, `Waste`, `Pile`, `Foundation`입니다. `lib/` 폴더 안에
+`components` 하위 디렉터리를 만들고, 이어서 `lib/components/stock.dart` 파일을 만드세요. 그
+파일에 다음과 같이 작성합니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -99,17 +102,15 @@ class Stock extends PositionComponent {
 }
 ```
 
-Here we declare the `Stock` class as a `PositionComponent` (which is a component
-that has a position and size). We also turn on the debug mode for this class so
-that we can see it on the screen even though we don't have any rendering logic
-yet.
+여기서는 `Stock` 클래스를 `PositionComponent`(위치와 크기를 가진 컴포넌트)로
+선언합니다. 또한 아직 렌더링 로직이 없더라도 화면에서 볼 수 있도록
+이 클래스의 디버그 모드를 켭니다.
 
-Likewise, create three more classes `Foundation`, `Pile` and `Waste`, each in
-its corresponding file. For now all four classes will have exactly the same
-logic inside, we'll be adding more functionality into those classes in
-subsequent chapters.
+마찬가지로 `Foundation`, `Pile`, `Waste` 세 클래스를 각각
+해당 파일에 만드세요. 지금은 네 클래스 모두 내부 로직이 완전히 같으며,
+이후 장에서 이 클래스들에 기능을 더 추가할 것입니다.
 
-At this moment the directory structure of your game should look like this:
+이 시점에서 게임의 디렉터리 구조는 다음과 같아야 합니다.
 
 ```text
 klondike/
@@ -129,33 +130,32 @@ klondike/
 ```
 
 
-## Game structure
+<a id="game-structure"></a>
 
-Once we have some basic components, they need to be added to the game. It is
-time to make a decision about the high-level structure of the game.
+## 게임 구조
 
-There exist multiple approaches here, which differ in their complexity,
-extendability, and overall philosophy. The approach that we will be taking in
-this tutorial is based on using the [World] component, together with a [Camera].
+기본 컴포넌트가 몇 개 준비되었다면 이를 게임에 추가해야 합니다. 이제
+게임의 상위 구조를 결정할 때입니다.
 
-The idea behind this approach is the following: imagine that your game **world**
-exists independently from the device, that it exists already in our heads, and
-on the sketch, even though we haven't done any coding yet. This world will have
-a certain size, and each element in the world will have certain coordinates. It
-is up to us to decide what will be the size of the world, and what is the unit
-of measurement for that size. The important part is that the world exists
-independently from the device, and its dimensions likewise do not depend on the
-pixel resolution of the screen.
+여기에는 여러 접근 방식이 있으며, 복잡도, 확장성, 전반적인 철학이
+서로 다릅니다. 이 튜토리얼에서 사용할 접근 방식은 [World] 컴포넌트를
+[Camera]와 함께 사용하는 것입니다.
 
-All elements that are part of the world will be added to the `World` component,
-and the `World` component will be then added to the game.
+이 접근 방식의 아이디어는 다음과 같습니다. 게임 **월드**가 기기와 독립적으로
+존재한다고 상상해 보세요. 아직 코딩을 하나도 하지 않았지만, 월드는 이미 우리 머릿속과
+스케치 위에 존재합니다. 이 월드는 특정한 크기를 가지며, 월드 안의 각 요소는 특정한 좌표를 가집니다.
+월드의 크기를 얼마로 할지, 그 크기의 측정 단위를 무엇으로 할지는
+우리가 결정합니다. 중요한 점은 월드가 기기와 독립적으로 존재하며,
+그 치수 역시 화면의 픽셀 해상도에 의존하지 않는다는 것입니다.
 
-The second part of the overall structure is a **camera** (`CameraComponent`).
-The purpose of the camera is to be able to look at the world, to make sure that
-it renders at the right size on the screen of the user's device.
+월드에 속하는 모든 요소는 `World` 컴포넌트에 추가되고,
+`World` 컴포넌트는 다시 게임에 추가됩니다.
 
-Thus, the overall structure of the component tree will look approximately like
-this:
+전체 구조의 두 번째 부분은 **카메라**(`CameraComponent`)입니다.
+카메라의 목적은 월드를 바라보면서, 월드가 사용자 기기의 화면에
+적절한 크기로 렌더링되도록 하는 것입니다.
+
+따라서 컴포넌트 트리의 전체 구조는 대략 다음과 같습니다.
 
 ```text
 KlondikeGame
@@ -167,21 +167,20 @@ KlondikeGame
  └─ CameraComponent
 ```
 
-For this game I've been drawing my image assets having in mind the dimension of
-a single card at 1000×1400 pixels. So, this will serve as the reference size for
-determining the overall layout. Another important measurement that affects the
-layout is the inter-card distance. It seems like it should be somewhere between
-150 to 200 units (relative to the card width), so we will declare it as a
-variable `cardGap` that can be adjusted later if needed. For simplicity, both
-the vertical and horizontal inter-card distance will be the same, and the
-minimum padding between the cards and the edges of the screen will also be equal
-to `cardGap`.
+이 게임의 이미지 에셋은 카드 한 장의 크기를 1000×1400 픽셀로 염두에 두고
+그렸습니다. 따라서 이 크기가 전체 레이아웃을 결정하는
+기준 크기가 됩니다. 레이아웃에 영향을 주는 또 하나의 중요한 치수는
+카드 사이의 간격입니다. (카드 너비를 기준으로) 150에서 200 단위 사이가
+적당해 보이므로, 필요하면 나중에 조정할 수 있도록 `cardGap`이라는
+변수로 선언하겠습니다. 단순하게 하기 위해 카드 사이의 세로 간격과 가로 간격은
+같게 하고, 카드와 화면 가장자리 사이의 최소 여백도
+`cardGap`과 같게 하겠습니다.
 
-Alright, let's put all this together and implement our `KlondikeGame` class.
+좋습니다, 이제 이 모든 것을 모아 `KlondikeGame` 클래스를 구현해 봅시다.
 
-First, we declare several global constants which describe the dimensions of a
-card and the distance between cards. We declare them as constants because we are
-not planning to change these values during the game:
+먼저 카드의 치수와 카드 사이의 간격을 나타내는 전역 상수 몇 개를
+선언합니다. 게임 중에 이 값들을 바꿀 계획이 없으므로
+상수로 선언합니다.
 
 ```dart
   static const double cardWidth = 1000.0;
@@ -191,10 +190,10 @@ not planning to change these values during the game:
   static final Vector2 cardSize = Vector2(cardWidth, cardHeight);
 ```
 
-Next, we will create a `Stock` component, the `Waste`, four `Foundation`s and
-seven `Pile`s, setting their sizes and positions in the world. The positions
-are calculated using simple arithmetics. This should all happen inside the
-`onLoad` method, after loading the sprite sheet:
+다음으로 `Stock` 컴포넌트, `Waste`, 네 개의 `Foundation`,
+일곱 개의 `Pile`을 만들고 월드에서의 크기와 위치를 설정합니다. 위치는
+간단한 산술로 계산합니다. 이 모든 작업은 스프라이트 시트를 불러온 뒤
+`onLoad` 메서드 안에서 이루어져야 합니다.
 
 ```dart
     final stock = Stock()
@@ -221,9 +220,9 @@ are calculated using simple arithmetics. This should all happen inside the
     );
 ```
 
-Since Flame version 1.9.0, `FlameGame` sets up default `world` and `camera`
-objects. `KlondikeGame` is an extension of `FlameGame`, so we can add to that
-`world` all the components that we just created.
+Flame 1.9.0 버전부터 `FlameGame`은 기본 `world`와 `camera`
+객체를 설정합니다. `KlondikeGame`은 `FlameGame`을 확장한 것이므로, 방금 만든
+모든 컴포넌트를 그 `world`에 추가할 수 있습니다.
 
 ```dart
     world.add(stock);
@@ -233,52 +232,50 @@ objects. `KlondikeGame` is an extension of `FlameGame`, so we can add to that
 ```
 
 ```{note}
-You may be wondering when you need to `await` the result of `add()`, and when
-you don't. The short answer is: usually you don't need to wait, but if you want
-to, then it won't hurt either.
+`add()`의 결과를 언제 `await`해야 하고 언제 하지 않아도 되는지 궁금할 수
+있습니다. 짧게 답하자면, 보통은 기다릴 필요가 없지만 기다리고
+싶다면 그렇게 해도 문제는 없습니다.
 
-If you check the documentation for `.add()` method, you'll see that the returned
-future only waits until the component is finished loading, not until it is
-actually mounted to the game. As such, you only have to wait for the future from
-`.add()` if your logic requires that the component is fully loaded before it can
-proceed. This is not very common.
+`.add()` 메서드의 문서를 확인해 보면, 반환된 future는 컴포넌트가
+실제로 게임에 마운트될 때까지가 아니라 로딩을 마칠 때까지만 기다린다는 것을 알 수 있습니다.
+따라서 로직상 컴포넌트가 완전히 로드된 뒤에야 다음으로 진행할 수 있는 경우에만
+`.add()`의 future를 기다리면 됩니다. 이런 경우는 흔하지 않습니다.
 
-If you don't `await` the future from `.add()`, then the component will be added
-to the game anyways, and in the same amount of time.
+`.add()`의 future를 `await`하지 않더라도 컴포넌트는 어쨌든 게임에
+추가되며, 걸리는 시간도 같습니다.
 ```
 
-Lastly, we use FlameGame's `camera` object to look at the `world`. Internally,
-the camera consists of two parts: a **viewport** and a **viewfinder**. The
-default viewport is `MaxViewport`, which takes up the entire available screen
-size -- this is exactly what we need for our game, so no need to change
-anything. The viewfinder, on the other hand, needs to be set up to take the
-dimensions of the underlying world into account.
+마지막으로 FlameGame의 `camera` 객체를 사용해 `world`를 바라봅니다. 내부적으로
+카메라는 **뷰포트**와 **뷰파인더**의 두 부분으로 구성됩니다.
+기본 뷰포트는 `MaxViewport`로, 사용 가능한 화면 크기 전체를
+차지합니다. 이는 우리 게임에 딱 필요한 것이므로 아무것도 바꿀
+필요가 없습니다. 반면 뷰파인더는 그 아래에 있는 월드의 치수를
+고려하도록 설정해야 합니다.
 
-We want the entire card layout to be visible on the screen without the need to
-scroll. In order to accomplish this, we specify that we want the entire world
-size (which is `7*cardWidth + 8*cardGap` by `4*cardHeight + 3*cardGap`) to be
-able to fit into the screen. The `.visibleGameSize` setting ensures that no
-matter the size of the device, the zoom level will be adjusted such that the
-specified chunk of the game world will be visible.
+우리는 스크롤하지 않고도 카드 레이아웃 전체가 화면에 보이기를 원합니다.
+이를 위해 월드 전체 크기(`7*cardWidth + 8*cardGap` × `4*cardHeight + 3*cardGap`)가
+화면에 들어맞도록 지정합니다. `.visibleGameSize` 설정은
+기기의 크기와 관계없이, 지정한 게임 월드 영역이 보이도록
+줌 레벨이 조정되게 합니다.
 
-The game size calculation is obtained like this: there are 7 cards in the
-tableau and 6 gaps between them, add 2 more "gaps" to account for padding, and
-you get the width of `7*cardWidth + 8*cardGap`. Vertically, there are two rows
-of cards, but in the bottom row we need some extra space to be able to display
-a tall pile -- by my rough estimate, thrice the height of a card is sufficient
-for this -- which gives the total height of the game world as
-`4*cardHeight + 3*cardGap`.
+게임 크기는 다음과 같이 계산합니다. 태블로에는 카드 7장과 그 사이의
+간격 6개가 있고, 여백을 위해 "간격" 2개를 더하면
+`7*cardWidth + 8*cardGap`의 너비가 됩니다. 세로로는 카드가 두 줄이지만,
+아래쪽 줄에는 높이 쌓인 파일(pile)을 표시할 수 있도록 여유 공간이 필요합니다.
+제 대략적인 추정으로는 카드 높이의 세 배면 충분합니다.
+그러면 게임 월드의 전체 높이는
+`4*cardHeight + 3*cardGap`이 됩니다.
 
-Next, we specify which part of the world will be in the "center" of the
-viewport. In this case I specify that the "center" of the viewport should
-be at the top center of the screen, and the corresponding point within
-the game world is at coordinates `[(7*cardWidth + 8*cardGap)/2, 0]`.
+다음으로 월드의 어느 부분이 뷰포트의 "중앙"에 올지 지정합니다.
+여기서는 뷰포트의 "중앙"이 화면의 위쪽 가운데에 있도록 지정하고,
+이에 대응하는 게임 월드 안의 지점은
+`[(7*cardWidth + 8*cardGap)/2, 0]` 좌표에 있습니다.
 
-The reason for such choice for the viewfinder's position and anchor is
-because of how we want it to respond if the game size becomes too wide or
-too tall: in case of too wide we want it to be centered on the screen,
-but if the screen is too tall, we want the content to be aligned at the
-top.
+뷰파인더의 위치와 앵커를 이렇게 선택한 이유는
+게임 크기가 너무 넓어지거나 너무 높아졌을 때 어떻게 반응하기를 원하는지와
+관련이 있습니다. 너무 넓은 경우에는 화면 가운데에 오기를 원하지만,
+화면이 너무 높은 경우에는 내용이 위쪽에
+정렬되기를 원합니다.
 
 ```dart
     camera.viewfinder.visibleGameSize =
@@ -287,9 +284,9 @@ top.
     camera.viewfinder.anchor = Anchor.topCenter;
 ```
 
-If you run the game now, you should see the placeholders for where the various
-components will be. If you are running the game in the browser, try resizing the
-window and see how the game responds to this.
+지금 게임을 실행하면 여러 컴포넌트가 놓일 자리를 나타내는 플레이스홀더가
+보일 것입니다. 브라우저에서 게임을 실행 중이라면 창 크기를
+바꿔 보면서 게임이 어떻게 반응하는지 확인해 보세요.
 
 ```{flutter-app}
 :sources: ../tutorials/klondike/app
@@ -297,9 +294,9 @@ window and see how the game responds to this.
 :show: popup code
 ```
 
-And this is it with this step -- we've created the basic game structure upon
-which everything else will be built. In the next step, we'll learn how to render
-the card objects, which are the most important visual objects in this game.
+이번 단계는 여기까지입니다. 앞으로 모든 것이 그 위에 세워질 기본 게임 구조를
+만들었습니다. 다음 단계에서는 이 게임에서 가장 중요한 시각적 객체인
+카드 객체를 렌더링하는 방법을 배웁니다.
 
 [World]: ../../flame/camera#world
 [Camera]: ../../flame/camera#cameracomponent

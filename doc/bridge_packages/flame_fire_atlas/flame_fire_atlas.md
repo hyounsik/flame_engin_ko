@@ -1,5 +1,5 @@
 # flame_fire_atlas
 
 ```{toctree}
-Overview    <fire_atlas.md>
+개요    <fire_atlas.md>
 ```

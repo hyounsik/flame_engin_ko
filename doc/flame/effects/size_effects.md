@@ -1,18 +1,20 @@
-# Size Effects
+<a id="size-effects"></a>
 
-Size effects are used to change the size of a component over time. They can be used to make a
-component grow, shrink, or change its size in a specific direction. The size is specified as a
-`Vector2` value, where x represents the width and y represents the height. The effects can be
-applied to any component that implements the `SizeProvider` interface, such as the
-`PositionComponent`. The difference between size effects and scale effects is that size only
-changes the size of the target component, while scale changes the "size" of all children too.
+# 크기 이펙트
+
+크기 이펙트는 시간에 따라 컴포넌트의 크기를 변경하는 데 사용됩니다. 컴포넌트를 커지게 하거나,
+작아지게 하거나, 특정 방향으로 크기를 바꾸는 데 사용할 수 있습니다. 크기는 `Vector2` 값으로
+지정하며, x는 너비를, y는 높이를 나타냅니다. 이 이펙트는 `PositionComponent`처럼 `SizeProvider`
+인터페이스를 구현하는 모든 컴포넌트에 적용할 수 있습니다. 크기 이펙트와 스케일 이펙트의 차이는,
+크기 이펙트는 대상 컴포넌트의 크기만 변경하는 반면 스케일 이펙트는 모든 자식들의 "크기"도 함께
+변경한다는 점입니다.
 
 
 ## `SizeEffect.by`
 
-This effect will change the size of the target component, relative to its current size. For example,
-if the target has size `Vector2(100, 100)`, then after the following effect is applied and runs its
-course, the new size will be `Vector2(120, 50)`:
+이 이펙트는 대상 컴포넌트의 크기를 현재 크기를 기준으로 변경합니다. 예를 들어 대상의 크기가
+`Vector2(100, 100)`이라면, 다음 이펙트가 적용되어 끝까지 실행된 후 새 크기는
+`Vector2(120, 50)`이 됩니다.
 
  ```{flutter-app}
  :sources: ../flame/examples
@@ -29,21 +31,21 @@ final effect = SizeEffect.by(
 );
 ```
 
-The size of a `PositionComponent` cannot be negative. If an effect attempts to set the size to a
-negative value, the size will be clamped at zero.
+`PositionComponent`의 크기는 음수일 수 없습니다. 이펙트가 크기를 음수 값으로 설정하려고 하면
+크기는 0으로 제한됩니다.
 
-Note that for this effect to work, the target component must implement the `SizeProvider` interface
-and take its `size` into account when rendering. Only few of the built-in components implement this
-API, but you can always make your own component work with size effects by adding
-`implements SizeEffect` to the class declaration.
+이 이펙트가 동작하려면 대상 컴포넌트가 `SizeProvider` 인터페이스를 구현하고 렌더링할 때 `size`를
+고려해야 한다는 점에 유의하세요. 이 API를 구현하는 내장 컴포넌트는 몇 개뿐이지만, 클래스 선언에
+`implements SizeEffect`를 추가하면 언제든지 여러분의 컴포넌트가 크기 이펙트와 함께 동작하도록 만들
+수 있습니다.
 
-An alternative to `SizeEffect` is the `ScaleEffect`, which works more generally and scales both the
-target component and its children.
+`SizeEffect`의 대안으로 `ScaleEffect`가 있습니다. 이는 더 일반적으로 동작하며, 대상 컴포넌트와
+그 자식들을 모두 스케일합니다.
 
 
 ## `SizeEffect.to`
 
-Changes the size of the target component to the specified size. Target size cannot be negative:
+대상 컴포넌트의 크기를 지정된 크기로 변경합니다. 목표 크기는 음수일 수 없습니다.
 
 
  ```{flutter-app}

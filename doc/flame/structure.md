@@ -1,19 +1,19 @@
-# Assets Directory Structure
+<a id="assets-directory-structure"></a>
 
-Games rely heavily on external assets like images for sprites, audio files for sound effects, and
-tile maps for levels. Organizing these files consistently ensures that Flame's built-in loaders
-(and Flutter's own [asset system](https://docs.flutter.dev/ui/assets/assets-and-images)) can find
-them without extra configuration.
+# 에셋 디렉터리 구조
 
-Every Flame loader takes the **full path** of the asset, exactly as you declared it in your
-`pubspec.yaml`. Nothing is prepended for you, so the string you write is the string that gets
-loaded.
+게임은 스프라이트용 이미지, 효과음용 오디오 파일, 레벨용 타일 맵 같은 외부 에셋에 크게 의존합니다.
+이런 파일을 일관되게 정리해 두면 Flame의 내장 로더(그리고 Flutter 자체의
+[에셋 시스템](https://docs.flutter.dev/ui/assets/assets-and-images))가 별도 설정 없이
+파일을 찾을 수 있습니다.
 
-Flame has a proposed structure for your project that includes the standard Flutter `assets`
-directory in addition to some children: `audio`, `images` and `tiles`. It is only a convention,
-not a requirement.
+모든 Flame 로더는 `pubspec.yaml`에 선언한 그대로의 에셋 **전체 경로**를 받습니다.
+앞에 자동으로 붙는 것이 없으므로, 작성한 문자열이 곧 로드되는 문자열입니다.
 
-If using the following example code:
+Flame은 표준 Flutter `assets` 디렉터리와 그 하위 디렉터리인 `audio`, `images`, `tiles`로
+이루어진 프로젝트 구조를 제안합니다. 이는 관례일 뿐 필수 사항은 아닙니다.
+
+다음 예제 코드를 사용한다면:
 
 ```dart
 class MyGame extends FlameGame {
@@ -21,11 +21,11 @@ class MyGame extends FlameGame {
   Future<void> onLoad() async {
     await FlameAudio.play('assets/audio/explosion.mp3');
 
-    // Load some images
+    // 이미지 몇 개 로드
     await Flame.images.load('assets/images/player.png');
     await Flame.images.load('assets/images/enemy.png');
 
-    // Or load every image in a directory
+    // 또는 디렉터리 안의 모든 이미지 로드
     await Flame.images.loadAllImages(directory: 'assets/images/');
 
     final map1 = await TiledComponent.load('assets/tiles/level.tmx', tileSize);
@@ -33,7 +33,7 @@ class MyGame extends FlameGame {
 }
 ```
 
-The following file structure matches those paths:
+다음 파일 구조가 이 경로들과 일치합니다:
 
 ```text
 .
@@ -49,9 +49,9 @@ The following file structure matches those paths:
         └── map.json
 ```
 
-Optionally you can split your `audio` folder into two subfolders, one for `music` and one for `sfx`.
+원한다면 `audio` 폴더를 `music`용과 `sfx`용 두 하위 폴더로 나눌 수도 있습니다.
 
-Don't forget to add these files to your `pubspec.yaml` file:
+이 파일들을 `pubspec.yaml` 파일에 추가하는 것을 잊지 마세요:
 
 ```yaml
 flutter:
@@ -62,17 +62,17 @@ flutter:
     - assets/tiles/level.tmx
 ```
 
-You are free to use any structure you like. Because every path is given in full, laying your
-assets out differently needs no configuration at all, just different strings:
+원하는 구조를 자유롭게 사용해도 됩니다. 모든 경로를 전체로 지정하므로, 에셋을 다르게 배치해도
+설정은 전혀 필요 없고 문자열만 달라질 뿐입니다:
 
 ```dart
 await Flame.images.load('gfx/sprites/player.png');
 ```
 
-Note that the path is also the key the asset is cached under, so `Flame.images.fromCache` and
-`Images.containsKey` take that same full path.
+경로는 에셋이 캐시될 때 사용하는 키이기도 하므로, `Flame.images.fromCache`와
+`Images.containsKey`도 같은 전체 경로를 받습니다.
 
-`AssetsCache` and `Images` can receive a custom
-[`AssetBundle`](https://api.flutter.dev/flutter/services/AssetBundle-class.html).
-This can be used to make Flame look for assets in a different location other than the `rootBundle`,
-like the file system for example.
+`AssetsCache`와 `Images`는 커스텀
+[`AssetBundle`](https://api.flutter.dev/flutter/services/AssetBundle-class.html)을 받을 수 있습니다.
+이를 이용하면 Flame이 `rootBundle`이 아닌 다른 위치(예: 파일 시스템)에서
+에셋을 찾도록 할 수 있습니다.

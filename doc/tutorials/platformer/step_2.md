@@ -1,41 +1,47 @@
-# 2. Start Coding
+<a id="2-start-coding"></a>
+
+# 2. 코딩 시작
 
 
-## The Plan
+<a id="the-plan"></a>
 
-Now that we have the assets loaded and a very rough idea of what classes we will need, we need to
-start thinking about how we will implement this game and our goals. To do this, let's break down
-what the game should do:
+## 계획
 
-- Ember should be able to be controlled to move left, right, and jump.
-- The level will be infinite, so we need a way to randomly load sections of the level.
-- The objective is to collect stars while avoiding enemies.
-- Enemies cannot be killed as you need to use the platforms to avoid them.
-- If Ember is hit by an enemy, it should reduce Ember's health by 1.
-- Ember should have 3 lives to lose.
-- There should be pits that if Ember falls into, it is automatically game over.
-- There should be a main menu and a game-over screen that lets the player start over.
+이제 에셋을 준비했고 어떤 클래스가 필요할지 대략적인 아이디어도 생겼으니, 이 게임을 어떻게 구현할지와
+우리의 목표에 대해 생각해 봐야 합니다. 이를 위해 게임이 무엇을 해야 하는지
+나누어 봅시다.
 
-Now that this is planned out, I know you are probably as excited as I am to begin and I just want to
-see Ember on the screen. So let's do that first.
+- Ember를 조종해 왼쪽, 오른쪽으로 움직이고 점프할 수 있어야 합니다.
+- 레벨은 무한하므로 레벨의 구간을 무작위로 로드하는 방법이 필요합니다.
+- 목표는 적을 피하면서 별을 모으는 것입니다.
+- 적은 죽일 수 없으므로 플랫폼을 이용해 피해야 합니다.
+- Ember가 적에게 맞으면 Ember의 체력이 1 줄어야 합니다.
+- Ember는 잃을 수 있는 목숨이 3개 있어야 합니다.
+- Ember가 빠지면 자동으로 게임 오버가 되는 구덩이가 있어야 합니다.
+- 메인 메뉴와 플레이어가 다시 시작할 수 있는 게임 오버 화면이 있어야 합니다.
+
+이렇게 계획을 세웠으니, 여러분도 저만큼 빨리 시작하고 싶을 것입니다. 저는 일단 화면에서 Ember를
+보고 싶습니다. 그러니 그것부터 해 봅시다.
 
 ```{note}
-Why did I choose to make this game an infinite side scrolling platformer?
+왜 이 게임을 무한 횡스크롤 플랫포머로 만들기로 했을까요?
 
-Well, I wanted to be able to showcase random level loading. No two game plays
-will be the same. This exact setup can easily be adapted to be a traditional 
-level game. As you make your way through this tutorial, you will see how we 
-could modify the level code to have an end. I will add a note in that section
-to explain the appropriate mechanics.
+무작위 레벨 로딩을 보여 주고 싶었기 때문입니다. 같은 플레이는 두 번 다시
+나오지 않습니다. 이 설정은 전통적인 레벨 방식의 게임으로도 쉽게 바꿀 수
+있습니다. 튜토리얼을 진행하다 보면 레벨 코드를 수정해 끝이 있도록 만드는
+방법을 보게 될 것입니다. 해당 섹션에 적절한 방법을 설명하는 참고를
+추가해 두겠습니다.
 ```
 
 
-## Loading Assets
+<a id="loading-assets"></a>
 
-For Ember to be displayed, we will need to load the assets. This can be done in `main.dart`, but by
-so doing, we will quickly clutter the file. To keep our game organized, we should create files that
-have a single focus. So let's create a file in the `lib` folder called `ember_quest.dart`. In that
-file, we will add:
+## 에셋 로드
+
+Ember를 표시하려면 에셋을 로드해야 합니다. 이 작업은 `main.dart`에서 할 수도 있지만, 그렇게 하면
+파일이 금방 지저분해집니다. 게임을 체계적으로 유지하려면 하나의 역할에 집중하는 파일을 만들어야 합니다.
+그러니 `lib` 폴더에 `ember_quest.dart`라는 파일을 만들어 봅시다. 그 파일에
+다음을 추가합니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -59,17 +65,19 @@ class EmberQuestGame extends FlameGame {
 }
 ```
 
-As I mentioned in the [assets](step_1.md#assets) section, we are using multiple individual image
-files and for performance reasons, we should leverage Flame's built-in caching system which will
-only load the files once, but allow us to access them as many times as needed without an impact to
-the game. `await images.loadAll()` takes a list of full asset paths and loads them into the cache,
-keyed by those same paths.
+[에셋](step_1.md#assets) 섹션에서 언급했듯이 우리는 여러 개의 개별 이미지
+파일을 사용하므로, 성능을 위해 Flame에 내장된 캐싱 시스템을 활용해야 합니다. 이 시스템은
+파일을 한 번만 로드하지만, 게임에 영향을 주지 않고 필요한 만큼 여러 번 접근할 수 있게 해 줍니다.
+`await images.loadAll()`은 전체 에셋 경로 목록을 받아 캐시에 로드하며,
+같은 경로를 키로 사용합니다.
 
 
-## Scaffolding
+<a id="scaffolding"></a>
 
-So now that we have our game file, let's prepare the `main.dart` file to receive our newly created
-`FlameGame`. Change your entire `main.dart` file to the following:
+## 뼈대 만들기
+
+이제 게임 파일이 생겼으니, 새로 만든 `FlameGame`을 받을 수 있도록 `main.dart` 파일을
+준비해 봅시다. `main.dart` 파일 전체를 다음과 같이 바꿉니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -86,14 +94,16 @@ void main() {
 }
 ```
 
-You can run this file and you should just have a blank screen now. Let's get Ember loaded!
+이 파일을 실행하면 지금은 빈 화면만 보일 것입니다. 이제 Ember를 로드해 봅시다!
 
 
-## CameraComponent and World
+<a id="cameracomponent-and-world"></a>
 
-To move around in the world we are going the use the built-in `CameraComponent` and `World` that
-exists on the `FlameGame` class.
-We are going to add all our components to the `world` and follow the player with the `camera`.
+## CameraComponent와 World
+
+월드 안에서 이동하기 위해 `FlameGame` 클래스에 존재하는 내장 `CameraComponent`와 `World`를
+사용하겠습니다.
+모든 컴포넌트를 `world`에 추가하고, `camera`로 플레이어를 따라가겠습니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -112,20 +122,22 @@ class EmberQuestGame extends FlameGame {
       'assets/images/water_enemy.png',
     ]);
 
-    // Everything in this tutorial assumes that the position
-    // of the `CameraComponent`s viewfinder (where the camera is looking)
-    // is in the top left corner, that's why we set the anchor here.
+    // 이 튜토리얼의 모든 내용은 `CameraComponent`의 뷰파인더(카메라가
+    // 바라보는 곳)의 위치가 왼쪽 위 모서리에 있다고 가정하므로,
+    // 여기서 앵커를 설정합니다.
     camera.viewfinder.anchor = Anchor.topLeft;
   }
 }
 ```
 
 
-## Ember Time
+<a id="ember-time"></a>
 
-Keeping your game files organized can always be a challenge. I like to keep things logically
-organized by how they will be involved in my game. So for Ember, let's create the following folder,
-`lib/actors` and in that folder, create `ember.dart`. In that file, add the following code:
+## Ember 등장
+
+게임 파일을 체계적으로 정리하는 것은 언제나 어려운 일입니다. 저는 게임에서 어떻게 쓰이는지에 따라
+논리적으로 정리하는 것을 좋아합니다. 그러니 Ember를 위해 `lib/actors` 폴더를 만들고,
+그 폴더 안에 `ember.dart`를 만듭니다. 그 파일에 다음 코드를 추가합니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -152,22 +164,22 @@ class EmberPlayer extends SpriteAnimationComponent
 }
 ```
 
-This file uses the `HasGameRef` mixin which allows us to reach back to `ember_quest.dart` and
-leverage any of the variables or methods that are defined in the game class. You can see this in
-use with the line `gameRef.images.fromCache('assets/images/ember.png')`. Earlier, we loaded all
-the files into cache, so to use that file now, we call `fromCache` so it can be leveraged by the
-`SpriteAnimation`.
-The `EmberPlayer` class is extending a `SpriteAnimationComponent` which allows us to define
-animation as well as position it accordingly in our game world. When we construct this class, the
-default size of `Vector2.all(64)` is defined as the size of Ember in our game world should be 64x64.
-You may notice that in the animation `SpriteAnimationData`, the `textureSize` is defined as
-`Vector2.all(16)` or 16x16. This is because the individual frame in our `ember.png` is 16x16 and
-there are 4 frames in total. To define the speed of the animation, `stepTime` is used and set at
-`0.12` seconds per frame. You can change the `stepTime` to any length that makes the animation seem
-correct for your game vision.
+이 파일은 `HasGameRef` 믹스인을 사용합니다. 이 믹스인을 사용하면 `ember_quest.dart`에 접근해
+게임 클래스에 정의된 변수나 메서드를 활용할 수 있습니다. `gameRef.images.fromCache('assets/images/ember.png')`
+줄에서 이것이 사용되는 것을 볼 수 있습니다. 앞에서 모든
+파일을 캐시에 로드했으므로, 이제 그 파일을 사용하려면 `fromCache`를 호출해
+`SpriteAnimation`에서 활용할 수 있게 합니다.
+`EmberPlayer` 클래스는 `SpriteAnimationComponent`를 상속합니다. 이를 통해
+애니메이션을 정의하고 게임 월드에서 적절히 위치를 지정할 수 있습니다. 이 클래스를 생성할 때
+게임 월드에서 Ember의 크기가 64x64여야 하므로 기본 크기를 `Vector2.all(64)`로 정의합니다.
+애니메이션 `SpriteAnimationData`에서 `textureSize`가 `Vector2.all(16)`, 즉 16x16으로 정의된 것을
+보셨을 것입니다. 이는 `ember.png`의 개별 프레임이 16x16이고
+총 4개의 프레임이 있기 때문입니다. 애니메이션 속도를 정의하기 위해 `stepTime`을 사용하며,
+프레임당 `0.12`초로 설정했습니다. `stepTime`은 여러분이 구상한 게임에 맞게 애니메이션이 자연스러워 보이는
+어떤 길이로든 바꿀 수 있습니다.
 
-Now before you rush to run the game again, we have to add Ember to the game world. To do this, go
-back to `ember_quest.dart` and add the following:
+이제 서둘러 게임을 다시 실행하기 전에, Ember를 게임 월드에 추가해야 합니다. 이를 위해
+`ember_quest.dart`로 돌아가 다음을 추가합니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -199,10 +211,12 @@ class EmberQuestGame extends FlameGame {
 }
 ```
 
-Run your game now and you should now see Ember flickering in the lower left-hand corner.
+이제 게임을 실행하면 왼쪽 아래 모서리에서 깜빡이는 Ember를 볼 수 있습니다.
 
 
-## Building Blocks
+<a id="building-blocks"></a>
 
-Now that we have Ember showing on screen and we know our basic environment is all working correctly,
-it's time to create a world for Embers Quest! Proceed on to [](step_3.md)!
+## 블록 쌓기
+
+이제 화면에 Ember가 보이고 기본 환경이 모두 올바르게 동작한다는 것을 알았으니,
+Ember Quest를 위한 월드를 만들 차례입니다! [](step_3.md)로 넘어갑시다!

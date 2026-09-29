@@ -1,7 +1,7 @@
 # flame_forge2d
 
 ```{toctree}
-Overview    <forge2d.md>
-Joints    <joints.md>
-Migration    <migration.md>
+개요    <forge2d.md>
+조인트    <joints.md>
+마이그레이션    <migration.md>
 ```

@@ -1,17 +1,18 @@
-# Function Effect
+<a id="function-effect"></a>
 
-The `FunctionEffect` class is a very generic Effect that allows you to do almost anything without
-having to define a new effect.
+# 함수 이펙트
 
-It runs a function that takes the target and the progress of the effect and then the user can
-decide what to do with that input.
+`FunctionEffect` 클래스는 매우 범용적인 이펙트로, 새 이펙트를 정의하지 않고도 거의 모든 일을 할 수
+있게 해 줍니다.
 
-This could for example be used to make game state changes that happen over time, but that isn't
-necessarily visual, like most other effects are.
+이 이펙트는 대상과 이펙트의 진행도를 받는 함수를 실행하며, 사용자는 그 입력으로 무엇을 할지 결정할
+수 있습니다.
 
-In the following example we have a `PlayerState` enum that we want to change over time. We want to
-change the state to `yawn` when the progress is over 50% and then back to `idle` when the progress
-is over 80%.
+예를 들어 대부분의 다른 이펙트처럼 시각적이지는 않지만 시간에 걸쳐 일어나는 게임 상태 변화를
+만드는 데 사용할 수 있습니다.
+
+다음 예제에는 시간에 따라 변경하고 싶은 `PlayerState` enum이 있습니다. 진행도가 50%를 넘으면
+상태를 `yawn`으로 바꾸고, 진행도가 80%를 넘으면 다시 `idle`로 바꾸려고 합니다.
 
 ```dart
 enum PlayerState {

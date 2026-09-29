@@ -1,10 +1,10 @@
 # flame_splash_screen
 
-![Showcase of the splash screen](https://raw.githubusercontent.com/flame-engine/flame_splash_screen/main/demogif.gif)
+![스플래시 화면 쇼케이스](https://raw.githubusercontent.com/flame-engine/flame_splash_screen/main/demogif.gif)
 
-Style your flame game with a beautiful splash screen.
+아름다운 스플래시 화면으로 Flame 게임을 꾸며 보세요.
 
-flame_splash_screen is a very customizable splash screen package.
+flame_splash_screen은 커스터마이징의 폭이 매우 넓은 스플래시 화면 패키지입니다.
 
 ```dart
 FlameSplashScreen(
@@ -13,5 +13,5 @@ FlameSplashScreen(
 )
 ```
 
-Check the [package's repo](https://github.com/flame-engine/flame_splash_screen) and the
-[pub page](https://pub.dev/packages/flame_splash_screen) for more details.
+자세한 내용은 [패키지 저장소](https://github.com/flame-engine/flame_splash_screen)와
+[pub 페이지](https://pub.dev/packages/flame_splash_screen)를 확인하세요.

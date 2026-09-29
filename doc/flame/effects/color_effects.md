@@ -1,15 +1,17 @@
-# Color Effects
+<a id="color-effects"></a>
 
-Color effects are used to change the color of a component over time. They can be used to tint a component,
-change its opacity, or apply a color filter.
+# 색상 이펙트
+
+색상 이펙트는 시간에 따라 컴포넌트의 색상을 변경하는 데 사용됩니다. 컴포넌트에 색조를 입히거나,
+불투명도를 바꾸거나, 색상 필터를 적용하는 데 사용할 수 있습니다.
 
 
 ## ColorEffect
 
-This effect will change the base color of the paint, causing the rendered component to be tinted by
-the provided color between a provided range.
+이 이펙트는 paint의 기본 색상을 변경하여, 렌더링된 컴포넌트가 주어진 범위 안에서 지정된 색상으로
+물들게 합니다.
 
-Usage example:
+사용 예시:
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -28,18 +30,18 @@ final effect = ColorEffect(
 );
 ```
 
-The `opacityFrom` and `opacityTo` arguments will determine "how much" of the color that will be
-applied to the component. In this example the effect will start with 20% and will go up to 80%.
+`opacityFrom`과 `opacityTo` 인자는 컴포넌트에 색상을 "얼마나" 적용할지를 결정합니다. 이 예제에서
+이펙트는 20%에서 시작하여 80%까지 올라갑니다.
 
-**Note:** Due to how this effect is implemented, and how Flutter's `ColorFilter` class works, this
-effect can't be mixed with other `ColorEffect`s, when more than one is added to the component, only
-the last one will have effect.
+**참고:** 이 이펙트의 구현 방식과 Flutter의 `ColorFilter` 클래스가 동작하는 방식 때문에, 이
+이펙트는 다른 `ColorEffect`와 섞어 쓸 수 없습니다. 컴포넌트에 둘 이상을 추가하면 마지막 것만
+적용됩니다.
 
 
 ## `OpacityToEffect`
 
-This effect will change the opacity of the target over time to the specified alpha-value.
-It can only be applied to components that implement the `OpacityProvider`.
+이 이펙트는 시간에 따라 대상의 불투명도를 지정된 알파 값으로 변경합니다.
+`OpacityProvider`를 구현하는 컴포넌트에만 적용할 수 있습니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -56,10 +58,10 @@ final effect = OpacityEffect.to(
 );
 ```
 
-If the component uses multiple paints, the effect can target one more more of those paints
-using the `target` parameter. The `HasPaint` mixin implements `OpacityProvider` and exposes APIs
-to easily create providers for desired paintIds. For single paintId `opacityProviderOf` can be used
-and for multiple paintIds and `opacityProviderOfList` can be used.
+컴포넌트가 여러 paint를 사용한다면, `target` 파라미터를 사용해 이펙트가 그중 하나 이상의 paint를
+대상으로 하도록 할 수 있습니다. `HasPaint` 믹스인은 `OpacityProvider`를 구현하며, 원하는 paintId에
+대한 provider를 쉽게 만들 수 있는 API를 제공합니다. paintId가 하나라면 `opacityProviderOf`를,
+여러 개라면 `opacityProviderOfList`를 사용할 수 있습니다.
 
 
 ```{flutter-app}
@@ -80,15 +82,15 @@ final effect = OpacityEffect.to(
 );
 ```
 
-The opacity value of 0 corresponds to a fully transparent component, and the opacity value of 1 is
-fully opaque. Convenience constructors `OpacityEffect.fadeOut()` and `OpacityEffect.fadeIn()` will
-animate the target into full transparency / full visibility respectively.
+불투명도 값 0은 완전히 투명한 컴포넌트에, 불투명도 값 1은 완전히 불투명한 컴포넌트에 해당합니다.
+편의 생성자 `OpacityEffect.fadeOut()`과 `OpacityEffect.fadeIn()`은 각각 대상을 완전히 투명하게 /
+완전히 보이게 애니메이션합니다.
 
 
 ## `OpacityByEffect`
 
-This effect will change the opacity of the target relative to the specified alpha-value. For example,
-the following effect will change the opacity of the target by `90%`:
+이 이펙트는 대상의 불투명도를 지정된 알파 값만큼 상대적으로 변경합니다. 예를 들어 다음 이펙트는
+대상의 불투명도를 `90%`만큼 변경합니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -105,20 +107,20 @@ final effect = OpacityEffect.by(
 );
 ```
 
-Currently this effect can only be applied to components that have a `HasPaint` mixin. If the
-target component uses multiple paints, the effect can target any individual color using the
-`paintId` parameter.
+현재 이 이펙트는 `HasPaint` 믹스인을 가진 컴포넌트에만 적용할 수 있습니다. 대상 컴포넌트가 여러
+paint를 사용한다면, `paintId` 파라미터를 사용해 이펙트가 개별 색상 중 어느 것이든 대상으로 하도록
+할 수 있습니다.
 
 
 ## GlowEffect
 
 ```{note}
-This effect is currently experimental, and its API may change in the future.
+이 이펙트는 현재 실험적이며, API가 향후 변경될 수 있습니다.
 ```
 
-This effect will apply the glowing shade around target relative to the specified
-`glow-strength`. The color of shade will be targets paint color. For example, the following effect
-will apply the glowing shade around target by strength of `10`:
+이 이펙트는 지정된 `glow-strength`에 따라 대상 주위에 빛나는 그림자를 적용합니다. 그림자의 색상은
+대상의 paint 색상입니다. 예를 들어 다음 이펙트는 강도 `10`으로 대상 주위에 빛나는 그림자를
+적용합니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -135,13 +137,13 @@ final effect = GlowEffect(
 );
 ```
 
-Currently this effect can only be applied to components that have a `HasPaint` mixin.
+현재 이 이펙트는 `HasPaint` 믹스인을 가진 컴포넌트에만 적용할 수 있습니다.
 
 
 ## `HueToEffect`
 
-This effect will change the hue of the target over time to the specified angle in radians.
-It can only be applied to components that implement the `HueProvider`.
+이 이펙트는 시간에 따라 대상의 색조(hue)를 지정된 각도(라디안)로 변경합니다.
+`HueProvider`를 구현하는 컴포넌트에만 적용할 수 있습니다.
 
 ```dart
 final effect = HueEffect.to(
@@ -153,8 +155,8 @@ final effect = HueEffect.to(
 
 ## `HueByEffect`
 
-This effect will rotate the hue of the target relative by the specified angle in radians.
-It can only be applied to components that implement the `HueProvider`.
+이 이펙트는 대상의 색조를 지정된 각도(라디안)만큼 상대적으로 회전시킵니다.
+`HueProvider`를 구현하는 컴포넌트에만 적용할 수 있습니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -171,10 +173,10 @@ final effect = HueEffect.by(
 );
 ```
 
-Both effects can target any component implementing `HueProvider`. The `HasPaint` mixin
-implements `HueProvider` and handles the necessary `ColorFilter` updates automatically.
+두 이펙트 모두 `HueProvider`를 구현하는 모든 컴포넌트를 대상으로 할 수 있습니다. `HasPaint`
+믹스인은 `HueProvider`를 구현하며, 필요한 `ColorFilter` 업데이트를 자동으로 처리합니다.
 
 > [!TIP]
-> **Performance Note**: `HueEffect` is extremely efficient because it modifies the `Paint`'s
-> `colorFilter` directly. If you have many components, prefer this effect over the `HueDecorator`,
-> which uses `saveLayer()` and has much higher overhead.
+> **성능 참고**: `HueEffect`는 `Paint`의 `colorFilter`를 직접 수정하므로 매우 효율적입니다.
+> 컴포넌트가 많다면 `saveLayer()`를 사용해 오버헤드가 훨씬 큰 `HueDecorator`보다 이 이펙트를
+> 사용하는 것이 좋습니다.

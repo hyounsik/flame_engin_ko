@@ -1,12 +1,16 @@
-# 4. Adding the Remaining Components
+<a id="4-adding-the-remaining-components"></a>
+
+# 4. 나머지 컴포넌트 추가
 
 
-## Star
+<a id="star"></a>
 
-The star is pretty simple. It is just like the Platform block except we are going to add an effect
-to make it pulse in size. For the effect to look correct, we need to change the object's `Anchor`
-to `center`. This means we will need to adjust the position by half of the image size. For brevity,
-I am going to add the whole class and explain the additional changes after.
+## 별
+
+별은 꽤 간단합니다. 플랫폼 블록과 거의 같지만, 크기가 맥박치듯 변하도록 이펙트를 추가합니다.
+이펙트가 올바르게 보이려면 오브젝트의 `Anchor`를 `center`로 바꿔야 합니다. 즉, 위치를
+이미지 크기의 절반만큼 조정해야 합니다. 간결함을 위해
+클래스 전체를 추가한 다음 추가로 바뀐 점을 설명하겠습니다.
 
 ```dart
 import 'package:flame/collisions.dart';
@@ -59,7 +63,7 @@ class Star extends SpriteComponent with HasGameRef<EmberQuestGame> {
 }
 ```
 
-So the only change between the Star and the Platform beyond the anchor is simply the following:
+앵커 외에 별과 플랫폼의 차이점은 다음 부분뿐입니다.
 
 ```dart
 add(
@@ -75,11 +79,11 @@ add(
 );
 ```
 
-The `SizeEffect` is best explained by going to their
-[docs](../../flame/effects.md#sizeeffectby). In short, we simply reduce the size of the star
-by -24 pixels in both directions and we make it pulse infinitely using the `EffectController`.
+`SizeEffect`는 [문서](../../flame/effects.md#sizeeffectby)를 보는 것이
+가장 좋습니다. 간단히 말해, 별의 크기를
+양방향으로 -24픽셀만큼 줄이고 `EffectController`를 사용해 무한히 맥박치게 합니다.
 
-Don't forget to add the star to your `lib/ember_quest.dart` file by doing:
+다음과 같이 `lib/ember_quest.dart` 파일에 별을 추가하는 것을 잊지 마세요.
 
 ```dart
 case Star:
@@ -91,13 +95,15 @@ case Star:
   );
 ```
 
-If you run your game, you should now see pulsating stars!
+게임을 실행하면 이제 맥박치는 별이 보일 것입니다!
 
 
-## Water Enemy
+<a id="water-enemy"></a>
 
-Now that we understand adding effects to our objects, let's do the same for the water drop enemy.
-Open `lib/actors/water_enemy.dart` and add the following code:
+## 물 적
+
+이제 오브젝트에 이펙트를 추가하는 방법을 알았으니, 물방울 적에도 똑같이 해 봅시다.
+`lib/actors/water_enemy.dart`를 열고 다음 코드를 추가합니다.
 
 ```dart
 import 'package:flame/collisions.dart';
@@ -156,16 +162,16 @@ class WaterEnemy extends SpriteAnimationComponent
 
 ```
 
-The water drop enemy is an animation just like Ember, so this class is extending the
-`SpriteAnimationComponent` class but it uses all of the previous code we have used for the Star and
-the Platform. The only difference will be instead of the `SizeEffect`, we are going to use the
-`MoveEffect`. The best resource for information will be their [help
-docs](../../flame/effects.md#sizeeffectby).
+물방울 적은 Ember와 마찬가지로 애니메이션이므로 이 클래스는
+`SpriteAnimationComponent` 클래스를 상속하지만, 앞에서 별과 플랫폼에 사용한 코드를
+모두 그대로 사용합니다. 유일한 차이점은 `SizeEffect` 대신
+`MoveEffect`를 사용한다는 것입니다. 가장 좋은 정보는 [도움말
+문서](../../flame/effects.md#sizeeffectby)에서 얻을 수 있습니다.
 
-In short, the `MoveEffect` will last for 3 seconds, alternate directions, and run infinitely. It
-will move our enemy to the left, 128 pixels (-2 x image width).
+간단히 말해, `MoveEffect`는 3초 동안 지속되고, 방향을 번갈아 바꾸며, 무한히 실행됩니다.
+적을 왼쪽으로 128픽셀(-2 x 이미지 너비) 이동시킵니다.
 
-Don't forget to add the water enemy to your `lib/ember_quest.dart` file by doing:
+다음과 같이 `lib/ember_quest.dart` 파일에 물 적을 추가하는 것을 잊지 마세요.
 
 ```dart
 case WaterEnemy:
@@ -177,22 +183,24 @@ case WaterEnemy:
     );
 ```
 
-If you run the game now, the Water Enemy should be displayed and moving!
+이제 게임을 실행하면 물 적이 표시되고 움직일 것입니다!
 
-![Water Enemies](../../images/tutorials/platformer/Step4Enemies.jpg)
+![물 적](../../images/tutorials/platformer/Step4Enemies.jpg)
 
 
-## Ground Blocks
+<a id="ground-blocks"></a>
 
-Finally, the last component that needs to be displayed is the Ground Block! This component is more
-complex than the others as we need to identify two times during a block's life cycle.
+## 땅 블록
 
-- When the block is added, if it is the last block in the segment, we need to update a global value
-  as to its position.
-- When the block is removed, if it was the first block in the segment, we need to randomly get the
-  next segment to load.
+마지막으로 표시해야 할 컴포넌트는 땅 블록입니다! 이 컴포넌트는 블록의 생명주기 동안
+두 시점을 파악해야 하므로 다른 컴포넌트보다 더 복잡합니다.
 
-So let's start with the basic class which is nothing more than a copy of the Platform Block.
+- 블록이 추가될 때, 그것이 세그먼트의 마지막 블록이라면 그 위치를 전역 값으로
+  업데이트해야 합니다.
+- 블록이 제거될 때, 그것이 세그먼트의 첫 번째 블록이었다면 다음에 로드할 세그먼트를
+  무작위로 가져와야 합니다.
+
+그럼 플랫폼 블록을 그대로 복사한 기본 클래스부터 시작해 봅시다.
 
 ```dart
 import 'package:flame/collisions.dart';
@@ -232,21 +240,21 @@ class GroundBlock extends SpriteComponent with HasGameRef<EmberQuestGame> {
 }
 ```
 
-The first thing we will tackle is registering the block globally if it is the absolute last block to
-be loaded. To do this, add two new global variables in `lib/ember_quest.dart` called:
+가장 먼저 다룰 것은, 블록이 로드되는 가장 마지막 블록이라면 전역적으로 등록하는
+것입니다. 이를 위해 `lib/ember_quest.dart`에 다음 두 개의 새 전역 변수를 추가합니다.
 
 ```dart
   late double lastBlockXPosition = 0.0;
   late UniqueKey lastBlockKey;
 ```
 
-Declare the following variable at the top of your Ground Block class:
+땅 블록 클래스 맨 위에 다음 변수를 선언합니다.
 
 ```dart
 final UniqueKey _blockKey = UniqueKey();
 ```
 
-Now in your Ground Block's `onLoad` method, add the following at the end of the method:
+이제 땅 블록의 `onLoad` 메서드 끝에 다음을 추가합니다.
 
 ```dart
 if (gridPosition.x == 9 && position.x > gameRef.lastBlockXPosition) {
@@ -255,12 +263,12 @@ if (gridPosition.x == 9 && position.x > gameRef.lastBlockXPosition) {
 }
 ```
 
-All that is happening is if this block is the 10th block (9 as the segment grid is 0 based) AND
-this block's position is greater than the global `lastBlockXPosition`, set the global block key to be
-this block's key and set the global `lastBlockXPosition` to be this blocks position plus the width of
-the image (the anchor is bottom left and we want the next block to align right next to it).
+여기서 하는 일은, 이 블록이 10번째 블록(세그먼트 격자는 0부터 시작하므로 9)이고
+이 블록의 위치가 전역 `lastBlockXPosition`보다 크다면, 전역 블록 키를
+이 블록의 키로 설정하고 전역 `lastBlockXPosition`을 이 블록의 위치에 이미지 너비를 더한 값으로
+설정하는 것뿐입니다(앵커가 왼쪽 아래이고, 다음 블록이 바로 옆에 붙어 정렬되도록 하려는 것입니다).
 
-Now we can address updating this information, so in the `update` method, add the following code:
+이제 이 정보를 업데이트하는 부분을 처리할 수 있습니다. `update` 메서드에 다음 코드를 추가합니다.
 
 ```dart
   @override
@@ -278,23 +286,25 @@ Now we can address updating this information, so in the `update` method, add the
   }
 ```
 
-`gameRef.lastBlockXPosition` is being updated by the block's current x-axis position plus its
-width - 10 pixels. This will cause a little overlap, but due to the potential variance in `dt` this
-prevents gaps in the map as it loads while a player is moving.
+`gameRef.lastBlockXPosition`은 블록의 현재 x축 위치에 너비를 더하고 10픽셀을 뺀 값으로
+업데이트됩니다. 약간 겹치게 되지만, `dt`의 잠재적인 편차 때문에 이렇게 하면
+플레이어가 이동하는 동안 맵이 로드될 때 틈이 생기는 것을 막을 수 있습니다.
 
 
-### Loading the Next Random Segment
+<a id="loading-the-next-random-segment"></a>
 
-To load the next random segment, we will use the `Random()` function that is built-in to
-`dart:math`. The following line of code gets a random integer from 0 (inclusive) to the max number
-in the passed parameter (exclusive).
+### 다음 무작위 세그먼트 로드하기
+
+다음 무작위 세그먼트를 로드하기 위해 `dart:math`에 내장된 `Random()` 함수를
+사용합니다. 다음 코드는 0(포함)부터 전달한 파라미터의 최댓값(미포함)까지의
+무작위 정수를 얻습니다.
 
 ```dart
 Random().nextInt(segments.length),
 ```
 
-Back in our Ground Block, we can now add the following to our 'update' method before
-the other block we just added:
+다시 땅 블록으로 돌아가서, 이제 'update' 메서드에서 방금 추가한 다른 블록 앞에
+다음을 추가할 수 있습니다.
 
 ```dart
 if (position.x < -size.x) {
@@ -308,10 +318,10 @@ if (position.x < -size.x) {
 }
 ```
 
-This simply extends the code that we have in our other objects, where once the block is off the
-screen and if the block is the first block of the segment, we will call the `loadGameSegments`
-method in our game class, get a random number between 0 and the number of segments and pass in the
-offset. If `Random()` or `segments.length` does not auto-import, you will need:
+이것은 다른 오브젝트에 있는 코드를 확장한 것일 뿐입니다. 블록이
+화면 밖으로 나가고 그 블록이 세그먼트의 첫 번째 블록이라면, 게임 클래스의 `loadGameSegments`
+메서드를 호출하면서 0부터 세그먼트 개수 사이의 무작위 수를 얻고
+오프셋을 전달합니다. `Random()`이나 `segments.length`가 자동으로 import되지 않는다면 다음이 필요합니다.
 
 ```dart
 import 'dart:math';
@@ -319,7 +329,7 @@ import 'dart:math';
 import '../managers/segment_manager.dart';
 ```
 
-So our full Ground Block class should look like this:
+따라서 전체 땅 블록 클래스는 다음과 같아야 합니다.
 
 ```dart
 import 'dart:math';
@@ -384,7 +394,7 @@ class GroundBlock extends SpriteComponent with HasGameRef<EmberQuestGame> {
 
 ```
 
-Finally, don't forget to add your Ground Block to `lib/ember_quest.dart` by adding the following:
+마지막으로 다음을 추가해 `lib/ember_quest.dart`에 땅 블록을 추가하는 것을 잊지 마세요.
 
 ```dart
 case GroundBlock:
@@ -396,10 +406,10 @@ case GroundBlock:
   );
 ```
 
-If you run your code, your game should now look like this:
+코드를 실행하면 이제 게임이 다음과 같이 보일 것입니다.
 
-![Ground Blocks](../../images/tutorials/platformer/Step4Ground.jpg)
+![땅 블록](../../images/tutorials/platformer/Step4Ground.jpg)
 
-You might say, but wait! Ember is in the middle of the ground and that is correct because Ember's
-`Anchor` is set to center. This is ok and we will be addressing this in [](step_5.md) where we will
-be adding movement and collisions to Ember!
+잠깐만요! Ember가 땅 한가운데에 있다고 말할 수도 있습니다. 맞습니다. Ember의
+`Anchor`가 center로 설정되어 있기 때문입니다. 괜찮습니다. Ember에 이동과 충돌을 추가하는
+[](step_5.md)에서 이 문제를 해결하겠습니다!

@@ -1,30 +1,32 @@
-# Looping Background Music
+<a id="looping-background-music"></a>
 
-With the `Bgm` class, you can manage looping of background music tracks with regards to application
-(or game) lifecycle state changes.
+# 배경 음악 반복 재생
 
-When the application is terminated, or sent to background, `Bgm` will automatically pause
-the currently playing music track. Similarly, when the application is resumed, `Bgm` will resume the
-background music. Manually pausing and resuming your tracks is also supported.
+`Bgm` 클래스를 사용하면 애플리케이션(또는 게임)의 생명주기 상태 변화에 맞춰 배경 음악 트랙의 반복 재생을
+관리할 수 있습니다.
 
-For this class to function properly, the observer must be registered by calling the following:
+애플리케이션이 종료되거나 백그라운드로 전환되면 `Bgm`이 현재 재생 중인 음악 트랙을 자동으로
+일시 정지합니다. 마찬가지로 애플리케이션이 재개되면 `Bgm`이 배경 음악을 다시
+재생합니다. 트랙을 수동으로 일시 정지하고 재개하는 것도 지원합니다.
+
+이 클래스가 제대로 동작하려면 다음을 호출해 옵저버를 등록해야 합니다.
 
 ```dart
 FlameAudio.bgm.initialize();
 ```
 
-**IMPORTANT Note:** The `initialize` function must be called at a point in time where an instance of
-the `WidgetsBinding` class already exists. Best practice is to put this call inside of your game's
-`onLoad` method`.
+**중요 참고:** `initialize` 함수는 `WidgetsBinding` 클래스의 인스턴스가 이미 존재하는 시점에
+호출해야 합니다. 이 호출은 게임의 `onLoad` 메서드 안에 두는 것이
+가장 좋습니다.
 
-In cases where you're done with background music but still want to keep the application/game
-running, use the `dispose` function to remove the observer.
+배경 음악 사용은 끝났지만 애플리케이션/게임은 계속 실행하고 싶은 경우에는
+`dispose` 함수를 사용해 옵저버를 제거합니다.
 
 ```dart
 FlameAudio.bgm.dispose();
 ```
 
-To play a looping background music track, run:
+반복되는 배경 음악 트랙을 재생하려면 다음을 실행합니다.
 
 ```dart
 import 'package:flame_audio/flame_audio.dart';
@@ -32,33 +34,39 @@ import 'package:flame_audio/flame_audio.dart';
 FlameAudio.bgm.play('assets/audio/adventure-track.mp3');
 ```
 
-You must have an appropriate folder structure and add the files to the `pubspec.yaml` file, as
-explained in [Flame Audio documentation](audio.md).
+[Flame Audio 문서](audio.md)에서 설명한 것처럼 적절한 폴더 구조를 갖추고 `pubspec.yaml` 파일에
+파일을 추가해야 합니다.
 
 
-## Caching music files
+<a id="caching-music-files"></a>
 
-The `Bgm` class will use the static instance of `FlameAudio` for storing cached
-music files by default.
+## 음악 파일 캐싱
 
-So in order to pre-load music, you can use the same recommendations from the
-[Flame Audio documentation](audio.md).
+`Bgm` 클래스는 기본적으로 캐시된 음악 파일을 저장하는 데 `FlameAudio`의 정적 인스턴스를
+사용합니다.
 
-You can optionally create your own `Bgm` instances with different backing `AudioCache`s,
-if you so desire.
+따라서 음악을 미리 로드하려면
+[Flame Audio 문서](audio.md)의 권장 사항을 그대로 따르면 됩니다.
+
+원한다면 서로 다른 `AudioCache`를 사용하는 `Bgm` 인스턴스를 직접
+만들 수도 있습니다.
 
 
-## Methods
+<a id="methods"></a>
+
+## 메서드
 
 
-### Play
+<a id="play"></a>
 
-The `play` function takes in a `String` that should be a path that points to the location of the
-music file to be played (following the Flame Audio folder structure requirements).
+### 재생
 
-You can pass an additional optional `double` parameter which is the `volume` (defaults to `1.0`).
+`play` 함수는 재생할 음악 파일의 위치를 가리키는 경로인 `String`을 받습니다
+(Flame Audio 폴더 구조 요구 사항을 따릅니다).
 
-Examples:
+선택적인 `double` 파라미터인 `volume`을 추가로 전달할 수 있습니다(기본값은 `1.0`).
+
+예시:
 
 ```dart
 FlameAudio.bgm.play('assets/audio/music/boss-fight/level-382.mp3');
@@ -69,22 +77,26 @@ FlameAudio.bgm.play('assets/audio/music/world-map.mp3', volume: .25);
 ```
 
 
-### Stop
+<a id="stop"></a>
 
-To stop a currently playing background music track, just call `stop`.
+### 정지
+
+현재 재생 중인 배경 음악 트랙을 정지하려면 `stop`을 호출하면 됩니다.
 
 ```dart
 FlameAudio.bgm.stop();
 ```
 
 
-### Pause and Resume
+<a id="pause-and-resume"></a>
 
-To manually pause and resume background music you can use the `pause` and `resume` functions.
+### 일시 정지와 재개
 
-`FlameAudio.bgm` automatically handles pausing and resuming the currently playing background music
-track. Manually `pausing` prevents the app/game from auto-resuming when focus is given back to the
-app/game.
+배경 음악을 수동으로 일시 정지하고 재개하려면 `pause`와 `resume` 함수를 사용할 수 있습니다.
+
+`FlameAudio.bgm`은 현재 재생 중인 배경 음악 트랙의 일시 정지와 재개를 자동으로 처리합니다.
+수동으로 일시 정지(`pausing`)하면 앱/게임에 다시 포커스가 돌아왔을 때 자동으로 재개되지
+않습니다.
 
 ```dart
 FlameAudio.bgm.pause();

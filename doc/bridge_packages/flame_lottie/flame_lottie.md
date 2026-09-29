@@ -1,35 +1,37 @@
 # flame_lottie
 
-This package allows you to load and add Lottie animations to your Flame game.
+이 패키지를 사용하면 Lottie 애니메이션을 불러와 Flame 게임에 추가할 수 있습니다.
 
 
-The native Lottie libraries (such as [lottie-android](https://github.com/airbnb/lottie-android))
-are maintained by **Airbnb**.
+네이티브 Lottie 라이브러리(예: [lottie-android](https://github.com/airbnb/lottie-android))는
+**Airbnb**가 관리합니다.
 
-The Flutter package ``lottie``, on which this wrapper is based on, is by developed **xaha.dev** and
-can be found on [pub.dev](https://pub.dev/packages/lottie).
+이 래퍼의 기반이 되는 Flutter 패키지 ``lottie``는 **xaha.dev**가 개발했으며
+[pub.dev](https://pub.dev/packages/lottie)에서 찾을 수 있습니다.
 
 
-## Usage
+<a id="usage"></a>
 
-To use it in your game you just need to add `flame_lottie` to your pubspec.yaml.
+## 사용법
 
-Simply load the Lottie animation using the **loadLottie** method and
-the [LottieBuilder](https://pub.dev/documentation/lottie/latest/lottie/LottieBuilder-class.html).
-It allows all the various ways of loading a Lottie file:
+게임에서 사용하려면 pubspec.yaml에 `flame_lottie`를 추가하기만 하면 됩니다.
 
-- [Lottie.asset](https://pub.dev/documentation/lottie/latest/lottie/Lottie/asset.html), for
-obtaining a Lottie file from an AssetBundle using a key.
-- [Lottie.network](https://pub.dev/documentation/lottie/latest/lottie/Lottie/network.html), for
-obtaining a lottie file from a URL.
-- [Lottie.file](https://pub.dev/documentation/lottie/latest/lottie/Lottie/file.html), for obtaining
- a lottie file from a File.
-- [Lottie.memory](https://pub.dev/documentation/lottie/latest/lottie/Lottie/memory.html), for
-obtaining a lottie file from a Uint8List.
+**loadLottie** 메서드와
+[LottieBuilder](https://pub.dev/documentation/lottie/latest/lottie/LottieBuilder-class.html)를 사용해 Lottie 애니메이션을 불러오기만 하면 됩니다.
+Lottie 파일을 불러오는 다양한 방법을 모두 지원합니다.
 
-... and add it as `LottieComponent` to your Flame 🔥 game.
+- [Lottie.asset](https://pub.dev/documentation/lottie/latest/lottie/Lottie/asset.html): 키를 사용해
+AssetBundle에서 Lottie 파일을 가져옵니다.
+- [Lottie.network](https://pub.dev/documentation/lottie/latest/lottie/Lottie/network.html): URL에서
+lottie 파일을 가져옵니다.
+- [Lottie.file](https://pub.dev/documentation/lottie/latest/lottie/Lottie/file.html): File에서
+ lottie 파일을 가져옵니다.
+- [Lottie.memory](https://pub.dev/documentation/lottie/latest/lottie/Lottie/memory.html): Uint8List에서
+lottie 파일을 가져옵니다.
 
-Example:
+... 그리고 이를 `LottieComponent`로 Flame 🔥 게임에 추가합니다.
+
+예시:
 
 ```dart
 class MyGame extends FlameGame {
@@ -41,7 +43,7 @@ class MyGame extends FlameGame {
     add(
       LottieComponent(
         animation,
-        repeating: true, // Continuously loop the animation.
+        repeating: true, // 애니메이션을 계속 반복합니다.
         size: Vector2.all(400),
       ),
     );

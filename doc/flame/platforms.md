@@ -1,41 +1,45 @@
-# Supported Platforms
+<a id="supported-platforms"></a>
 
-One of Flame's biggest advantages is that it inherits Flutter's cross-platform reach. A single
-codebase can produce games for phones, desktops, and the web. This section covers platform
-support details and shows how to deploy your finished game to popular hosting services.
+# 지원 플랫폼
 
-Since Flame runs on top of Flutter, its supported platforms depend on which platforms are
-supported by Flutter.
+Flame의 가장 큰 장점 중 하나는 Flutter의 크로스 플랫폼 지원 범위를 그대로 물려받는다는 것입니다.
+하나의 코드베이스로 휴대폰, 데스크톱, 웹용 게임을 만들 수 있습니다. 이 섹션에서는 플랫폼 지원에 관한
+세부 사항과 완성한 게임을 널리 쓰이는 호스팅 서비스에 배포하는 방법을 설명합니다.
 
-At the moment, Flame supports web, mobile (Android and iOS) and desktop (Windows, macOS and Linux).
+Flame은 Flutter 위에서 동작하므로, 지원 플랫폼은 Flutter가 지원하는 플랫폼에 따라 달라집니다.
 
-
-## Flutter channels
-
-Flame keeps its support on the stable channel. The dev, beta and master channels should work,
-but we don't support them. This means that issues happening outside the stable channel are not
-a priority.
+현재 Flame은 웹, 모바일(Android와 iOS), 데스크톱(Windows, macOS, Linux)을 지원합니다.
 
 
-## Deploy your game to GitHub Pages
+<a id="flutter-channels"></a>
 
-One easy way to deploy your game online is to use [GitHub Pages](https://pages.github.com/).
-It is a cool feature from GitHub, by which you can easily host web content from your repository.
+## Flutter 채널
 
-Here we will explain the easiest way to get your game hosted using GitHub pages.
+Flame은 stable 채널을 기준으로 지원합니다. dev, beta, master 채널에서도 동작할 수 있지만
+공식적으로 지원하지는 않습니다. 따라서 stable 채널 외에서 발생하는 이슈는 우선순위가 높지 않습니다.
 
-First, let's create the branch where your deployed files will live:
+
+<a id="deploy-your-game-to-github-pages"></a>
+
+## GitHub Pages에 게임 배포하기
+
+게임을 온라인에 배포하는 쉬운 방법 중 하나는 [GitHub Pages](https://pages.github.com/)를 사용하는
+것입니다. GitHub Pages는 저장소에서 웹 콘텐츠를 손쉽게 호스팅할 수 있게 해 주는 GitHub의 멋진
+기능입니다.
+
+여기서는 GitHub Pages로 게임을 호스팅하는 가장 쉬운 방법을 설명합니다.
+
+먼저 배포된 파일이 저장될 브랜치를 만듭니다:
 
 ```shell
 git checkout -b gh-pages
 ```
 
-This branch can be created from `main` or any other place, it doesn't matter much. After you push
-that branch go back to your `main` branch.
+이 브랜치는 `main`이나 다른 어느 곳에서 만들어도 크게 상관없습니다. 브랜치를 push한 뒤 `main`
+브랜치로 돌아갑니다.
 
-Now you should add the [flutter-gh-pages](https://github.com/bluefireteam/flutter-gh-pages)
-action to your repository, you can do that by creating a file `gh-pages.yaml` under the folder
-`.github/workflows`.
+이제 저장소에 [flutter-gh-pages](https://github.com/bluefireteam/flutter-gh-pages) 액션을 추가해야
+합니다. `.github/workflows` 폴더 아래에 `gh-pages.yaml` 파일을 만들면 됩니다.
 
 ```yaml
 name: Gh-Pages
@@ -57,61 +61,61 @@ jobs:
           webRenderer: canvaskit
 ```
 
-Be sure to change `NAME_OF_YOUR_REPOSITORY` to the name of your GitHub repository.
+`NAME_OF_YOUR_REPOSITORY`를 여러분의 GitHub 저장소 이름으로 꼭 바꾸세요.
 
-Now, whenever you push something to the `main` branch, the action will run and update your
-deployed game.
+이제 `main` 브랜치에 무언가를 push할 때마다 액션이 실행되어 배포된 게임이 업데이트됩니다.
 
-The game should be available at a URL like this:
+게임은 다음과 같은 URL에서 접속할 수 있습니다:
 `https://YOUR_GITHUB_USERNAME.github.io/NAME_OF_YOUR_REPOSITORY/`
 
 
-## Deploy your game to itch.io
+<a id="deploy-your-game-to-itchio"></a>
 
-1. Create a web build, either from your IDE or by running `flutter build web`
-(If it complains about `Missing index.html` run `flutter create . --platforms=web`)
-2. Go into `index.html` and remove the line that says `<base href="/">`
-3. zip the `build/web` folder and upload to itch.io
+## itch.io에 게임 배포하기
 
-**Remember that it shouldn't be the `web` directory in your project's root, but in `build/web`!**
+1. IDE에서 또는 `flutter build web`을 실행하여 웹 빌드를 만듭니다
+(`Missing index.html` 오류가 나면 `flutter create . --platforms=web`을 실행하세요)
+2. `index.html`에서 `<base href="/">`라고 적힌 줄을 삭제합니다
+3. `build/web` 폴더를 zip으로 압축해 itch.io에 업로드합니다
 
-If you are submitting your game to a game jam, remember to make it public and submit it on the
-game jam page too (many get confused by this).
+**프로젝트 루트의 `web` 디렉터리가 아니라 `build/web` 디렉터리여야 한다는 점을 기억하세요!**
 
-Further instructions can be found on
-[itch.io](https://itch.io/docs/creators/html5#getting-started/zip-file).
+게임 잼에 게임을 제출하는 경우, 게임을 공개로 설정하고 게임 잼 페이지에서도 제출하는 것을 잊지
+마세요(많은 사람이 이 부분에서 헷갈립니다).
+
+자세한 안내는 [itch.io](https://itch.io/docs/creators/html5#getting-started/zip-file)에서 확인할 수
+있습니다.
 
 
-## Deploy your game to Cloudflare Pages
+<a id="deploy-your-game-to-cloudflare-pages"></a>
+
+## Cloudflare Pages에 게임 배포하기
 
 ```{note}
-Automated deployment to Cloudflare Pages is only available for GitHub and GitLab
-repositories.
+Cloudflare Pages 자동 배포는 GitHub과 GitLab 저장소에서만 사용할 수 있습니다.
 ```
 
-[Cloudflare pages](https://pages.cloudflare.com/) is another interesting option to host your
-Flame game online.
+[Cloudflare pages](https://pages.cloudflare.com/)도 Flame 게임을 온라인에 호스팅하기 좋은 선택지입니다.
 
-Setting up an automated deployment on it is super simple and can be achieved in a few steps:
+자동 배포 설정은 아주 간단해서 몇 단계만으로 완료할 수 있습니다.
 
-First, create your account on Cloudflare, and once you are logged in, use the `+ Add` button on
-the top right corner to create your page project.
+먼저 Cloudflare 계정을 만들고, 로그인한 뒤 오른쪽 위의 `+ Add` 버튼을 사용해 페이지 프로젝트를
+만듭니다.
 
-![Cloudflare add menu screenshot](../images/add_button.png)
+![Cloudflare add 메뉴 스크린샷](../images/add_button.png)
 
-Next follow the steps to connect your repository, you can choose between GitHub and GitLab.
+다음으로 안내에 따라 저장소를 연결합니다. GitHub과 GitLab 중에서 선택할 수 있습니다.
 
-You should then be presented with a screen to configure your project name, which should be
-pre-filled with the name of your repository, and the production branch, which will also
-be pre-filled with `main`.
+그러면 프로젝트 이름과 프로덕션 브랜치를 설정하는 화면이 나타납니다. 프로젝트 이름은 저장소 이름으로,
+프로덕션 브랜치는 `main`으로 미리 채워져 있을 것입니다.
 
-Scrolling down you will see the build settings panel, which should look like this:
+아래로 스크롤하면 다음과 같은 빌드 설정 패널이 보입니다:
 
-![Cloudflare build settings screenshot](../images/build_form.png)
+![Cloudflare 빌드 설정 스크린샷](../images/build_form.png)
 
-Leave the `Framework preset` as `None` since Flutter is not supported out of the box.
+Flutter는 기본으로 지원되지 않으므로 `Framework preset`은 `None`으로 둡니다.
 
-Then on the `Build command` field, enter the following command:
+그런 다음 `Build command` 필드에 다음 명령을 입력합니다:
 
 ```shell
 if cd flutter; then git pull && cd ..;else
@@ -120,8 +124,7 @@ git clone https://github.com/flutter/flutter.git; fi &&
 ../flutter/bin/flutter build web --release
 ```
 
-It should be entered as a single line, but below you can see it split into multiple lines for
-better readability:
+한 줄로 입력해야 하지만, 아래에는 읽기 쉽도록 여러 줄로 나누어 표시했습니다:
 
 ```shell
 if cd flutter; then
@@ -134,31 +137,31 @@ fi
 ../flutter/bin/flutter build web --release
 ```
 
-Some people might prefer to create a bash script in the root of their repository with the above
-commands and use it instead of entering the commands directly in the field, so it is up to you.
+위 명령을 필드에 직접 입력하는 대신 저장소 루트에 bash 스크립트로 만들어 사용하는 편을 선호하는
+사람도 있으니, 원하는 방식을 선택하세요.
 
-Set the Build output directory to `build/web`.
+Build output directory는 `build/web`으로 설정합니다.
 
-If needed use the advanced options to set environment variables.
+필요하다면 고급 옵션을 사용해 환경 변수를 설정합니다.
 
-Finally, click on the `Save and Deploy` button to start the deployment and that is it. You should
-have automation ready to deploy your game to Cloudflare Pages every time you push to your
-repository.
+마지막으로 `Save and Deploy` 버튼을 클릭하면 배포가 시작되고, 이것으로 끝입니다. 이제 저장소에
+push할 때마다 게임을 Cloudflare Pages에 배포하는 자동화가 준비되었습니다.
 
 
-### Web support
+<a id="web-support"></a>
 
-When using Flame on the web some methods may not work. For example `Flame.device.setOrientation` and
-`Flame.device.fullScreen` won't work on web, they can be called, but nothing will happen.
+### 웹 지원
 
-Another example: pre-caching audio using the `flame_audio` package also doesn't work due to
-Audioplayers not supporting it on web. This can be worked around by using the `http` package,
-and requesting a get to the audio file, that will make the browser cache the file producing the
-same effect as on mobile.
+웹에서 Flame을 사용할 때는 일부 메서드가 동작하지 않을 수 있습니다. 예를 들어
+`Flame.device.setOrientation`과 `Flame.device.fullScreen`은 웹에서 동작하지 않습니다. 호출할 수는
+있지만 아무 일도 일어나지 않습니다.
 
-If you want to create instances of `ui.Image` on the web you can use our
-`Flame.images.decodeImageFromPixels` method. This wraps the `decodeImageFromPixels` from the `ui`
-library, but with support for the web platform. If the `runAsWeb` argument is set to `true` (by
-default it is set to `kIsWeb`) it will decode the image using an internal image method. When the
-`runAsWeb` is `false` it will use the `decodeImageFromPixels`, which is currently not supported on
-the web.
+또 다른 예로, `flame_audio` 패키지를 사용한 오디오 사전 캐싱도 Audioplayers가 웹에서 이를 지원하지
+않기 때문에 동작하지 않습니다. 이 문제는 `http` 패키지로 오디오 파일에 GET 요청을 보내 우회할 수
+있습니다. 그러면 브라우저가 파일을 캐시하여 모바일에서와 같은 효과를 얻을 수 있습니다.
+
+웹에서 `ui.Image` 인스턴스를 만들고 싶다면 Flame의 `Flame.images.decodeImageFromPixels` 메서드를
+사용할 수 있습니다. 이 메서드는 `ui` 라이브러리의 `decodeImageFromPixels`를 감싸면서 웹 플랫폼
+지원을 추가한 것입니다. `runAsWeb` 인자가 `true`로 설정되면(기본값은 `kIsWeb`) 내부 이미지 메서드를
+사용해 이미지를 디코딩합니다. `runAsWeb`이 `false`이면 `decodeImageFromPixels`를 사용하며, 이는
+현재 웹에서 지원되지 않습니다.

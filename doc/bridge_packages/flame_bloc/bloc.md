@@ -1,22 +1,24 @@
 # flame_bloc
 
-`flame_bloc` is a bridge library for using [Bloc](https://bloclibrary.dev/) in your Flame
-game. `flame_bloc` offers a simple and natural (as in similar to flutter_bloc) way to use blocs and
-cubits inside a FlameGame. Bloc offers way to make game state changes predictable by regulating when
-a game state change can occur and offers a single way to change game state throughout an entire
-Game.
+`flame_bloc`은 Flame 게임에서 [Bloc](https://bloclibrary.dev/)을 사용하기 위한 브릿지 라이브러리입니다.
+`flame_bloc`은 FlameGame 안에서 bloc과 cubit을 사용하는 간단하고 자연스러운(flutter_bloc과 비슷하다는 의미에서) 방법을
+제공합니다. Bloc은 게임 상태 변경이 언제 일어날 수 있는지를 통제해 게임 상태 변경을 예측 가능하게 만들고,
+게임 전체에서 게임 상태를 변경하는 단일한 방법을
+제공합니다.
 
-To use it in your game you just need to add `flame_bloc` to your pubspec.yaml, as can be seen in the
-[Flame Bloc example](https://github.com/flame-engine/flame/tree/main/packages/flame_bloc/example)
-and in the pub.dev [installation instructions](https://pub.dev/packages/flame_bloc).
+게임에서 사용하려면 pubspec.yaml에 `flame_bloc`을 추가하기만 하면 됩니다.
+[Flame Bloc 예제](https://github.com/flame-engine/flame/tree/main/packages/flame_bloc/example)와
+pub.dev의 [설치 안내](https://pub.dev/packages/flame_bloc)에서 확인할 수 있습니다.
 
 
-## How to use
+<a id="how-to-use"></a>
 
-Lets assume we have a bloc that handles player inventory, first we need to make it available to our
-components.
+## 사용 방법
 
-We can do that by using `FlameBlocProvider` component:
+플레이어 인벤토리를 처리하는 bloc이 있다고 가정해 봅시다. 먼저 이 bloc을 컴포넌트에서 사용할 수 있게
+만들어야 합니다.
+
+`FlameBlocProvider` 컴포넌트를 사용하면 됩니다.
 
 ```dart
 class MyGame extends FlameGame {
@@ -35,10 +37,10 @@ class MyGame extends FlameGame {
 }
 ```
 
-With the above changes, the `Player` component will now have access to our bloc.
+위와 같이 변경하면 `Player` 컴포넌트가 이제 bloc에 접근할 수 있습니다.
 
-If more than one bloc needs to be provided, `FlameMultiBlocProvider` can be used in a similar
-fashion:
+둘 이상의 bloc을 제공해야 한다면 `FlameMultiBlocProvider`를 비슷한 방식으로
+사용할 수 있습니다.
 
 ```dart
 class MyGame extends FlameGame {
@@ -64,9 +66,9 @@ class MyGame extends FlameGame {
 }
 ```
 
-Listening to states changes at the component level can be done with two approaches:
+컴포넌트 수준에서 상태 변경을 수신하는 방법은 두 가지입니다.
 
-By using `FlameBlocListener` component:
+`FlameBlocListener` 컴포넌트를 사용하는 방법:
 
 ```dart
 class Player extends PositionComponent {
@@ -83,7 +85,7 @@ class Player extends PositionComponent {
 }
 ```
 
-Or by using `FlameBlocListenable` mixin:
+또는 `FlameBlocListenable` 믹스인을 사용하는 방법:
 
 ```dart
 
@@ -98,8 +100,8 @@ class Player extends PositionComponent
 
 ```
 
-If all your component need is to simply access a bloc, the `FlameBlocReader` mixin can be applied to
-a component:
+컴포넌트가 단순히 bloc에 접근하기만 하면 된다면 컴포넌트에 `FlameBlocReader` 믹스인을
+적용할 수 있습니다.
 
 ```dart
 class Player extends PositionComponent
@@ -112,10 +114,12 @@ class Player extends PositionComponent
 
 ```
 
-Note that one limitation of the mixin is that it can access only a single bloc.
+이 믹스인은 하나의 bloc에만 접근할 수 있다는 제약이 있다는 점에 유의하세요.
 
 
-## Full Example
+<a id="full-example"></a>
 
-You can check an example
-[here](https://github.com/flame-engine/flame/tree/main/packages/flame_bloc/example).
+## 전체 예제
+
+예제는
+[여기](https://github.com/flame-engine/flame/tree/main/packages/flame_bloc/example)에서 확인할 수 있습니다.

@@ -1,14 +1,14 @@
-# Numeric functions
+<a id="numeric-functions"></a>
 
-These functions are used to manipulate numeric values. Most of them take a single numeric argument
-and produce a numeric result.
+# 숫자 함수
+
+이 함수들은 숫자 값을 다루는 데 사용합니다. 대부분은 숫자 인자 하나를 받아 숫자 결과를 만듭니다.
 
 
 ## `ceil(x)`
 
-Returns the value `x` rounded up towards positive infinity. In other words, this returns the
-smallest integer value greater than or equal to `x`.
-
+값 `x`를 양의 무한대 방향으로 올림하여 반환합니다. 다시 말해 `x`보다 크거나 같은 가장 작은 정수 값을
+반환합니다.
 ```yarn
 title: ceil
 ---
@@ -29,9 +29,8 @@ title: ceil
 
 ## `dec(x)`
 
-Returns the value `x` reduced towards the previous integer. Thus, if `x` is already an integer
-this returns `x - 1`, but if `x` is not an integer then this returns `floor(x)`.
-
+값 `x`를 이전 정수 쪽으로 줄여서 반환합니다. 따라서 `x`가 이미 정수라면 `x - 1`을 반환하고, `x`가
+정수가 아니라면 `floor(x)`를 반환합니다.
 ```yarn
 title: dec
 ---
@@ -51,12 +50,10 @@ title: dec
 
 ## `decimal(x)`
 
-Returns a fractional part of `x`.
+`x`의 소수 부분을 반환합니다.
 
-If `x` is positive, then the returned value will be between `0` (inclusive) and `1` (exclusive).
-If `x` is negative, then the returned value will be between `0` and `-1`. In all cases it should
-hold that `x == int(x) + decimal(x)`.
-
+`x`가 양수이면 반환값은 `0`(포함)과 `1`(제외) 사이입니다. `x`가 음수이면 반환값은 `0`과 `-1` 사이입니다.
+모든 경우에 `x == int(x) + decimal(x)`가 성립해야 합니다.
 ```yarn
 title: decimal
 ---
@@ -76,9 +73,8 @@ title: decimal
 
 ## `floor(x)`
 
-Returns the value `x` rounded down towards negative infinity. In other words, this returns the
-largest integer value less than or equal to `x`.
-
+값 `x`를 음의 무한대 방향으로 내림하여 반환합니다. 다시 말해 `x`보다 작거나 같은 가장 큰 정수 값을
+반환합니다.
 ```yarn
 title: floor
 ---
@@ -99,9 +95,8 @@ title: floor
 
 ## `inc(x)`
 
-Returns the value `x` increased towards the next integer. Thus, if `x` is already an integer
-this returns `x + 1`, but if `x` is not an integer then this returns `ceil(x)`.
-
+값 `x`를 다음 정수 쪽으로 늘려서 반환합니다. 따라서 `x`가 이미 정수라면 `x + 1`을 반환하고, `x`가
+정수가 아니라면 `ceil(x)`를 반환합니다.
 ```yarn
 title: inc
 ---
@@ -121,9 +116,7 @@ title: inc
 
 ## `int(x)`
 
-Truncates the fractional part of `x`, rounding it towards zero, and returns just the integer part
-of the argument `x`.
-
+`x`의 소수 부분을 잘라 0 방향으로 반올림하고, 인자 `x`의 정수 부분만 반환합니다.
 ```yarn
 title: int
 ---
@@ -144,10 +137,9 @@ title: int
 
 ## `round(x)`
 
-Rounds the value `x` towards a nearest integer.
+값 `x`를 가장 가까운 정수로 반올림합니다.
 
-The values that end with `.5` are rounded up if `x` is positive, and down if `x` is negative.
-
+`.5`로 끝나는 값은 `x`가 양수이면 올림하고, 음수이면 내림합니다.
 ```yarn
 title: round
 ---
@@ -169,13 +161,11 @@ title: round
 
 ## `round_places(x, n)`
 
-Rounds the value `x` to `n` decimal places.
+값 `x`를 소수점 아래 `n`자리로 반올림합니다.
 
-The value `x` can be either positive, negative, or zero, but it must be an integer. Rounding to
-`0` decimal places is equivalent to the regular `round(x)` function. If `n` is positive, then the
-function will attempt to keep that many digits after the decimal point in `x`. If `n` is negative,
-then `round_places()` will round `x` to nearest tens, hundreds, thousands, etc:
-
+값 `x`는 양수, 음수, 0 모두 될 수 있지만 정수여야 합니다. 소수점 아래 `0`자리로 반올림하는 것은 일반
+`round(x)` 함수와 같습니다. `n`이 양수이면 함수는 `x`의 소수점 뒤 자릿수를 그만큼 유지하려고 합니다.
+`n`이 음수이면 `round_places()`는 `x`를 가장 가까운 십, 백, 천 등의 단위로 반올림합니다.
 ```yarn
 title: round_places
 ---

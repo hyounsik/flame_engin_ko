@@ -1,18 +1,18 @@
-# Nodes
+<a id="nodes"></a>
 
-A **node** is a small section of text, that represents a single conversation or interaction with
-an NPC. Each node has a **title**, which can be used to *run* that node in a [DialogueRunner], or to
-[jump] to that node from another node.
+# 노드
 
-You can think of a node as if it was a function in a regular programming language. Running a node
-is equivalent to calling a function, and it is not possible to start execution in the middle of a
-node/function. When a function becomes too large, we will usually want to split it into multiple
-smaller ones -- the same is true for nodes, when a node becomes too long it is a good idea to split
-it into several smaller nodes.
+**노드**는 NPC와의 단일 대화나 상호작용을 나타내는 작은 텍스트 구역입니다. 각 노드에는
+**제목(title)**이 있으며, 이 제목은 [DialogueRunner]에서 해당 노드를 *실행*하거나 다른 노드에서
+해당 노드로 [점프][jump]하는 데 사용할 수 있습니다.
 
-Each node consists of a **header** and a **body**. The header is separated from the body with 3
-(or more) dashes, and the body is terminated with 3 "=" signs:
+노드는 일반 프로그래밍 언어의 함수와 같다고 생각할 수 있습니다. 노드를 실행하는 것은 함수를
+호출하는 것과 같으며, 노드/함수의 중간에서 실행을 시작할 수는 없습니다. 함수가 너무 커지면
+보통 여러 개의 작은 함수로 나누고 싶어지는데, 노드도 마찬가지입니다. 노드가 너무 길어지면
+여러 개의 작은 노드로 나누는 것이 좋습니다.
 
+각 노드는 **헤더**와 **본문**으로 이루어집니다. 헤더와 본문은 대시 3개(이상)로 구분하며,
+본문은 "=" 기호 3개로 끝납니다.
 ```yarn
 // NODE HEADER
 ---
@@ -20,9 +20,7 @@ Each node consists of a **header** and a **body**. The header is separated from 
 ===
 ```
 
-In addition, you can use 3 (or more) dashes to separate the header from the previous content, which
-means the following is also a valid node:
-
+또한 대시 3개(이상)를 사용해 헤더를 앞의 내용과 구분할 수도 있으므로, 다음도 유효한 노드입니다.
 ```yarn
 ---------------
 // NODE HEADER
@@ -31,27 +29,27 @@ means the following is also a valid node:
 ===
 ```
 
-A **node** is represented with a [Node] class in Jenny runtime.
+**노드**는 Jenny 런타임에서 [Node] 클래스로 표현됩니다.
 
 [Node]: ../runtime/node.md
 
 
-## Header
+<a id="header"></a>
 
-The header of a node consists of one or more lines of the form `TAG: CONTENT`. One of these lines
-must contain the node's **title**, which is the name of the node:
+## 헤더
 
+노드의 헤더는 `TAG: CONTENT` 형식의 줄 하나 이상으로 이루어집니다. 이 줄 중 하나에는 노드의 이름인
+**title**이 반드시 들어 있어야 합니다.
 ```yarn
 title: NodeName
 ```
 
-The title of a node must be a valid ID (that is, starts with a letter, followed by any number of
-letters, digits, or underscores). All nodes within a single project must have unique titles.
+노드의 title은 유효한 ID여야 합니다(즉, 문자로 시작하고 그 뒤에 문자, 숫자, 밑줄이 몇 개든 올 수
+있습니다). 한 프로젝트 안의 모든 노드는 고유한 title을 가져야 합니다.
 
-Besides the title, you can add any number of extra tags into the node's header. Jenny will store
-these tags with the node's metadata, but will not interpret them in any other way. You will then
-be able to access these tags programmatically
-
+title 외에도 노드 헤더에 추가 태그를 몇 개든 넣을 수 있습니다. Jenny는 이 태그들을 노드의
+메타데이터와 함께 저장하지만, 그 외의 방식으로는 해석하지 않습니다. 이후 프로그래밍 방식으로
+이 태그들에 접근할 수 있습니다.
 ```yarn
 title: Alert
 colorID: 0
@@ -62,11 +60,12 @@ WARNING\: Entering Radioactive Zone!
 ```
 
 
-## Body
+<a id="body"></a>
 
-The body of a node is where the dialogue itself is located. The body is just a sequence of
-statements, where each statement is either a [Line], an [Option], or a [Command]. For example:
+## 본문
 
+노드의 본문은 대화 자체가 들어 있는 곳입니다. 본문은 문장(statement)의 나열일 뿐이며, 각 문장은
+[줄][Line], [옵션][Option], [명령][Command] 중 하나입니다. 예를 들면 다음과 같습니다.
 ```yarn
 title: Gloomy_Morning
 camera_zoom: 2

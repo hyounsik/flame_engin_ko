@@ -1,21 +1,29 @@
-# Naming Conventions
+<a id="naming-conventions"></a>
+
+# 네이밍 규칙
 
 > [!Note]
-> The following naming conventions are simply recommendations and are completely
-> optional. Feel free to use whatever naming conventions you prefer.
+> 다음 네이밍 규칙은 단지 권장 사항일 뿐이며 전적으로
+> 선택 사항입니다. 원하는 네이밍 규칙을 자유롭게 사용하세요.
 
 
-## Entities
+<a id="entities"></a>
+
+## 엔티티
 
 
-### Anatomy of entities
+<a id="anatomy-of-entities"></a>
+
+### 엔티티 이름의 구조
 
 `Type (name)`
 
 
-### Examples of entities
+<a id="examples-of-entities"></a>
 
-✅ **Good**
+### 엔티티 예시
+
+✅ **좋은 예**
 
 ```dart
 class Player extends Entity {}
@@ -25,7 +33,7 @@ class Enemy extends Entity {}
 class Bullet extends Entity {}
 ```
 
-❌ **Bad**
+❌ **나쁜 예**
 
 ```dart
 class PlayerEntity extends Entity {}
@@ -36,17 +44,23 @@ class BulletEntity extends Entity {}
 ```
 
 
-## Behaviors
+<a id="behaviors"></a>
+
+## 비헤이비어
 
 
-### Anatomy of behaviors
+<a id="anatomy-of-behaviors"></a>
+
+### 비헤이비어 이름의 구조
 
 `Verb (action)` + `Behavior`
 
 
-### Examples of behaviors
+<a id="examples-of-behaviors"></a>
 
-✅ **Good**
+### 비헤이비어 예시
+
+✅ **좋은 예**
 
 ```dart
 class JumpingBehavior extends Behavior<Entity> {}
@@ -54,7 +68,7 @@ class JumpingBehavior extends Behavior<Entity> {}
 class AttackingBehavior extends Behavior<Entity> {}
 ```
 
-❌ **Bad**
+❌ **나쁜 예**
 
 ```dart
 class JumpBehavior extends Behavior<Entity> {}

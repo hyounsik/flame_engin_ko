@@ -1,13 +1,15 @@
-# Camera & World
+<a id="camera--world"></a>
 
-In most games the world is larger than what fits on screen at once. The camera controls which
-portion of the game world is visible and how it is projected onto the player's display, handling
-panning, zooming, and following characters. This is similar to how a
-[`Viewport`](https://api.flutter.dev/flutter/rendering/RenderViewport-class.html) in Flutter determines
-which part of a scrollable area is visible, but tailored for the free-form 2D coordinate space of
-a game.
+# 카메라와 월드
 
-Example of a simple game structure:
+대부분의 게임에서 월드는 한 번에 화면에 담을 수 있는 크기보다 큽니다. 카메라는 게임 월드의 어느
+부분이 보이는지, 그리고 그것이 플레이어의 디스플레이에 어떻게 투영되는지를 제어하며,
+패닝, 줌, 캐릭터 추적 등을 처리합니다. 이는 Flutter의
+[`Viewport`](https://api.flutter.dev/flutter/rendering/RenderViewport-class.html)가 스크롤 가능한 영역 중
+어느 부분을 보여 줄지 결정하는 방식과 비슷하지만, 게임의 자유로운 2D 좌표 공간에 맞게
+조정되어 있습니다.
+
+간단한 게임 구조의 예:
 
 ```text
 FlameGame
@@ -21,48 +23,48 @@ FlameGame
     └── Viewport
 ```
 
-In order to understand how the `CameraComponent` works, imagine that your game
-world is an entity that exists *somewhere* independently from your application.
-Imagine that your game is merely a window through which you can look into that
-world. That you can close that window at any moment, and the game world would
-still be there. Or, on the contrary, you can open multiple windows that all look
-at the same world (or different worlds) at the same time.
+`CameraComponent`가 어떻게 동작하는지 이해하려면, 게임 월드가 애플리케이션과는
+독립적으로 *어딘가에* 존재하는 개체라고 상상해 보세요.
+그리고 게임은 그 월드를 들여다볼 수 있는 창문에 불과하다고 상상해 보세요.
+언제든 그 창문을 닫을 수 있지만, 게임 월드는
+여전히 그곳에 존재합니다. 또는 반대로, 여러 개의 창문을 열어 동시에 같은 월드(또는 서로 다른 월드)를
+바라볼 수도 있습니다.
 
-With this mindset, we can now understand how the `CameraComponent` works.
+이런 관점을 가지면 이제 `CameraComponent`가 어떻게 동작하는지 이해할 수 있습니다.
 
-First, there is the [World](#world) class, which contains all components that are
-inside your game world. The `World` component can be mounted anywhere, for
-example at the root of your game class, like the built-in `World` is.
+먼저 [World](#world) 클래스가 있으며, 게임 월드 안에 있는 모든 컴포넌트를
+담고 있습니다. `World` 컴포넌트는 어디에든 마운트할 수 있습니다. 예를 들어
+내장 `World`처럼 게임 클래스의 루트에 마운트할 수 있습니다.
 
-Then, a [CameraComponent](#cameracomponent) class that "looks at" the [World](#world). The
-`CameraComponent` has a [Viewport](#viewport) and a [Viewfinder](#viewfinder)
-inside of it, allowing both the flexibility of rendering the world at any place
-on the screen, and also controlling the viewing location and angle. The
-`CameraComponent` also contains a [backdrop](#backdrop) component which is
-statically rendered below the world.
+그다음으로 [World](#world)를 "바라보는" [CameraComponent](#cameracomponent) 클래스가 있습니다.
+`CameraComponent` 안에는 [Viewport](#viewport)와 [Viewfinder](#viewfinder)가
+있어, 화면의 어느 위치에든 월드를 렌더링할 수 있는 유연성과
+보는 위치 및 각도를 제어하는 기능을 모두 제공합니다.
+`CameraComponent`에는 월드 아래에 정적으로 렌더링되는 [backdrop](#backdrop) 컴포넌트도
+포함되어 있습니다.
 
 
 ## World
 
-This component should be used to host all other components that comprise your
-game world. The main property of the `World` class is that it does not render
-through traditional means; instead it is rendered by one or more
-[CameraComponent](#cameracomponent)s to "look at" the world. In the `FlameGame` class there is
-one `World` called `world` which is added by default and paired together with
-the default `CameraComponent` called `camera`.
+이 컴포넌트는 게임 월드를 구성하는 다른 모든 컴포넌트를 담는 데 사용해야
+합니다. `World` 클래스의 주요 특성은 전통적인 방식으로 렌더링되지
+않는다는 것입니다. 대신 월드를 "바라보는" 하나 이상의
+[CameraComponent](#cameracomponent)에 의해 렌더링됩니다. `FlameGame` 클래스에는
+기본적으로 추가되는 `world`라는 `World`가 하나 있으며, 이는
+`camera`라는 기본 `CameraComponent`와 짝을 이룹니다.
 
-A game can have multiple `World` instances that can be rendered either at the
-same time, or at different times. For example, if you have two worlds A and B
-and a single camera, then switching that camera's target from A to B will
-instantaneously switch the view to world B without having to unmount A and
-then mount B.
+게임에는 여러 개의 `World` 인스턴스가 있을 수 있으며, 이들은 동시에 렌더링될 수도,
+서로 다른 시점에 렌더링될 수도 있습니다. 예를 들어 두 개의 월드 A와 B,
+그리고 카메라 하나가 있다면, 카메라의 대상을 A에서 B로 바꾸는 것만으로
+A를 언마운트하고 B를 마운트할 필요 없이 즉시 월드 B로 화면이
+전환됩니다.
 
-Just like with most `Component`s, children can be added to `World` by using the
-`children` argument in its constructor, or by using the `add` or `addAll`
-methods.
+대부분의 `Component`와 마찬가지로, 생성자의 `children` 인자를 사용하거나
+`add` 또는 `addAll` 메서드를 사용해 `World`에 자식을
+추가할 수 있습니다.
 
-For many games you want to extend the world and create your logic in there,
-such a game structure could look like this:
+많은 게임에서는 월드를 확장하고 그 안에 로직을 작성하게 됩니다.
+그런 게임 구조는 다음과 같을 수 있습니다.
 
 ```dart
 void main() {
@@ -72,8 +74,8 @@ void main() {
 class MyWorld extends World {
   @override
   Future<void> onLoad() async {
-    // Load all the assets that are needed in this world
-    // and add components etc.
+    // 이 월드에서 필요한 모든 에셋을 로드하고
+    // 컴포넌트 등을 추가합니다.
   }
 }
 ```
@@ -81,19 +83,19 @@ class MyWorld extends World {
 
 ## CameraComponent
 
-This is a component through which a `World` is rendered. Multiple cameras can
-observe the same world at the same time.
+`World`를 렌더링하는 데 사용되는 컴포넌트입니다. 여러 카메라가
+동시에 같은 월드를 관찰할 수 있습니다.
 
-There is a default `CameraComponent` called `camera` on the `FlameGame` class
-which is paired together with the default `world`, so you don't need to create
-or add your own `CameraComponent` if your game doesn't need to.
+`FlameGame` 클래스에는 기본 `world`와 짝을 이루는 `camera`라는 기본 `CameraComponent`가
+있으므로, 게임에서 필요하지 않다면 직접 `CameraComponent`를 만들거나
+추가할 필요가 없습니다.
 
-A `CameraComponent` has two other components inside: a [Viewport](#viewport) and a
-[Viewfinder](#viewfinder). Those components are always children of a camera.
+`CameraComponent` 안에는 두 개의 다른 컴포넌트, [Viewport](#viewport)와
+[Viewfinder](#viewfinder)가 있습니다. 이 컴포넌트들은 항상 카메라의 자식입니다.
 
-The `FlameGame` class has a `camera` field in its constructor, so you can set
-what type of default camera that you want, like this camera with a
-[fixed resolution](#cameracomponent-with-fixed-resolution) for example:
+`FlameGame` 클래스의 생성자에는 `camera` 필드가 있으므로, 원하는
+기본 카메라 유형을 설정할 수 있습니다. 예를 들어 다음은
+[고정 해상도](#고정-해상도의-cameracomponent) 카메라를 설정하는 예입니다.
 
 ```dart
 void main() {
@@ -111,17 +113,18 @@ void main() {
 }
 ```
 
-There is also a static property `CameraComponent.currentCamera` and it returns
-the camera object that currently performs rendering. This is needed only for
-certain advanced use cases where the rendering of a component depends on the
-camera settings. For example, some components may decide to skip rendering
-themselves and their children if they are outside of the camera's viewport.
+또한 정적 속성 `CameraComponent.currentCamera`가 있으며, 이 속성은
+현재 렌더링을 수행 중인 카메라 객체를 반환합니다. 이는 컴포넌트의 렌더링이
+카메라 설정에 따라 달라지는 일부 고급 사용 사례에서만 필요합니다. 예를 들어 어떤 컴포넌트는
+카메라의 뷰포트 밖에 있을 때 자기 자신과 자식들의 렌더링을 건너뛰도록 결정할 수 있습니다.
 
 
-### CameraComponent with fixed resolution
+<a id="cameracomponent-with-fixed-resolution"></a>
 
-This named constructor will let you pretend that the user's device has a fixed resolution of your
-choice. For example:
+### 고정 해상도의 CameraComponent
+
+이 이름 있는 생성자를 사용하면 사용자의 기기가 원하는 고정 해상도를 가진 것처럼
+다룰 수 있습니다. 예를 들면 다음과 같습니다.
 
 ```dart
 final camera = CameraComponent.withFixedResolution(
@@ -131,152 +134,154 @@ final camera = CameraComponent.withFixedResolution(
 );
 ```
 
-This will create a camera with a viewport centered in the middle of the screen, taking as much space
-as possible while still maintaining the 4:3 (800x600) aspect ratio, and showing a game world region
-of size 800 x 600.
+이렇게 하면 화면 중앙에 뷰포트가 위치한 카메라가 만들어집니다. 뷰포트는 4:3(800x600) 종횡비를
+유지하면서 가능한 한 많은 공간을 차지하고, 800 x 600 크기의 게임 월드 영역을
+보여 줍니다.
 
-A "fixed resolution" is very simple to work with, but it will underutilize the user's available
-screen space, unless their device happens to have the same aspect ratio as your chosen dimensions.
+"고정 해상도"는 다루기가 매우 간단하지만, 사용자의 기기가 우연히 선택한 크기와 같은
+종횡비를 갖지 않는 한 사용 가능한 화면 공간을 충분히 활용하지 못합니다.
 
 
 ## Viewport
 
-The `Viewport` is a window through which the `World` is seen. That window
-has a certain size, shape, and position on the screen. There are multiple kinds
-of viewports available, and you can always implement your own.
+`Viewport`는 `World`를 보는 창문입니다. 이 창문은
+화면에서 특정한 크기, 모양, 위치를 가집니다. 여러 종류의
+뷰포트가 제공되며, 언제든 직접 구현할 수도 있습니다.
 
-The `Viewport` is a component, which means you can add other components to it.
-These child components will be affected by the viewport's position, but not
-by its clip mask. Thus, if a viewport is a "window" into the game world, then
-its children are things that you can put on top of the window.
+`Viewport`는 컴포넌트이므로 다른 컴포넌트를 추가할 수 있습니다.
+이 자식 컴포넌트들은 뷰포트의 위치에는 영향을 받지만,
+클립 마스크에는 영향을 받지 않습니다. 따라서 뷰포트가 게임 월드를 들여다보는 "창문"이라면,
+그 자식들은 창문 위에 올려놓을 수 있는 것들입니다.
 
-Adding elements to the viewport is a convenient way to implement "HUD"
-components.
+뷰포트에 요소를 추가하는 것은 "HUD" 컴포넌트를 구현하는
+편리한 방법입니다.
 
-The following viewports are available:
+다음 뷰포트들을 사용할 수 있습니다.
 
-- `MaxViewport` (default): this viewport expands to the maximum size allowed
-    by the game, i.e. it will be equal to the size of the game canvas.
-- `FixedResolutionViewport`: keeps the resolution and aspect ratio fixed, with black bars on the
-    sides if it doesn't match the aspect ratio.
-- `FixedSizeViewport`: a simple rectangular viewport with predefined size.
-- `FixedAspectRatioViewport`: a rectangular viewport which expands to fit
-    into the game canvas, but preserving its aspect ratio.
-- `CircularViewport`: a viewport in the shape of a circle, fixed size.
+- `MaxViewport`(기본값): 게임이 허용하는 최대 크기까지 확장되는 뷰포트입니다.
+    즉, 게임 캔버스의 크기와 같아집니다.
+- `FixedResolutionViewport`: 해상도와 종횡비를 고정하며, 종횡비가 맞지 않으면
+    양옆에 검은 막대가 표시됩니다.
+- `FixedSizeViewport`: 미리 정의된 크기를 가진 단순한 사각형 뷰포트입니다.
+- `FixedAspectRatioViewport`: 게임 캔버스에 맞게 확장되지만
+    종횡비는 유지하는 사각형 뷰포트입니다.
+- `CircularViewport`: 원 모양의 고정 크기 뷰포트입니다.
 
 
-If you add children to the `Viewport` they will appear as static HUDs in front of the world.
+`Viewport`에 자식을 추가하면 월드 앞에 정적인 HUD로 표시됩니다.
 
 
 ## Viewfinder
 
-This part of the camera is responsible for knowing which location in the
-underlying game world we are currently looking at. The `Viewfinder` also
-controls the zoom level, and the rotation angle of the view.
+카메라의 이 부분은 현재 기반 게임 월드의 어느 위치를 보고 있는지 파악하는
+역할을 합니다. `Viewfinder`는 줌 레벨과 뷰의 회전 각도도
+제어합니다.
 
-The `anchor` property of the viewfinder allows you to designate which point
-inside the viewport serves as a "logical center" of the camera. For example,
-in side-scrolling action games it is common to have the camera focused on the
-main character who is displayed not in the center of the screen but closer to
-the lower-left corner. This off-center position would be the "logical center"
-of the camera, controlled by the viewfinder's `anchor`.
+뷰파인더의 `anchor` 속성을 사용하면 뷰포트 안의 어느 지점을
+카메라의 "논리적 중심"으로 삼을지 지정할 수 있습니다. 예를 들어
+횡스크롤 액션 게임에서는 카메라가 주인공에게 초점을 맞추되, 주인공이
+화면 중앙이 아니라 왼쪽 아래 모서리에 더 가깝게 표시되는 경우가 흔합니다. 이렇게 중심에서 벗어난 위치가
+카메라의 "논리적 중심"이 되며, 이는 뷰파인더의 `anchor`로 제어합니다.
 
-If you add children to the `Viewfinder` they will appear in front of the world,
-but behind the viewport and with the same transformations as are applied to the
-world, so these components are not static.
+`Viewfinder`에 자식을 추가하면 월드 앞에, 그러나 뷰포트 뒤에 표시되며,
+월드에 적용되는 것과 동일한 변환이 적용되므로 이 컴포넌트들은 정적이지 않습니다.
 
-You can also add behavioral components as children to the viewfinder, for
-example [effects](effects.md) or other controllers. If you for example would add a
-`ScaleEffect` you would be able to achieve a smooth zoom in your game.
+뷰파인더에 동작(behavior) 컴포넌트를 자식으로 추가할 수도 있습니다. 예를 들어
+[이펙트](effects.md)나 다른 컨트롤러를 추가할 수 있습니다. 예를 들어
+`ScaleEffect`를 추가하면 게임에서 부드러운 줌을 구현할 수 있습니다.
 
 
 ## Backdrop
 
-To add static components behind the world you can add them to the `backdrop`
-component, or replace the `backdrop` component. This is for example useful if
-you want to have a static `ParallaxComponent` that shows behind a world that
-contains a player that can move around.
+월드 뒤에 정적인 컴포넌트를 추가하려면 `backdrop`
+컴포넌트에 추가하거나, `backdrop` 컴포넌트를 교체하면 됩니다. 예를 들어
+돌아다닐 수 있는 플레이어가 있는 월드 뒤에 정적인 `ParallaxComponent`를 보여 주고 싶을 때
+유용합니다.
 
-Example:
+예시:
 
 ```dart
 camera.backdrop.add(MyStaticBackground());
 ```
 
-or
+또는
 
 ```dart
 camera.backdrop = MyStaticBackground();
 ```
 
 
-## Camera controls
+<a id="camera-controls"></a>
 
-There are several ways to modify a camera's settings at runtime:
+## 카메라 제어
 
-1. Use camera functions such as `follow()`, `moveBy()` and `moveTo()`.
-   Under the hood, this approach uses the same effects/behaviors as in (2).
+런타임에 카메라 설정을 변경하는 방법은 여러 가지가 있습니다.
 
-2. Apply effects and/or behaviors to the camera's `Viewfinder` or `Viewport`.
-   The effects and behaviors are special kinds of components whose purpose is
-   to modify some property of a component over time.
+1. `follow()`, `moveBy()`, `moveTo()` 같은 카메라 함수를 사용합니다.
+   내부적으로 이 방식은 (2)와 같은 이펙트/동작을 사용합니다.
 
-3. Do it manually. You can always override the `CameraComponent.update()`
-   method (or the same method on the viewfinder or viewport) and within it
-   change the viewfinder's position or zoom as you see fit. This approach may
-   be viable in some circumstances, but in general it is not recommended.
+2. 카메라의 `Viewfinder`나 `Viewport`에 이펙트 및/또는 동작을 적용합니다.
+   이펙트와 동작은 시간에 따라 컴포넌트의 어떤 속성을 수정하는 것을
+   목적으로 하는 특별한 종류의 컴포넌트입니다.
 
-The `CameraComponent` has several methods for controlling its behavior:
+3. 수동으로 처리합니다. 언제든 `CameraComponent.update()`
+   메서드(또는 뷰파인더나 뷰포트의 같은 메서드)를 오버라이드하고, 그 안에서
+   원하는 대로 뷰파인더의 위치나 줌을 변경할 수 있습니다. 이 방식은
+   상황에 따라 쓸 만할 수 있지만, 일반적으로는 권장하지 않습니다.
 
-- `follow()` will force the camera to follow the provided target.
-   Optionally you can limit the maximum speed of movement of the camera, or
-   allow it to only move horizontally/vertically.
+`CameraComponent`에는 동작을 제어하는 여러 메서드가 있습니다.
 
-- `stop()` will undo the effect of the previous call and stop the camera
-   at its current position.
+- `follow()`는 카메라가 지정된 대상을 따라가도록 합니다.
+   선택적으로 카메라의 최대 이동 속도를 제한하거나,
+   가로/세로로만 이동하도록 할 수 있습니다.
 
-- `moveBy()` can be used to move the camera by the specified offset.
-   If the camera was already following another component or moving,
-   those behaviors would be automatically cancelled.
+- `stop()`은 이전 호출의 효과를 취소하고 카메라를
+   현재 위치에 멈춥니다.
 
-- `moveTo()` can be used to move the camera to the designated point on
-   the world map. If the camera was already following another component or
-   moving towards another point, those behaviors would be automatically
-   cancelled.
+- `moveBy()`는 카메라를 지정된 오프셋만큼 이동하는 데 사용할 수 있습니다.
+   카메라가 이미 다른 컴포넌트를 따라가거나 이동 중이었다면,
+   그 동작은 자동으로 취소됩니다.
 
-- `setBounds()` allows you to add limits to where the camera is allowed to go. These limits
-   are in the form of a `Shape`, which is commonly a rectangle, but can also be any other shape.
+- `moveTo()`는 카메라를 월드 맵의 지정된 지점으로 이동하는 데
+   사용할 수 있습니다. 카메라가 이미 다른 컴포넌트를 따라가거나
+   다른 지점으로 이동 중이었다면, 그 동작은 자동으로
+   취소됩니다.
+
+- `setBounds()`를 사용하면 카메라가 이동할 수 있는 범위에 제한을 둘 수 있습니다. 이 제한은
+   `Shape` 형태이며, 보통은 사각형이지만 다른 어떤 도형이든 될 수 있습니다.
 
 
 ### visibleWorldRect
 
-The camera exposes property `visibleWorldRect`, which is a rect that describes the world's region
-which is currently visible through the camera. This region can be used in order to avoid rendering
-components that are out of view, or updating objects that are far away from the player less
-frequently.
+카메라는 `visibleWorldRect` 속성을 제공합니다. 이 속성은 현재 카메라를 통해 보이는
+월드 영역을 나타내는 사각형입니다. 이 영역을 사용하면 화면 밖에 있는 컴포넌트의
+렌더링을 피하거나, 플레이어에게서 멀리 떨어진 객체를 덜 자주
+업데이트할 수 있습니다.
 
-The `visibleWorldRect` is a cached property, and it updates automatically whenever the camera
-moves or the viewport changes its size.
+`visibleWorldRect`는 캐시되는 속성이며, 카메라가
+이동하거나 뷰포트의 크기가 바뀔 때마다 자동으로 업데이트됩니다.
 
 
 ### canSee
 
-The `CameraComponent` has a method called `canSee` which can be used to check
-if a component is visible from the camera point of view.
-This is useful for example to cull components that are not in view.
+`CameraComponent`에는 `canSee`라는 메서드가 있으며, 이를 사용해
+카메라의 시점에서 컴포넌트가 보이는지 확인할 수 있습니다.
+예를 들어 화면에 보이지 않는 컴포넌트를 컬링할 때 유용합니다.
 
 ```dart
 if (!camera.canSee(component)) {
-   component.removeFromParent(); // Cull the component
+   component.removeFromParent(); // 컴포넌트를 컬링합니다
 }
 ```
 
 
-### Post processing
+<a id="post-processing"></a>
 
-[Post processing](rendering/post_processing.md) is a technique used in game development to apply visual
-effects to a component tree after it has been rendered. This can be added to the camera via the
-`postProcess` property.
+### 포스트 프로세싱
+
+[포스트 프로세싱](rendering/post_processing.md)은 컴포넌트 트리가 렌더링된 후 시각
+효과를 적용하기 위해 게임 개발에서 사용하는 기법입니다. `postProcess` 속성을 통해
+카메라에 추가할 수 있습니다.
 
 ```dart
 camera.postProcess = PostProcessGroup(
@@ -292,4 +297,4 @@ camera.postProcess = PostProcessGroup(
 );
 ```
 
-Read more about this on [Post processing](rendering/post_processing.md).
+자세한 내용은 [포스트 프로세싱](rendering/post_processing.md)을 참고하세요.

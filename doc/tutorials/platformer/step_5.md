@@ -1,12 +1,16 @@
-# 5. Controlling Movement
+<a id="5-controlling-movement"></a>
 
-If you were waiting for some serious coding, this chapter is it. Prepare yourself as we dive in!
+# 5. 이동 제어
+
+본격적인 코딩을 기다리고 있었다면, 바로 이 챕터입니다. 뛰어들 준비를 하세요!
 
 
-## Keyboard Controls
+<a id="keyboard-controls"></a>
 
-The first step will be to allow control of Ember via the keyboard. We need to start by adding the
-appropriate mixins to the game class and Ember. Add the following:
+## 키보드 조작
+
+첫 번째 단계는 키보드로 Ember를 조작할 수 있게 하는 것입니다. 먼저 게임 클래스와 Ember에
+적절한 믹스인을 추가해야 합니다. 다음을 추가합니다.
 
 `lib/ember_quest.dart`
 
@@ -23,7 +27,7 @@ class EmberPlayer extends SpriteAnimationComponent
     with KeyboardHandler, HasGameRef<EmberQuestGame> {
 ```
 
-Now we can add a new method:
+이제 새 메서드를 추가할 수 있습니다.
 
 ```dart
   @override
@@ -32,21 +36,21 @@ Now we can add a new method:
   }
 ```
 
-Like before, if this did not trigger an auto-import, you will need the following:
+앞에서처럼 자동 import가 되지 않았다면 다음이 필요합니다.
 
 ```dart
 import 'package:flutter/services.dart';
 ```
 
-To control Ember's movement, it is easiest to set a variable where we think of the direction of
-movement like a normalized vector, meaning the value will be restricted to -1, 0, or 1. So let's
-set a variable at the top of the class:
+Ember의 이동을 제어하려면, 이동 방향을 정규화된 벡터처럼 생각하는 변수를 두는 것이 가장 쉽습니다.
+즉, 값은 -1, 0, 1로 제한됩니다. 그러니 클래스 맨 위에
+변수를 하나 둡시다.
 
 ```dart
   int horizontalDirection = 0;
 ```
 
-Now in our `onKeyEvent` method, we can register the key pressed by adding:
+이제 `onKeyEvent` 메서드에 다음을 추가해 눌린 키를 등록할 수 있습니다.
 
 ```dart
 @override
@@ -65,17 +69,17 @@ Now in our `onKeyEvent` method, we can register the key pressed by adding:
   }
 ```
 
-Let's make Ember move by adding a few lines of code and creating our `update` method. First, we
-need to define a velocity variable for Ember. Add the following at the top of the `EmberPlayer`
-class:
+코드 몇 줄을 추가하고 `update` 메서드를 만들어 Ember를 움직여 봅시다. 먼저
+Ember를 위한 속도 변수를 정의해야 합니다. `EmberPlayer` 클래스 맨 위에
+다음을 추가합니다.
 
 ```dart
 final Vector2 velocity = Vector2.zero();
 final double moveSpeed = 200;
 ```
 
-This establishes a base velocity of 0 and stores `moveSpeed` so we can adjust as necessary to suit
-how the game-play should be. Next, add the `update` method with the following:
+이렇게 하면 기본 속도가 0으로 정해지고 `moveSpeed`가 저장되므로, 게임플레이에 맞게 필요에 따라
+조정할 수 있습니다. 다음으로 `update` 메서드를 다음과 같이 추가합니다.
 
 
 ```dart
@@ -87,9 +91,9 @@ how the game-play should be. Next, add the `update` method with the following:
   }
 ```
 
-If you run the game now, Ember moves left and right using the arrow keys or the `A` and `D` keys.
-You may have noticed that Ember doesn't look back if you are going left, to fix that, add the
-following code at the end of your `update` method:
+이제 게임을 실행하면 화살표 키나 `A`, `D` 키로 Ember가 좌우로 움직입니다.
+왼쪽으로 갈 때 Ember가 뒤돌아보지 않는다는 것을 눈치챘을 수 있습니다. 이를 고치려면
+`update` 메서드 끝에 다음 코드를 추가합니다.
 
 ```dart
 if (horizontalDirection < 0 && scale.x > 0) {
@@ -99,42 +103,44 @@ if (horizontalDirection < 0 && scale.x > 0) {
 }
 ```
 
-Now Ember looks in the direction they are traveling.
+이제 Ember가 이동하는 방향을 바라봅니다.
 
 
-## Collisions
+<a id="collisions"></a>
 
-It is time to get into the thick of it with collisions. I highly suggest reading the
-[documentation](../../flame/collision_detection.md) to understand how collisions work in Flame. The
-first thing we need to do is make the game aware that collisions are going to occur using the
-`HasCollisionDetection` mixin. Add that to `lib/ember_quest.dart` like:
+## 충돌
+
+이제 충돌이라는 본론으로 들어갈 차례입니다. Flame에서 충돌이 어떻게 동작하는지 이해하려면
+[문서](../../flame/collision_detection.md)를 읽어 보기를 강력히 권합니다.
+가장 먼저 해야 할 일은 `HasCollisionDetection` 믹스인을 사용해 게임이 충돌이 일어난다는 것을
+알게 하는 것입니다. `lib/ember_quest.dart`에 다음과 같이 추가합니다.
 
 ```dart
 class EmberQuestGame extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
 ```
 
-Next, add the `CollisionCallbacks` mixin to `lib/actors/ember.dart` like:
+다음으로 `lib/actors/ember.dart`에 `CollisionCallbacks` 믹스인을 다음과 같이 추가합니다.
 
 ```dart
 class EmberPlayer extends SpriteAnimationComponent
     with KeyboardHandler, CollisionCallbacks, HasGameRef<EmberQuestGame> {
 ```
 
-If it did not auto-import, you will need the following:
+자동 import가 되지 않았다면 다음이 필요합니다.
 
 ```dart
 import 'package:flame/collisions.dart';
 ```
 
-Now add the following `onCollision` method:
+이제 다음 `onCollision` 메서드를 추가합니다.
 
 ```dart
 @override
 void onCollision(List<Vector2> intersectionPoints, PositionComponent other) {
   if (other is GroundBlock || other is PlatformBlock) {
     if (intersectionPoints.length == 2) {
-      // Calculate the collision normal and separation distance.
+      // 충돌 법선과 분리 거리를 계산합니다.
       final mid = (intersectionPoints.elementAt(0) +
         intersectionPoints.elementAt(1)) / 2;
 
@@ -142,14 +148,14 @@ void onCollision(List<Vector2> intersectionPoints, PositionComponent other) {
       final separationDistance = (size.x / 2) - collisionNormal.length;
       collisionNormal.normalize();
 
-      // If collision normal is almost upwards,
-      // ember must be on ground.
+      // 충돌 법선이 거의 위쪽을 향한다면
+      // ember는 땅 위에 있는 것입니다.
       if (fromAbove.dot(collisionNormal) > 0.9) {
         isOnGround = true;
       }
 
-      // Resolve collision by moving ember along
-      // collision normal by separation distance.
+      // 충돌 법선 방향으로 분리 거리만큼 ember를
+      // 이동시켜 충돌을 해소합니다.
       position += collisionNormal.scaled(separationDistance);
       }
     }
@@ -158,29 +164,29 @@ void onCollision(List<Vector2> intersectionPoints, PositionComponent other) {
 }
 ```
 
-You will need to import the following:
+다음을 import해야 합니다.
 
 ```dart
 import '../objects/ground_block.dart';
 import '../objects/platform_block.dart';
 ```
 
-As well as create these class variables:
+또한 다음 클래스 변수도 만들어야 합니다.
 
 ```dart
   final Vector2 fromAbove = Vector2(0, -1);
   bool isOnGround = false;
 ```
 
-For the collisions to be activated for Ember, we need to add a `CircleHitbox`, so in the `onLoad`
-method, add the following:
+Ember의 충돌이 활성화되려면 `CircleHitbox`를 추가해야 합니다. `onLoad`
+메서드에 다음을 추가합니다.
 
 ```dart
 add(CircleHitbox());
 ```
 
-Now that we have the basic collisions created, we can add gravity so Ember exists in a game world
-with very basic physics. To do that, we need to create some more variables:
+기본적인 충돌을 만들었으니, 이제 중력을 추가해 Ember가 아주 기본적인 물리가 있는 게임 월드에
+존재하도록 할 수 있습니다. 이를 위해 변수를 몇 개 더 만들어야 합니다.
 
 ```dart
   final double gravity = 15;
@@ -190,19 +196,19 @@ with very basic physics. To do that, we need to create some more variables:
   bool hasJumped = false;
 ```
 
-Now we can add Ember's ability to jump by adding the following to our `onKeyEvent` method:
+이제 `onKeyEvent` 메서드에 다음을 추가해 Ember가 점프할 수 있게 합니다.
 
 ```dart
 hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
 ```
 
-Finally, in our `update` method we can tie this all together with:
+마지막으로 `update` 메서드에서 다음과 같이 이 모든 것을 하나로 묶습니다.
 
 ```dart
-// Apply basic gravity
+// 기본 중력을 적용합니다
 velocity.y += gravity;
 
-// Determine if ember has jumped
+// ember가 점프했는지 판단합니다
 if (hasJumped) {
   if (isOnGround) {
     velocity.y = -jumpSpeed;
@@ -211,14 +217,14 @@ if (hasJumped) {
   hasJumped = false;
 }
 
-// Prevent ember from jumping to crazy fast as well as descending too fast and 
-// crashing through the ground or a platform.
+// ember가 너무 빠르게 점프하거나, 너무 빠르게 떨어져서
+// 땅이나 플랫폼을 뚫고 지나가는 것을 막습니다.
 velocity.y = velocity.y.clamp(-jumpSpeed, terminalVelocity);
 ```
 
-Earlier I mentioned that Ember was in the center of the grass, to solve this and show how collisions
-and gravity work with Ember, I like to add a little drop-in when you start the game. So in
-`lib/ember_quest.dart` in the `initializeGame` method, change the following:
+앞에서 Ember가 잔디 한가운데에 있다고 했습니다. 이를 해결하고 Ember에서 충돌과
+중력이 어떻게 동작하는지 보여 주기 위해, 게임을 시작할 때 살짝 떨어지며 등장하도록 해 보겠습니다.
+`lib/ember_quest.dart`의 `initializeGame` 메서드에서 다음을 변경합니다.
 
 ```dart
 _ember = EmberPlayer(
@@ -226,13 +232,15 @@ _ember = EmberPlayer(
 );
 ```
 
-If you run the game now, Ember should be created and fall to the ground; then you can jump around!
+이제 게임을 실행하면 Ember가 생성되어 땅으로 떨어집니다. 그런 다음 여기저기 점프할 수 있습니다!
 
 
-### Collisions with Objects
+<a id="collisions-with-objects"></a>
 
-Adding the collisions with the other objects is fairly trivial. All we need to do is add the
-following to the bottom of the `onCollision` method:
+### 오브젝트와의 충돌
+
+다른 오브젝트와의 충돌을 추가하는 것은 꽤 간단합니다.
+`onCollision` 메서드 맨 아래에 다음을 추가하기만 하면 됩니다.
 
 ```dart
 if (other is Star) {
@@ -244,20 +252,20 @@ if (other is WaterEnemy) {
 }
 ```
 
-When Ember collides with a star, the game will remove the star, and to implement the `hit` method for
-when Ember collides with an enemy, we need to do the following:
+Ember가 별과 충돌하면 게임은 별을 제거합니다. 그리고 Ember가 적과 충돌했을 때를 위한
+`hit` 메서드를 구현하려면 다음을 해야 합니다.
 
-Add the following variable at the top of the `EmberPlayer` class:
+`EmberPlayer` 클래스 맨 위에 다음 변수를 추가합니다.
 
 ```dart
 bool hitByEnemy = false;
 ```
 
-Additionally, add this method to the `EmberPlayer` class:
+또한 `EmberPlayer` 클래스에 이 메서드를 추가합니다.
 
 ```dart
-// This method runs an opacity effect on ember
-// to make it blink.
+// 이 메서드는 ember에 불투명도 이펙트를 실행해
+// 깜빡이게 합니다.
 void hit() {
   if (!hitByEnemy) {
     hitByEnemy = true;
@@ -276,7 +284,7 @@ void hit() {
 }
 ```
 
-If the auto-imports did not occur, you will need to add the following imports to your file:
+자동 import가 되지 않았다면 파일에 다음 import를 추가해야 합니다.
 
 ```dart
 import 'package:flame/effects.dart';
@@ -285,23 +293,25 @@ import '../objects/star.dart';
 import 'water_enemy.dart';
 ```
 
-If you run the game now, you should be able to move around, make stars disappear, and if you
-collide with an enemy, Ember should blink.
+이제 게임을 실행하면 이리저리 움직이고, 별을 사라지게 할 수 있으며, 적과
+충돌하면 Ember가 깜빡일 것입니다.
 
 
-## Adding the Scrolling
+<a id="adding-the-scrolling"></a>
 
-This is our last task with Ember. We need to restrict Ember's movement because as of now, Ember can
-go off-screen and we never move the map. So to implement this feature, we simply need to add the
-following to the end of our `update` method:
+## 스크롤 추가
+
+이것이 Ember와 관련된 마지막 작업입니다. 지금은 Ember가 화면 밖으로 나갈 수 있고
+맵은 전혀 움직이지 않으므로 Ember의 이동을 제한해야 합니다. 이 기능을 구현하려면
+`update` 메서드 끝에 다음을 추가하기만 하면 됩니다.
 
 ```dart
 gameRef.objectSpeed = 0;
-// Prevent ember from going backwards at screen edge.
+// 화면 가장자리에서 ember가 뒤로 가지 못하게 합니다.
 if (position.x - 36 <= 0 && horizontalDirection < 0) {
   velocity.x = 0;
 }
-// Prevent ember from going beyond half screen.
+// ember가 화면 절반을 넘어가지 못하게 합니다.
 if (position.x + 64 >= gameRef.size.x / 2 && horizontalDirection > 0) {
   velocity.x = 0;
   gameRef.objectSpeed = -moveSpeed;
@@ -311,20 +321,18 @@ position += velocity * dt;
 super.update(dt);
 ```
 
-If you run the game now, Ember can't move off-screen to the left, and as Ember moves to the right,
-once they get to the middle of the screen, the rest of the objects scroll by. This is because we
-are now updating `gameRef.objectSpeed` which we established early on in the series. Additionally,
-you will see the next random segment be generated and added to the level based on the work we did in
-Ground Block.
+이제 게임을 실행하면 Ember는 왼쪽 화면 밖으로 나갈 수 없고, 오른쪽으로 이동하다가
+화면 가운데에 도달하면 나머지 오브젝트들이 스크롤됩니다. 이는 시리즈 초반에 만든
+`gameRef.objectSpeed`를 이제 업데이트하고 있기 때문입니다. 또한
+땅 블록에서 한 작업 덕분에 다음 무작위 세그먼트가 생성되어 레벨에 추가되는 것을 볼 수 있습니다.
 
 ```{note}
-As I mentioned earlier, I would add a section on how this game could be adapted
-to a traditional level game. As we built the segments in [](step_3.md), we
-could add a segment that has a door or a special block. For every `X` number of
-segments loaded, we could then add that special segment. When Ember reaches that
-object, we could reload the level and start all over maintaining the stars 
-collected and health.
+앞에서 이 게임을 전통적인 레벨 방식의 게임으로 바꾸는 방법에 대한 섹션을
+추가하겠다고 했습니다. [](step_3.md)에서 세그먼트를 만들 때처럼, 문이나 특별한
+블록이 있는 세그먼트를 추가할 수 있습니다. 세그먼트가 `X`개 로드될 때마다
+그 특별한 세그먼트를 추가하면 됩니다. Ember가 그 오브젝트에 도달하면
+모은 별과 체력을 유지한 채 레벨을 다시 로드해 처음부터 시작할 수 있습니다.
 ```
 
-We are almost done! In [](step_6.md), we will add the health system, keep track of
-the score, and provide a HUD to relay that information to the player.
+거의 다 왔습니다! [](step_6.md)에서는 체력 시스템을 추가하고, 점수를 기록하며,
+그 정보를 플레이어에게 전달하는 HUD를 제공하겠습니다.

@@ -1,16 +1,16 @@
-# Sprite Components
+<a id="sprite-components"></a>
 
-Sprites are 2D images (or regions of images) that represent the visual appearance of game objects.
-They are the most common way to display characters, items, backgrounds, and other visuals in 2D
-games. Flame provides several sprite-based components that make it easy to load images, play
-animations, and switch between visual states, all while benefiting from the transform properties
-inherited from `PositionComponent`.
+# 스프라이트 컴포넌트
+
+스프라이트는 게임 객체의 시각적 모습을 나타내는 2D 이미지(또는 이미지의 일부 영역)입니다. 2D 게임에서
+캐릭터, 아이템, 배경 등 여러 시각 요소를 표시하는 가장 일반적인 방법입니다. Flame은 이미지를 로드하고,
+애니메이션을 재생하고, 시각적 상태를 전환하는 작업을 쉽게 해 주는 여러 스프라이트 기반 컴포넌트를
+제공하며, 이 컴포넌트들은 모두 `PositionComponent`에서 물려받은 변환 속성의 이점을 누립니다.
 
 
 ## SpriteComponent
 
-The most commonly used implementation of `PositionComponent` is `SpriteComponent`, and it can be
-created with a `Sprite`:
+가장 흔히 사용되는 `PositionComponent` 구현은 `SpriteComponent`이며, `Sprite`로 만들 수 있습니다:
 
 ```dart
 import 'package:flame/components/component.dart';
@@ -24,13 +24,13 @@ class MyGame extends FlameGame {
     final size = Vector2.all(128.0);
     final player = SpriteComponent(size: size, sprite: sprite);
 
-    // Vector2(0.0, 0.0) by default, can also be set in the constructor
+    // 기본값은 Vector2(0.0, 0.0)이며, 생성자에서 설정할 수도 있습니다
     player.position = Vector2(10, 20);
 
-    // 0 by default, can also be set in the constructor
+    // 기본값은 0이며, 생성자에서 설정할 수도 있습니다
     player.angle = 0;
 
-    // Adds the component
+    // 컴포넌트를 추가합니다
     add(player);
   }
 }
@@ -39,9 +39,9 @@ class MyGame extends FlameGame {
 
 ## SpriteAnimationComponent
 
-This class is used to represent a Component that has sprites that run in a single cyclic animation.
+이 클래스는 하나의 순환 애니메이션으로 재생되는 스프라이트들을 가진 컴포넌트를 나타내는 데 사용됩니다.
 
-This will create a simple three frame animation using 3 different images:
+다음 코드는 서로 다른 이미지 3개를 사용해 간단한 3프레임 애니메이션을 만듭니다:
 
 ```dart
 @override
@@ -59,8 +59,8 @@ Future<void> onLoad() async {
 }
 ```
 
-If you have a sprite sheet, you can use the `sequenced` constructor from the `SpriteAnimationData`
-class (check more details on [Images > Animation](../rendering/images.md#animation)):
+스프라이트 시트가 있다면 `SpriteAnimationData` 클래스의 `sequenced` 생성자를 사용할 수 있습니다
+(자세한 내용은 [Images > Animation](../rendering/images.md#animation)을 참고하세요):
 
 ```dart
 @override
@@ -78,63 +78,62 @@ Future<void> onLoad() async {
 }
 ```
 
-All animation components internally maintain a `SpriteAnimationTicker` which ticks the
-`SpriteAnimation`. This allows multiple components to share the same animation object.
+모든 애니메이션 컴포넌트는 내부적으로 `SpriteAnimation`을 진행시키는 `SpriteAnimationTicker`를
+유지합니다. 덕분에 여러 컴포넌트가 같은 애니메이션 객체를 공유할 수 있습니다.
 
-Example:
+예:
 
 ```dart
-final sprites = [/*Your sprite list here*/];
+final sprites = [/*여기에 스프라이트 목록*/];
 final animation = SpriteAnimation.spriteList(sprites, stepTime: 0.01);
 
 final animationTicker = SpriteAnimationTicker(animation);
 
-// or alternatively, you can ask the animation object to create one for you.
+// 또는 애니메이션 객체에 ticker를 만들어 달라고 요청할 수도 있습니다.
 
-final animationTicker = animation.createTicker(); // creates a new ticker
+final animationTicker = animation.createTicker(); // 새 ticker를 만듭니다
 
 animationTicker.update(dt);
 ```
 
-To listen when the animation is done (when it reaches the last frame and is not looping) you can
-use `animationTicker.completed`.
+애니메이션이 끝났을 때(반복하지 않는 애니메이션이 마지막 프레임에 도달했을 때)를 감지하려면
+`animationTicker.completed`를 사용할 수 있습니다.
 
-Example:
+예:
 
 ```dart
 await animationTicker.completed;
 
 doSomething();
 
-// or alternatively
+// 또는
 
 animationTicker.completed.whenComplete(doSomething);
 ```
 
-Additionally, `SpriteAnimationTicker` also has the following optional event callbacks: `onStart`,
-`onFrame`, and `onComplete`. To listen to these events, you can do the following:
+또한 `SpriteAnimationTicker`에는 선택적 이벤트 콜백인 `onStart`, `onFrame`, `onComplete`도 있습니다.
+이 이벤트를 수신하려면 다음과 같이 합니다:
 
 ```dart
 final animationTicker = SpriteAnimationTicker(animation)
   ..onStart = () {
-    // Do something on start.
+    // 시작할 때 무언가를 합니다.
   };
 
 final animationTicker = SpriteAnimationTicker(animation)
   ..onComplete = () {
-    // Do something on completion.
+    // 완료될 때 무언가를 합니다.
   };
 
 final animationTicker = SpriteAnimationTicker(animation)
   ..onFrame = (index) {
     if (index == 1) {
-      // Do something for the second frame.
+      // 두 번째 프레임에서 무언가를 합니다.
     }
   };
 ```
 
-To reset the animation to the first frame when the component is removed, you can set
-`resetOnRemove` to `true`:
+컴포넌트가 제거될 때 애니메이션을 첫 프레임으로 되돌리려면 `resetOnRemove`를 `true`로 설정합니다:
 
 ```dart
 SpriteAnimationComponent(
@@ -147,16 +146,15 @@ SpriteAnimationComponent(
 
 ## SpriteAnimationGroupComponent
 
-`SpriteAnimationGroupComponent` is a simple wrapper around `SpriteAnimationComponent` which enables
-your component to hold several animations and change the current playing animation at runtime. Since
-this component is just a wrapper, the event listeners can be implemented as described in
-[SpriteAnimationComponent](#spriteanimationcomponent).
+`SpriteAnimationGroupComponent`는 `SpriteAnimationComponent`를 감싼 간단한 래퍼로, 컴포넌트가 여러
+애니메이션을 가지고 런타임에 현재 재생 중인 애니메이션을 바꿀 수 있게 해 줍니다. 이 컴포넌트는
+래퍼일 뿐이므로 이벤트 리스너는 [SpriteAnimationComponent](#spriteanimationcomponent)에서 설명한
+방식대로 구현할 수 있습니다.
 
-Its use is very similar to the `SpriteAnimationComponent` but instead of being initialized with a
-single animation, this component receives a Map of a generic type `T` as key and a
-`SpriteAnimation` as value, and the current animation.
+사용법은 `SpriteAnimationComponent`와 매우 비슷하지만, 하나의 애니메이션으로 초기화하는 대신 제네릭
+타입 `T`를 키로, `SpriteAnimation`을 값으로 하는 Map과 현재 애니메이션을 받습니다.
 
-Example:
+예:
 
 ```dart
 enum RobotState {
@@ -164,8 +162,8 @@ enum RobotState {
   running,
 }
 
-final running = await loadSpriteAnimation(/* omitted */);
-final idle = await loadSpriteAnimation(/* omitted */);
+final running = await loadSpriteAnimation(/* 생략 */);
+final idle = await loadSpriteAnimation(/* 생략 */);
 
 final robot = SpriteAnimationGroupComponent<RobotState>(
   animations: {
@@ -175,22 +173,22 @@ final robot = SpriteAnimationGroupComponent<RobotState>(
   current: RobotState.idle,
 );
 
-// Changes current animation to "running"
+// 현재 애니메이션을 "running"으로 바꿉니다
 robot.current = RobotState.running;
 ```
 
-As this component works with multiple `SpriteAnimation`s, naturally it needs an equal number of
-animation tickers to make all those animations tick. Use `animationsTickers` getter to access a map
-containing tickers for each animation state. This can be useful if you want to register callbacks
-for `onStart`, `onComplete` and `onFrame`.
+이 컴포넌트는 여러 `SpriteAnimation`을 다루므로, 당연히 그 모든 애니메이션을 진행시키려면 같은 수의
+애니메이션 ticker가 필요합니다. `animationsTickers` getter를 사용하면 각 애니메이션 상태에 대한
+ticker를 담은 맵에 접근할 수 있습니다. `onStart`, `onComplete`, `onFrame` 콜백을 등록하고 싶을 때
+유용합니다.
 
-Example:
+예:
 
 ```dart
 enum RobotState { idle, running, jump }
 
-final running = await loadSpriteAnimation(/* omitted */);
-final idle = await loadSpriteAnimation(/* omitted */);
+final running = await loadSpriteAnimation(/* 생략 */);
+final idle = await loadSpriteAnimation(/* 생략 */);
 
 final robot = SpriteAnimationGroupComponent<RobotState>(
   animations: {
@@ -201,36 +199,36 @@ final robot = SpriteAnimationGroupComponent<RobotState>(
 );
 
 robot.animationTickers?[RobotState.running]?.onStart = () {
-  // Do something on start of running animation.
+  // running 애니메이션이 시작될 때 무언가를 합니다.
 };
 
 robot.animationTickers?[RobotState.jump]?.onStart = () {
-  // Do something on start of jump animation.
+  // jump 애니메이션이 시작될 때 무언가를 합니다.
 };
 
 robot.animationTickers?[RobotState.jump]?.onComplete = () {
-  // Do something on complete of jump animation.
+  // jump 애니메이션이 완료될 때 무언가를 합니다.
 };
 
 robot.animationTickers?[RobotState.idle]?.onFrame = (currentIndex) {
-  // Do something based on current frame index of idle animation.
+  // idle 애니메이션의 현재 프레임 인덱스에 따라 무언가를 합니다.
 };
 ```
 
 
 ## SpriteGroupComponent
 
-`SpriteGroupComponent` is pretty similar to its animation counterpart, but especially for sprites.
+`SpriteGroupComponent`는 애니메이션 버전과 매우 비슷하지만, 스프라이트 전용입니다.
 
-Example:
+예:
 
 ```dart
 class PlayerComponent extends SpriteGroupComponent<ButtonState>
     with HasGameRef<SpriteGroupExample>, TapCallbacks {
   @override
   Future<void> onLoad() async {
-    final pressedSprite = await gameRef.loadSprite(/* omitted */);
-    final unpressedSprite = await gameRef.loadSprite(/* omitted */);
+    final pressedSprite = await gameRef.loadSprite(/* 생략 */);
+    final unpressedSprite = await gameRef.loadSprite(/* 생략 */);
 
     sprites = {
       ButtonState.pressed: pressedSprite,
@@ -240,21 +238,23 @@ class PlayerComponent extends SpriteGroupComponent<ButtonState>
     current = ButtonState.unpressed;
   }
 
-  // tap methods handler omitted...
+  // 탭 메서드 핸들러는 생략...
 }
 ```
 
 
 ## IconComponent
 
-`IconComponent` renders a Flutter `IconData` (such as `Icons.star`) as a Flame component. The icon
-is rasterized to an image once during `onLoad()` and then drawn each frame using
-`canvas.drawImageRect()` with the component's `Paint`. Because the icon is rendered as a cached
-image rather than as text, all paint-based effects work out of the box, including `tint()`,
-`setOpacity()`, `ColorEffect`, `OpacityEffect`, `GlowEffect`, and custom `ColorFilter`s.
+`IconComponent`는 Flutter의 `IconData`(예: `Icons.star`)를 Flame 컴포넌트로 렌더링합니다. 아이콘은
+`onLoad()` 중에 한 번 이미지로 래스터화된 뒤, 매 프레임 컴포넌트의 `Paint`와 함께
+`canvas.drawImageRect()`로 그려집니다. 아이콘이 텍스트가 아니라 캐시된 이미지로 렌더링되므로
+`tint()`, `setOpacity()`, `ColorEffect`, `OpacityEffect`, `GlowEffect`, 커스텀 `ColorFilter` 등
+paint 기반 효과가 모두 별도 설정 없이 동작합니다.
 
 
-### Basic usage
+<a id="basic-usage"></a>
+
+### 기본 사용법
 
 ```dart
 import 'package:flame/components.dart';
@@ -274,23 +274,24 @@ class MyGame extends FlameGame {
 ```
 
 
-### Tinting and effects
+<a id="tinting-and-effects"></a>
 
-The icon is rasterized in white, which allows you to tint it to any color using
-`HasPaint` methods:
+### 틴트와 이펙트
+
+아이콘은 흰색으로 래스터화되므로 `HasPaint` 메서드를 사용해 원하는 색으로 틴트할 수 있습니다:
 
 ```dart
-// Tint the icon gold
+// 아이콘을 금색으로 틴트합니다
 final star = IconComponent(
   icon: Icons.star,
   iconSize: 64,
   position: Vector2(100, 100),
 )..tint(const Color(0xFFFFD700));
 
-// Set opacity
+// 불투명도를 설정합니다
 star.setOpacity(0.5);
 
-// Or use a custom paint
+// 또는 커스텀 paint를 사용합니다
 final icon = IconComponent(
   icon: Icons.favorite,
   iconSize: 48,
@@ -302,20 +303,23 @@ final icon = IconComponent(
 ```
 
 
-### Constructor parameters
+<a id="constructor-parameters"></a>
 
-- `icon`: The `IconData` to render (e.g., `Icons.star`, `Icons.favorite`).
-- `iconSize`: The resolution at which the icon is rasterized (default `64`). This is independent
-  of the component's display `size`.
-- `size`: The display size of the component. Defaults to `Vector2.all(iconSize)` if not provided.
-- `paint`: Optional `Paint` for rendering effects.
-- All standard `PositionComponent` parameters (`position`, `scale`, `angle`, `anchor`, etc.).
+### 생성자 파라미터
+
+- `icon`: 렌더링할 `IconData`(예: `Icons.star`, `Icons.favorite`).
+- `iconSize`: 아이콘을 래스터화할 해상도(기본값 `64`). 컴포넌트의 표시 크기인 `size`와는 독립적입니다.
+- `size`: 컴포넌트의 표시 크기. 지정하지 않으면 기본값은 `Vector2.all(iconSize)`입니다.
+- `paint`: 렌더링 효과를 위한 선택적 `Paint`.
+- 모든 표준 `PositionComponent` 파라미터(`position`, `scale`, `angle`, `anchor` 등).
 
 
-### Changing the icon at runtime
+<a id="changing-the-icon-at-runtime"></a>
 
-Both the `icon` and `iconSize` properties can be changed after creation. The component will
-automatically re-rasterize the icon on the next frame:
+### 런타임에 아이콘 바꾸기
+
+`icon`과 `iconSize` 속성은 모두 생성 후에 바꿀 수 있습니다. 컴포넌트는 다음 프레임에 자동으로
+아이콘을 다시 래스터화합니다:
 
 ```dart
 final iconComponent = IconComponent(
@@ -323,9 +327,9 @@ final iconComponent = IconComponent(
   iconSize: 64,
 );
 
-// Later, swap the icon
+// 나중에 아이콘을 교체합니다
 iconComponent.icon = Icons.pause;
 
-// Or change the rasterization resolution
+// 또는 래스터화 해상도를 바꿉니다
 iconComponent.iconSize = 128;
 ```

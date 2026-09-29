@@ -1,28 +1,25 @@
 # ShapeComponents
 
-Geometric shapes are useful in many game scenarios: debug visualizations, procedurally generated
-graphics, UI elements, or simple game objects that don't need sprite art. Flame's shape components
-let you render polygons, rectangles, and circles as first-class components with all the transform
-properties of `PositionComponent`. They also serve as the foundation for the
-[collision detection hitboxes](../collision_detection.md#shapehitbox).
+기하학적 도형은 디버그 시각화, 절차적으로 생성되는 그래픽, UI 요소, 스프라이트 아트가 필요 없는 단순한
+게임 객체 등 다양한 게임 상황에서 유용합니다. Flame의 도형 컴포넌트를 사용하면 다각형, 사각형, 원을
+`PositionComponent`의 모든 변환 속성을 갖춘 일급 컴포넌트로 렌더링할 수 있습니다. 또한 이 컴포넌트들은
+[충돌 감지 히트박스](../collision_detection.md#shapehitbox)의 기반이 되기도 합니다.
 
 
-A `ShapeComponent` is the base class for representing a scalable geometrical shape. The shapes have
-different ways of defining how they look, but they all have a size and angle that can be modified
-and the shape definition will scale or rotate the shape accordingly.
+`ShapeComponent`는 스케일링 가능한 기하학적 도형을 나타내는 기반 클래스입니다. 도형마다 모양을
+정의하는 방식은 다르지만, 모두 수정 가능한 크기와 각도를 가지며 도형 정의는 그에 맞게 도형을
+스케일링하거나 회전시킵니다.
 
-These shapes are meant as a tool for using geometrical shapes in a more general way than together
-with the collision detection system, where you want to use the
-[ShapeHitbox](../collision_detection.md#shapehitbox)es.
+이 도형들은 [ShapeHitbox](../collision_detection.md#shapehitbox)를 사용하는 충돌 감지 시스템과
+함께 쓰는 것보다 더 일반적인 방식으로 기하학적 도형을 사용하기 위한 도구입니다.
 
 
 ## PolygonComponent
 
-A `PolygonComponent` is created by giving it a list of points in the constructor, called vertices.
-This list will be transformed into a polygon with a size, which can still be scaled and rotated.
+`PolygonComponent`는 생성자에 꼭짓점(vertices)이라고 부르는 점 목록을 전달하여 만듭니다.
+이 목록은 크기를 가진 다각형으로 변환되며, 여전히 스케일링과 회전이 가능합니다.
 
-For example, this would create a square going from (50, 50) to (100, 100), with its center in
-(75, 75):
+예를 들어 다음 코드는 (50, 50)부터 (100, 100)까지 이어지고 중심이 (75, 75)인 정사각형을 만듭니다:
 
 ```dart
 void main() {
@@ -35,45 +32,44 @@ void main() {
 }
 ```
 
-A `PolygonComponent` can also be created with a list of relative vertices, which are points defined
-in relation to the given size, most often the size of the intended parent.
+`PolygonComponent`는 상대 꼭짓점 목록으로도 만들 수 있습니다. 상대 꼭짓점은 주어진 크기(대개는 붙일
+부모의 크기)를 기준으로 정의된 점입니다.
 
-For example you could create a diamond-shaped polygon like this:
+예를 들어 다음과 같이 마름모 모양의 다각형을 만들 수 있습니다:
 
 ```dart
 void main() {
   PolygonComponent.relative(
     [
-      Vector2(0.0, -1.0), // Middle of top wall
-      Vector2(1.0, 0.0), // Middle of right wall
-      Vector2(0.0, 1.0), // Middle of bottom wall
-      Vector2(-1.0, 0.0), // Middle of left wall
+      Vector2(0.0, -1.0), // 위쪽 변의 가운데
+      Vector2(1.0, 0.0), // 오른쪽 변의 가운데
+      Vector2(0.0, 1.0), // 아래쪽 변의 가운데
+      Vector2(-1.0, 0.0), // 왼쪽 변의 가운데
     ],
     size: Vector2.all(100),
   );
 }
 ```
 
-The vertices in the example define percentages of the length from the center to the edge of the
-screen in both x and y axis, so for our first item in our list (`Vector2(0.0, -1.0)`) we are
-pointing on the middle of the top wall of the bounding box, since the coordinate system here is
-defined from
-the center of the polygon.
+예제의 꼭짓점은 x축과 y축 모두에서 중심으로부터 화면 가장자리까지 길이의 비율을 정의합니다. 여기서
+좌표계는 다각형의 중심을 기준으로 정의되므로, 목록의 첫 번째 항목(`Vector2(0.0, -1.0)`)은
+바운딩 박스의
+위쪽 변 가운데를 가리킵니다.
 
-![An example of how to define a polygon shape](../../images/polygon_shape.png)
+![다각형 도형을 정의하는 방법의 예](../../images/polygon_shape.png)
 
-In the image you can see how the polygon shape formed by the purple arrows is defined by the red
-arrows.
+이미지에서 보라색 화살표로 이루어진 다각형 도형이 빨간색 화살표로 어떻게 정의되는지 확인할 수 있습니다.
 
 
-### From a Path
+<a id="from-a-path"></a>
 
-When the outline of a shape already exists as a `Path`, for example one that was converted from a
-vector graphic, the `PolygonComponent.fromPath` constructor follows that outline with straight edges
-instead of you having to list the vertices by hand. The corners between the straight lines of the
-path become vertices as they are, and the curves are approximated.
+### Path로부터 만들기
 
-The following would create a rounded rectangle with a size of `(100, 60)`, centered in `(200, 100)`:
+도형의 윤곽선이 이미 `Path`로 존재할 때(예: 벡터 그래픽에서 변환한 경로), `PolygonComponent.fromPath`
+생성자를 사용하면 꼭짓점을 직접 나열할 필요 없이 직선 변으로 그 윤곽선을 따라갑니다. 경로의 직선 사이
+모서리는 그대로 꼭짓점이 되고, 곡선은 근사됩니다.
+
+다음 코드는 크기가 `(100, 60)`이고 중심이 `(200, 100)`인 둥근 사각형을 만듭니다:
 
 ```dart
 void main() {
@@ -93,24 +89,22 @@ void main() {
 }
 ```
 
-The component gets the size of the contour, so that curves which reach the bounds of the path are
-not cut short. If no `position` is given the polygon ends up where the contour is in the coordinates
-of the path.
+컴포넌트는 윤곽선(contour)의 크기를 가지므로, 경로의 경계까지 닿는 곡선이 잘리지 않습니다. `position`을
+지정하지 않으면 다각형은 경로 좌표상의 윤곽선 위치에 놓입니다.
 
-There are two arguments that control how the path is followed:
+경로를 따라가는 방식을 제어하는 인자는 두 가지입니다:
 
-- `contour`: A path has one contour for each shape that was added to it, and for each `moveTo`.
-  This is the index of the one that the polygon is made from, and it defaults to the first one. An
-  index that the path does not have results in a `RangeError`.
-- `sampling`: The step that curves are followed with, in the units of the path, which defaults
-  to `1.0`. The polygon stays within about half of it from the path. A higher value gives fewer
-  vertices, which makes collision detection and ray casting cheaper, and a lower value follows the
-  curves more closely. A path that is defined in small units, like meters, needs a sampling that
-  is small compared to its size. Straight stretches cost the same whatever the sampling is.
+- `contour`: 경로에는 추가된 도형마다, 그리고 `moveTo`마다 하나의 윤곽선이 있습니다. 이 값은 다각형을
+  만들 윤곽선의 인덱스이며, 기본값은 첫 번째 윤곽선입니다. 경로에 없는 인덱스를 지정하면
+  `RangeError`가 발생합니다.
+- `sampling`: 곡선을 따라갈 때의 간격으로, 경로의 단위를 사용하며 기본값은 `1.0`입니다. 다각형은
+  경로로부터 이 값의 약 절반 이내에 머뭅니다. 값이 클수록 꼭짓점이 적어져 충돌 감지와 레이 캐스팅
+  비용이 줄고, 값이 작을수록 곡선을 더 정확하게 따라갑니다. 미터처럼 작은 단위로 정의된 경로에는 그
+  크기에 비해 작은 sampling 값이 필요합니다. 직선 구간은 sampling 값과 관계없이 비용이 같습니다.
 
-The constructor is built on the `walkContours`, `walkContourAt` and `walkContour` extension methods
-on `Path` and `PathMetric`, which return the vertices as lists of `Offset`s. Those also accept a
-`tolerance`, in case the simplification of the sampled contour should not follow the sampling.
+이 생성자는 `Path`와 `PathMetric`의 확장 메서드인 `walkContours`, `walkContourAt`, `walkContour`를
+기반으로 만들어졌으며, 이 메서드들은 꼭짓점을 `Offset` 목록으로 반환합니다. 샘플링한 윤곽선을 단순화할
+때 sampling 값을 따르지 않게 하고 싶다면 이 메서드들에 `tolerance`를 지정할 수도 있습니다.
 
 ```dart
 void main() {
@@ -118,10 +112,10 @@ void main() {
     ..addOval(const Rect.fromLTWH(0, 0, 100, 60))
     ..addRect(const Rect.fromLTWH(200, 0, 50, 50));
 
-  // One list of offsets for each contour in the path.
+  // 경로의 윤곽선마다 하나씩 offset 목록이 만들어집니다.
   final contours = path.walkContours();
-  // Only the rectangle, sampled with a step of 2 and simplified with a
-  // tolerance of 0.5.
+  // 사각형만, 간격 2로 샘플링하고 허용 오차 0.5로
+  // 단순화합니다.
   final rectangle = path.walkContourAt(1, 2, 0.5);
 }
 ```
@@ -129,10 +123,10 @@ void main() {
 
 ## RectangleComponent
 
-A `RectangleComponent` is created very similarly to how a `PositionComponent` is created, since it
-also has a bounding rectangle.
+`RectangleComponent`도 바운딩 사각형을 가지므로 `PositionComponent`를 만드는 방식과 매우 비슷하게
+만듭니다.
 
-Something like this for example:
+예를 들면 다음과 같습니다:
 
 ```dart
 void main() {
@@ -145,14 +139,12 @@ void main() {
 }
 ```
 
-Dart also already has an excellent way to create rectangles and that class is called `Rect`, you
-can create a Flame `RectangleComponent` from a `Rect` by using the
-`RectangleComponent.fromRect` factory, and just like when setting the vertices of the
-`PolygonComponent`, your rectangle will be sized
-according to the `Rect` if you use this constructor.
+Dart에는 이미 사각형을 만드는 훌륭한 방법인 `Rect` 클래스가 있습니다.
+`RectangleComponent.fromRect` 팩토리를 사용하면 `Rect`로부터 Flame `RectangleComponent`를 만들 수
+있으며, `PolygonComponent`의 꼭짓점을 설정할 때와 마찬가지로 이 생성자를 사용하면 사각형의 크기가
+`Rect`에 맞춰 정해집니다.
 
-The following would create a `RectangleComponent` with its top left corner in `(10, 10)` and a size
-of `(100, 50)`.
+다음 코드는 왼쪽 위 모서리가 `(10, 10)`이고 크기가 `(100, 50)`인 `RectangleComponent`를 만듭니다.
 
 ```dart
 void main() {
@@ -162,14 +154,12 @@ void main() {
 }
 ```
 
-You can also create a `RectangleComponent` by defining a relation to the intended parent's size,
-you can use the default constructor to build your rectangle from a position, size and angle. The
-`relation` is a vector defined in relation to the parent size, for example a `relation` that is
-`Vector2(0.5, 0.8)` would create a rectangle that is 50% of the width of the parent's size and
-80% of its height.
+붙일 부모의 크기에 대한 비율을 정의하여 `RectangleComponent`를 만들 수도 있으며, 기본 생성자로
+위치, 크기, 각도로부터 사각형을 만들 수도 있습니다. `relation`은 부모 크기를 기준으로 정의된 벡터로,
+예를 들어 `relation`이 `Vector2(0.5, 0.8)`이면 부모 크기의 너비 50%, 높이 80%인 사각형이
+만들어집니다.
 
-In the example below a `RectangleComponent` of size `(25.0, 30.0)` positioned at `(100, 100)` would
-be created.
+아래 예제에서는 크기가 `(25.0, 30.0)`이고 `(100, 100)`에 위치한 `RectangleComponent`가 만들어집니다.
 
 ```dart
 void main() {
@@ -181,9 +171,8 @@ void main() {
 }
 ```
 
-Since a square is a simplified version of a rectangle, there is also a constructor for creating a
-square `RectangleComponent`, the only difference is that the `size` argument is a `double` instead
-of a `Vector2`.
+정사각형은 사각형을 단순화한 형태이므로, 정사각형 `RectangleComponent`를 만드는 생성자도 있습니다.
+유일한 차이는 `size` 인자가 `Vector2`가 아니라 `double`이라는 점입니다.
 
 ```dart
 void main() {
@@ -197,11 +186,11 @@ void main() {
 
 ## CircleComponent
 
-If you know your circle's position and/or how long the radius is going to be from the start
-you can use the optional arguments `radius` and `position` to set those.
+원의 위치나 반지름 길이를 처음부터 알고 있다면 선택적 인자 `radius`와 `position`으로 이를 설정할 수
+있습니다.
 
-The following would create a `CircleComponent` with its center in `(100, 100)` with a radius of 5,
-and therefore a size of `Vector2(10, 10)`.
+다음 코드는 중심이 `(100, 100)`이고 반지름이 5, 따라서 크기가 `Vector2(10, 10)`인
+`CircleComponent`를 만듭니다.
 
 ```dart
 void main() {
@@ -209,11 +198,10 @@ void main() {
 }
 ```
 
-When creating a `CircleComponent` with the `relative` constructor you can define how long the
-radius is in comparison to the shortest edge of the bounding box defined by `size`.
+`relative` 생성자로 `CircleComponent`를 만들 때는 `size`로 정의된 바운딩 박스의 가장 짧은 변과 비교해
+반지름의 길이를 정의할 수 있습니다.
 
-The following example would result in a `CircleComponent` that defines a circle with a radius of 40
-(a diameter of 80).
+다음 예제는 반지름이 40(지름 80)인 원을 정의하는 `CircleComponent`를 만듭니다.
 
 ```dart
 void main() {

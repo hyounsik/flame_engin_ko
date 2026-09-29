@@ -1,5 +1,5 @@
 # flame_isolate
 
 ```{toctree}
-Overview    <isolate.md>
+개요    <isolate.md>
 ```

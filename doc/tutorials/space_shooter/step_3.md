@@ -1,30 +1,32 @@
-# Adding animations and depth
+<a id="adding-animations-and-depth"></a>
 
-We now have something that looks more like a game, having graphics for our spaceship and being
-able to directly control it.
+# 애니메이션과 깊이감 추가
 
-But our game so far is too boring, the starship is just a static sprite and the background is
-just a black screen.
+이제 우주선 그래픽이 있고 직접 조작할 수도 있으니, 조금 더 게임다운 모습이
+되었습니다.
 
-In this step we will look at how to improve that, we will replace the static graphics of the player
-with an animation and create a cool sense of depth and movement by adding a parallax to the
-background of the game.
+하지만 지금까지의 게임은 너무 지루합니다. 우주선은 정적인 스프라이트일 뿐이고 배경은
+그저 검은 화면입니다.
 
-So lets start by adding the animation to the player ship! For that, we will something that we
-call Sprite Animations, which is an animation that is composed by a collection of sprites, each
-one representing one frame, and the animation effect is achieved by rendering one sprite after
-the other over a time frame.
+이 단계에서는 이를 개선하는 방법을 살펴봅니다. 플레이어의 정적인 그래픽을
+애니메이션으로 바꾸고, 게임 배경에 패럴랙스(parallax)를 추가해 멋진 깊이감과 움직임을
+만들어 보겠습니다.
 
-To better visualize this, this is the animation that we will be using, note how the image holds 4
-individual images (or frames). Right-click the image below, choose "Save as...", and store it as
-`player.png` in your `assets/images/` folder (replacing the static `player-sprite.png` we used
-before):
+그럼 플레이어 우주선에 애니메이션을 추가하는 것부터 시작해 봅시다! 이를 위해 스프라이트
+애니메이션이라는 것을 사용합니다. 스프라이트 애니메이션은 스프라이트 모음으로 구성된 애니메이션으로, 각
+스프라이트가 하나의 프레임을 나타내며, 일정 시간 동안 스프라이트를 차례로 렌더링해
+애니메이션 효과를 만들어 냅니다.
+
+이해를 돕기 위해, 우리가 사용할 애니메이션은 다음과 같습니다. 이미지 하나에 4개의
+개별 이미지(또는 프레임)가 들어 있다는 점에 주목하세요. 아래 이미지를 마우스 오른쪽 버튼으로 클릭하고 "다른 이름으로 저장..."을 선택해
+`assets/images/` 폴더에 `player.png`로 저장합니다(앞에서 사용한 정적인 `player-sprite.png`를
+대체합니다).
 
 ![player](app/assets/images/player.png)
 
-Flame provides us with a specialized classes to deal with such images: `SpriteAnimation` and its component
-wrapper `SpriteAnimationComponent` and changing our `Player` component to be an animation is quite
-simple, take a look at how the component will look like now:
+Flame은 이런 이미지를 다루기 위한 전용 클래스인 `SpriteAnimation`과 그 컴포넌트
+래퍼인 `SpriteAnimationComponent`를 제공합니다. `Player` 컴포넌트를 애니메이션으로 바꾸는 것은 꽤
+간단합니다. 이제 컴포넌트가 어떻게 생겼는지 살펴보세요.
 
 ```dart
 class Player extends SpriteAnimationComponent
@@ -51,45 +53,43 @@ class Player extends SpriteAnimationComponent
     position = gameRef.size / 2;
   }
 
-  // Other methods omitted
+  // 다른 메서드는 생략
 }
 ```
 
-So lets break down the changes:
+변경 사항을 하나씩 살펴봅시다.
 
-- First we changed our `Player` component to extend from `SpriteAnimationComponent` instead of
-`SpriteComponent`
-- In the `onLoad` method we are now using the `gameRef.loadSpriteAnimation` helper instead of the
- `loadSprite` one, and setting the `animation` attribute with its returned value.
+- 먼저 `Player` 컴포넌트가 `SpriteComponent` 대신 `SpriteAnimationComponent`를
+상속하도록 바꿨습니다.
+- `onLoad` 메서드에서 이제 `loadSprite` 대신 `gameRef.loadSpriteAnimation` 헬퍼를
+ 사용하고, 반환된 값으로 `animation` 속성을 설정합니다.
 
-The `SpriteAnimationData` class might look complicated at first glance, but it is actually quite
-simple, note how we used the `sequenced` constructor, which is a helper to load animation images
-where the frames are already laid down in the sequence that they will play, then:
+`SpriteAnimationData` 클래스는 처음에는 복잡해 보일 수 있지만 실제로는 꽤
+간단합니다. `sequenced` 생성자를 사용했다는 점에 주목하세요. 이는 프레임이 재생될 순서대로
+이미 배치된 애니메이션 이미지를 로드하기 위한 헬퍼입니다. 그리고
 
-- `amount` defines how many frames the animation has, in this case `4`
-- `stepTime` is the time in seconds that each frame will be rendered, before it gets replaced
-with the next one.
-- `textureSize` is the size in pixels which defines each frame of the image.
+- `amount`는 애니메이션에 몇 개의 프레임이 있는지 정의합니다. 여기서는 `4`입니다.
+- `stepTime`은 각 프레임이 다음 프레임으로 바뀌기 전까지 렌더링되는 시간(초)입니다.
+- `textureSize`는 이미지의 각 프레임을 정의하는 픽셀 단위 크기입니다.
 
-With all of this information, the `SpriteAnimationComponent` will now automatically play the
-animation!
+이 모든 정보를 바탕으로 이제 `SpriteAnimationComponent`가 자동으로
+애니메이션을 재생합니다!
 
-Now lets add some depth and energy to our game background. Of course there are many ways of
-doing so, in this tutorial we will explore the idea of parallax scrolling. If you never heard
-about it, it consist of a technique where background images move past the camera with different
-speeds, this not only creates the sensation of depth but also improves the movement feeling
-of the game a lot. If you want to read more about Parallax Scrolling, check this article
-from [Wikipedia](https://en.wikipedia.org/wiki/Parallax_scrolling).
+이제 게임 배경에 깊이감과 활력을 더해 봅시다. 물론 방법은 여러 가지가
+있지만, 이 튜토리얼에서는 패럴랙스 스크롤링이라는 아이디어를 살펴보겠습니다. 처음 들어 보았다면,
+배경 이미지들이 서로 다른 속도로 카메라를 지나가도록 하는 기법입니다. 이렇게 하면 깊이감이 생길 뿐 아니라
+게임의 움직임도 훨씬 좋아집니다. 패럴랙스 스크롤링에 대해 더 알아보고 싶다면
+[Wikipedia](https://en.wikipedia.org/wiki/Parallax_scrolling)의 이 문서를 확인하세요.
 
-Flame provides classes to implement parallax scrolling out of the box, these classes are `Parallax`
-and `ParallaxComponent`. We will need three star layer images for our parallax background.
-Right-click each image below, choose "Save as...", and store them in your `assets/images/` folder:
+Flame은 패럴랙스 스크롤링을 구현하는 클래스를 기본으로 제공합니다. 바로 `Parallax`와
+`ParallaxComponent`입니다. 패럴랙스 배경을 위해 별 레이어 이미지 3개가 필요합니다.
+아래 각 이미지를 마우스 오른쪽 버튼으로 클릭하고 "다른 이름으로 저장..."을 선택해 `assets/images/` 폴더에 저장합니다.
 
-- `stars_0.png` (farthest layer): ![stars_0](app/assets/images/stars_0.png)
-- `stars_1.png` (middle layer): ![stars_1](app/assets/images/stars_1.png)
-- `stars_2.png` (closest layer): ![stars_2](app/assets/images/stars_2.png)
+- `stars_0.png` (가장 먼 레이어): ![stars_0](app/assets/images/stars_0.png)
+- `stars_1.png` (중간 레이어): ![stars_1](app/assets/images/stars_1.png)
+- `stars_2.png` (가장 가까운 레이어): ![stars_2](app/assets/images/stars_2.png)
 
-Now lets take a look at how we can add that new feature to the game:
+이제 이 새 기능을 게임에 어떻게 추가하는지 살펴봅시다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -126,24 +126,24 @@ class SpaceShooterGame extends FlameGame with DragCallbacks {
 }
 ```
 
-Looking at the code above we notice that we are now using the `loadParallaxComponent` helper
-method from the `FlameGame` class to directly load a `ParallaxComponent` and add it to our game.
+위 코드를 보면 이제 `FlameGame` 클래스의 `loadParallaxComponent` 헬퍼
+메서드를 사용해 `ParallaxComponent`를 직접 로드하고 게임에 추가한다는 것을 알 수 있습니다.
 
-The arguments used there are as follows:
+여기서 사용한 인자는 다음과 같습니다.
 
-- The first argument is a positional one, which should be a list of `ParallaxData`s. There are a
-couple of types of `ParallaxData`s in Flame, in this tutorial we are using the `ParallaxImageData`
-which describes a layer in the parallax scrolling effect that is an `image`. This list will tell
-Flame about all the layers that we want in our parallax.
-- `baseVelocity` is the base value for all the values, so by passing a `Vector2(0, -5)` to it
-means that the slower of the layers will move at 0 pixels per second on the `x` axis and `-5`
-pixels per second on the `y` axis.
-- Finally `velocityMultiplierDelta` is a vector that is applied to the base value for each layer,
-and in our example the multiplication rate is `5` on only the `y` axis.
+- 첫 번째 인자는 위치 인자로, `ParallaxData`의 리스트여야 합니다. Flame에는
+몇 가지 종류의 `ParallaxData`가 있으며, 이 튜토리얼에서는 패럴랙스 스크롤링 효과에서 `image`인
+레이어를 설명하는 `ParallaxImageData`를 사용합니다. 이 리스트는 패럴랙스에 원하는 모든 레이어를
+Flame에 알려 줍니다.
+- `baseVelocity`는 모든 값의 기준값입니다. 여기에 `Vector2(0, -5)`를 전달하면
+가장 느린 레이어가 `x`축으로는 초당 0픽셀, `y`축으로는 초당 `-5`픽셀로
+움직인다는 뜻입니다.
+- 마지막으로 `velocityMultiplierDelta`는 각 레이어마다 기준값에 적용되는 벡터이며,
+예제에서는 `y`축에만 `5`의 배율을 적용합니다.
 
 
-Give it a try by running the game now, you will notice that it looks way more dynamic now, giving a
-more convincing feeling to the player that the spaceship is really crossing the stars!
+이제 게임을 실행해 보세요. 훨씬 역동적으로 보여서, 우주선이 정말로 별 사이를 가로지르고 있다는
+느낌을 플레이어에게 더 실감 나게 전달합니다!
 
 ```{flutter-app}
 :sources: ../tutorials/space_shooter/app
@@ -151,4 +151,4 @@ more convincing feeling to the player that the spaceship is really crossing the 
 :show: popup code
 ```
 
-[Next step: Adding bullets](./step_4.md)
+[다음 단계: 총알 추가](./step_4.md)

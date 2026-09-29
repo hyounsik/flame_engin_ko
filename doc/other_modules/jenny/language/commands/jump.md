@@ -1,24 +1,23 @@
 # `<<jump>>`
 
-The **\<\<jump\>\>** command stops executing the current node, and then immediately starts running
-the target node. This is similar to a `goto` in many programming languages. For example:
-
+**\<\<jump\>\>** 명령은 현재 노드의 실행을 멈추고, 곧바로 대상 노드를 실행하기 시작합니다. 많은
+프로그래밍 언어의 `goto`와 비슷합니다. 예를 들면 다음과 같습니다.
 ```yarn
 <<jump FarewellScene>>
 ```
 
-The argument of this command is the id of the node to jump to. It can be given either as a plain
-node ID, or as an expression in curly braces:
-
+이 명령의 인자는 점프할 노드의 id입니다. 일반 노드 ID로 지정하거나, 중괄호 안의 표현식으로 지정할 수
+있습니다.
 ```yarn
 <<jump {"Ending_" + $ending}>>
 ```
 
-If the expression evaluates at runtime to an unknown name, then a `NameError` exception will be
-thrown.
+표현식이 런타임에 알 수 없는 이름으로 평가되면 `NameError` 예외가 발생합니다.
 
 
-## See Also
+<a id="see-also"></a>
 
-- [\<\<visit\>\>](visit.md) command, which jumps into the destination node temporarily and then
-  returns to the same place in the dialogue as before.
+## 함께 보기
+
+- [\<\<visit\>\>](visit.md) 명령: 대상 노드로 일시적으로 점프했다가 대화의 이전과 같은 위치로
+  돌아옵니다.

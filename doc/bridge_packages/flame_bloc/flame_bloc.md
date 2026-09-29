@@ -1,7 +1,6 @@
 # flame_bloc
 
 ```{toctree}
-Overview    <bloc.md>
-Components    <bloc_components.md>
+개요    <bloc.md>
+컴포넌트    <bloc_components.md>
 ```
-

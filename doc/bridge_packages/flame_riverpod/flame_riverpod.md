@@ -1,8 +1,8 @@
 # flame_riverpod
 
 ```{toctree}
-Overview   <riverpod.md>
-Component  <component.md>
-Widget     <widget.md>
+개요   <riverpod.md>
+컴포넌트  <component.md>
+위젯     <widget.md>
 ```
 

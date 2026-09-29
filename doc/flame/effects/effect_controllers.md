@@ -1,11 +1,12 @@
-# Effect controllers
+<a id="effect-controllers"></a>
 
-An `EffectController` is an object that describes how the effect should evolve over time. If you
-think of the initial value of the effect as 0% progress, and the final value as 100% progress, then
-the job of the effect controller is to map from the "physical" time, measured in seconds, into the
-"logical" time, which changes from 0 to 1.
+# 이펙트 컨트롤러
 
-There are multiple effect controllers provided by the Flame framework:
+`EffectController`는 이펙트가 시간에 따라 어떻게 변화해야 하는지를 기술하는 객체입니다. 이펙트의
+초기값을 진행도 0%, 최종값을 진행도 100%로 생각한다면, 이펙트 컨트롤러의 역할은 초 단위로 측정되는
+"물리적" 시간을 0에서 1까지 변하는 "논리적" 시간으로 매핑하는 것입니다.
+
+Flame 프레임워크는 여러 이펙트 컨트롤러를 제공합니다.
 
 - [`EffectController`](#effectcontroller)
 - [`LinearEffectController`](#lineareffectcontroller)
@@ -26,8 +27,8 @@ There are multiple effect controllers provided by the Flame framework:
 
 ## `EffectController`
 
-The base `EffectController` class provides a factory constructor capable of creating a variety of
-common controllers. The syntax of the constructor is the following:
+기본 `EffectController` 클래스는 다양한 일반적인 컨트롤러를 만들 수 있는 팩토리 생성자를
+제공합니다. 생성자의 문법은 다음과 같습니다.
 
 ```dart
 EffectController({
@@ -46,80 +47,75 @@ EffectController({
 });
 ```
 
-- *`duration`*: the length of the main part of the effect, i.e. how long it should take to go
-  from 0 to 100%. This parameter cannot be negative, but can be zero. If this is the only parameter
-  specified then the effect will grow linearly over the `duration` seconds.
+- *`duration`*: 이펙트의 주요 부분의 길이, 즉 0에서 100%까지 가는 데 걸리는 시간입니다. 이
+  파라미터는 음수일 수 없지만 0일 수는 있습니다. 이 파라미터만 지정하면 이펙트는 `duration`초
+  동안 선형으로 증가합니다.
 
-- *`curve`*: if given, creates a non-linear effect that grows from 0 to 100% according to the
-  provided [curve](https://api.flutter.dev/flutter/animation/Curves-class.html).
+- *`curve`*: 주어지면, 제공된 [curve](https://api.flutter.dev/flutter/animation/Curves-class.html)에
+  따라 0에서 100%까지 증가하는 비선형 이펙트를 만듭니다.
 
-- *`reverseDuration`*: if provided, adds an additional step to the controller: after the effect
-  has grown from 0 to 100% over the `duration` seconds, it will then go backwards from 100% to 0
-  over the `reverseDuration` seconds. In addition, the effect will complete at progress level of 0
-  (normally the effect completes at progress 1).
+- *`reverseDuration`*: 제공되면 컨트롤러에 단계가 하나 추가됩니다. 이펙트가 `duration`초 동안
+  0에서 100%까지 증가한 뒤, `reverseDuration`초 동안 100%에서 0으로 거꾸로 돌아갑니다. 또한
+  이펙트는 진행도 0에서 완료됩니다(보통 이펙트는 진행도 1에서 완료됩니다).
 
-- *`reverseCurve`*: the curve to be used during the "reverse" step of the effect. If not given,
-  this will default to `curve.flipped`.
+- *`reverseCurve`*: 이펙트의 "역방향" 단계에서 사용할 curve입니다. 주어지지 않으면 기본값은
+  `curve.flipped`입니다.
 
-- *`alternate`*: setting this to true is equivalent to specifying the `reverseDuration` equal
-  to the `duration`. If the `reverseDuration` is already set, this flag has no effect.
+- *`alternate`*: true로 설정하면 `reverseDuration`을 `duration`과 같게 지정하는 것과 같습니다.
+  `reverseDuration`이 이미 설정되어 있다면 이 플래그는 효과가 없습니다.
 
-- *`atMaxDuration`*: if non-zero, this inserts a pause after the effect reaches its max
-  progress and before the reverse stage. During this time the effect is kept at 100% progress. If
-  there is no reverse stage, then this will simply be a pause before the effect is marked as
-  completed.
+- *`atMaxDuration`*: 0이 아니면, 이펙트가 최대 진행도에 도달한 후 역방향 단계 전에 일시 정지를
+  삽입합니다. 이 시간 동안 이펙트는 진행도 100%로 유지됩니다. 역방향 단계가 없다면, 이는 단순히
+  이펙트가 완료로 표시되기 전의 일시 정지가 됩니다.
 
-- *`atMinDuration`*: if non-zero, this inserts a pause after the reaches its lowest progress
-  (0) at the end of the reverse stage. During this time, the effect's progress is at 0%. If there
-  is no reverse stage, then this pause will still be inserted after the "at-max" pause if it's
-  present, or after the forward stage otherwise. In addition, the effect will now complete at
-  progress level of 0.
+- *`atMinDuration`*: 0이 아니면, 역방향 단계의 끝에서 이펙트가 가장 낮은 진행도(0)에 도달한 후
+  일시 정지를 삽입합니다. 이 시간 동안 이펙트의 진행도는 0%입니다. 역방향 단계가 없다면, 이
+  일시 정지는 "at-max" 일시 정지가 있으면 그 뒤에, 없으면 정방향 단계 뒤에 삽입됩니다. 또한
+  이펙트는 이제 진행도 0에서 완료됩니다.
 
-- *`repeatCount`*: if greater than one, it will cause the effect to repeat itself the prescribed
-  number of times. Each iteration will consists of the forward stage, pause at max, reverse stage,
-  then pause at min (skipping those that were not specified).
+- *`repeatCount`*: 1보다 크면 이펙트가 지정된 횟수만큼 반복됩니다. 각 반복은 정방향 단계, 최대
+  지점에서의 일시 정지, 역방향 단계, 최소 지점에서의 일시 정지로 구성됩니다(지정되지 않은 것은
+  건너뜁니다).
 
-- *`infinite`*: if true, the effect will repeat infinitely and never reach completion. This is
-  equivalent to as if `repeatCount` was set to infinity.
+- *`infinite`*: true이면 이펙트가 무한히 반복되며 완료에 도달하지 않습니다. 이는 `repeatCount`를
+  무한대로 설정한 것과 같습니다.
 
-- *`startDelay`*: an additional wait time inserted before the beginning of the effect. This
-  wait time is executed only once, even if the effect is repeating. During this time the effect's
-  `.started` property returns false. The effect's `onStart()` callback will be executed at the end
-  of this waiting period.
+- *`startDelay`*: 이펙트 시작 전에 삽입되는 추가 대기 시간입니다. 이 대기 시간은 이펙트가
+  반복되더라도 한 번만 실행됩니다. 이 시간 동안 이펙트의 `.started` 속성은 false를 반환합니다.
+  이펙트의 `onStart()` 콜백은 이 대기 시간이 끝날 때 실행됩니다.
 
-  Using this parameter is the simplest way to create a chain of effects that execute one after
-  another (or with an overlap).
+  이 파라미터를 사용하는 것이 차례로(또는 겹쳐서) 실행되는 이펙트 체인을 만드는 가장 간단한
+  방법입니다.
 
-- *`onMax`*: callback function which will be invoked right after reaching its max progress and
-  before the optional pause and reverse stage.
+- *`onMax`*: 최대 진행도에 도달한 직후, 선택적인 일시 정지와 역방향 단계 전에 호출되는 콜백
+  함수입니다.
 
-- *`onMin`*: callback function which will be invoked right after reaching its lowest progress
-  at the end of the reverse stage and before the optional pause and forward stage.
+- *`onMin`*: 역방향 단계의 끝에서 가장 낮은 진행도에 도달한 직후, 선택적인 일시 정지와 정방향
+  단계 전에 호출되는 콜백 함수입니다.
 
-The effect controller returned by this factory constructor will be composited of multiple simpler
-effect controllers described further below. If this constructor proves to be too limited for your
-needs, you can always create your own combination from the same building blocks.
+이 팩토리 생성자가 반환하는 이펙트 컨트롤러는 아래에서 설명하는 여러 개의 더 단순한 이펙트
+컨트롤러로 조합됩니다. 이 생성자가 필요에 비해 너무 제한적이라면, 언제든지 같은 구성 요소로
+직접 조합을 만들 수 있습니다.
 
-In addition to the factory constructor, the `EffectController` class defines a number of properties
-common for all effect controllers. These properties are:
+팩토리 생성자 외에도, `EffectController` 클래스는 모든 이펙트 컨트롤러에 공통인 여러 속성을
+정의합니다. 이 속성들은 다음과 같습니다.
 
-- `.started`: true if the effect has already started. For most effect controllers this property
-  is always true. The only exception is the `DelayedEffectController` which returns false while the
-  effect is in the waiting stage.
+- `.started`: 이펙트가 이미 시작되었으면 true입니다. 대부분의 이펙트 컨트롤러에서 이 속성은
+  항상 true입니다. 유일한 예외는 `DelayedEffectController`로, 이펙트가 대기 단계에 있는 동안
+  false를 반환합니다.
 
-- `.completed`: becomes true when the effect controller finishes execution.
+- `.completed`: 이펙트 컨트롤러가 실행을 마치면 true가 됩니다.
 
-- `.progress`: current value of the effect controller, a floating-point value from 0 to 1. This
-  variable is the main "output" value of an effect controller.
+- `.progress`: 이펙트 컨트롤러의 현재 값으로, 0에서 1 사이의 부동소수점 값입니다. 이 변수가
+  이펙트 컨트롤러의 주요 "출력" 값입니다.
 
-- `.duration`: total duration of the effect, or `null` if the duration cannot be determined (for
-  example if the duration is random or infinite).
+- `.duration`: 이펙트의 전체 지속 시간이며, 지속 시간을 결정할 수 없는 경우(예: 지속 시간이
+  무작위이거나 무한한 경우)에는 `null`입니다.
 
 
 ## `LinearEffectController`
 
-This is the simplest effect controller that grows linearly from 0 to 1 over the specified
-`duration`:
+지정된 `duration` 동안 0에서 1까지 선형으로 증가하는 가장 간단한 이펙트 컨트롤러입니다.
 
 ```dart
 final controller = LinearEffectController(3);
@@ -128,8 +124,8 @@ final controller = LinearEffectController(3);
 
 ## `ReverseLinearEffectController`
 
-Similar to the `LinearEffectController`, but it goes in the opposite direction and grows linearly
-from 1 to 0 over the specified duration:
+`LinearEffectController`와 비슷하지만 반대 방향으로 진행하여, 지정된 지속 시간 동안 1에서 0으로
+선형으로 변합니다.
 
 ```dart
 final controller = ReverseLinearEffectController(1);
@@ -138,8 +134,8 @@ final controller = ReverseLinearEffectController(1);
 
 ## `CurvedEffectController`
 
-This effect controller grows non-linearly from 0 to 1 over the specified `duration` and following
-the provided `curve`:
+이 이펙트 컨트롤러는 지정된 `duration` 동안 제공된 `curve`를 따라 0에서 1까지 비선형으로
+증가합니다.
 
 ```dart
 final controller = CurvedEffectController(0.5, Curves.easeOut);
@@ -148,8 +144,7 @@ final controller = CurvedEffectController(0.5, Curves.easeOut);
 
 ## `ReverseCurvedEffectController`
 
-Similar to the `CurvedEffectController`, but the controller grows down from 1 to 0 following the
-provided `curve`:
+`CurvedEffectController`와 비슷하지만, 컨트롤러가 제공된 `curve`를 따라 1에서 0으로 감소합니다.
 
 ```dart
 final controller = ReverseCurvedEffectController(0.5, Curves.bounceInOut);
@@ -158,8 +153,8 @@ final controller = ReverseCurvedEffectController(0.5, Curves.bounceInOut);
 
 ## `PauseEffectController`
 
-This effect controller keeps the progress at a constant value for the specified time duration.
-Typically, the `progress` would be either 0 or 1:
+이 이펙트 컨트롤러는 지정된 시간 동안 진행도를 일정한 값으로 유지합니다.
+일반적으로 `progress`는 0 또는 1입니다.
 
 ```dart
 final controller = PauseEffectController(1.5, progress: 0);
@@ -168,20 +163,20 @@ final controller = PauseEffectController(1.5, progress: 0);
 
 ## `RepeatedEffectController`
 
-This is a composite effect controller. It takes another effect controller as a child, and repeats
-it multiple times, resetting before the start of each next cycle.
+복합 이펙트 컨트롤러입니다. 다른 이펙트 컨트롤러를 자식으로 받아 여러 번 반복하며, 매 다음
+사이클이 시작되기 전에 초기화합니다.
 
 ```dart
 final controller = RepeatedEffectController(LinearEffectController(1), 10);
 ```
 
-The child effect controller cannot be infinite. If the child is random, then it will be
-re-initialized with new random values on each iteration.
+자식 이펙트 컨트롤러는 무한할 수 없습니다. 자식이 무작위라면, 매 반복마다 새로운 무작위 값으로
+다시 초기화됩니다.
 
 
 ## `InfiniteEffectController`
 
-Similar to the `RepeatedEffectController`, but repeats its child controller indefinitely.
+`RepeatedEffectController`와 비슷하지만, 자식 컨트롤러를 무기한 반복합니다.
 
 ```dart
 final controller = InfiniteEffectController(LinearEffectController(1));
@@ -190,8 +185,7 @@ final controller = InfiniteEffectController(LinearEffectController(1));
 
 ## `SequenceEffectController`
 
-Executes a sequence of effect controllers, one after another. The list of controllers cannot be
-empty.
+이펙트 컨트롤러들의 시퀀스를 차례로 실행합니다. 컨트롤러 목록은 비어 있을 수 없습니다.
 
 ```dart
 final controller = SequenceEffectController([
@@ -204,13 +198,12 @@ final controller = SequenceEffectController([
 
 ## `SpeedEffectController`
 
-Alters the duration of its child effect controller so that the effect proceeds at the predefined
-speed. The initial duration of the child EffectController is irrelevant. The child controller must
-be the subclass of `DurationEffectController`.
+이펙트가 미리 정의된 속도로 진행되도록 자식 이펙트 컨트롤러의 지속 시간을 변경합니다. 자식
+EffectController의 초기 지속 시간은 무관합니다. 자식 컨트롤러는 `DurationEffectController`의
+서브클래스여야 합니다.
 
-The `SpeedEffectController` can only be applied to effects for which the notion of speed is
-well-defined. Such effects must implement the `MeasurableEffect` interface. For example, the
-following effects qualify:
+`SpeedEffectController`는 속도 개념이 잘 정의된 이펙트에만 적용할 수 있습니다. 이러한 이펙트는
+`MeasurableEffect` 인터페이스를 구현해야 합니다. 예를 들어 다음 이펙트들이 해당됩니다.
 
 - [`MoveByEffect`](move_effects.md#movebyeffect)
 - [`MoveToEffect`](move_effects.md#movetoeffect)
@@ -218,23 +211,22 @@ following effects qualify:
 - [`RotateEffect.by`](rotate_effects.md#rotateeffectby)
 - [`RotateEffect.to`](rotate_effects.md#rotateeffectto)
 
-The parameter `speed` is in units per second, where the notion of a "unit" depends on the target
-effect. For example, for move effects, they refer to the distance traveled; for rotation effects
-the units are radians.
+`speed` 파라미터의 단위는 초당 단위(units per second)이며, "단위"의 의미는 대상 이펙트에 따라
+다릅니다. 예를 들어 이동 이펙트에서는 이동한 거리를 뜻하고, 회전 이펙트에서는 단위가 라디안입니다.
 
 ```dart
 final speedController =
     SpeedEffectController(LinearEffectController(0), speed: 1);
 final controller =
-    EffectController(speed: 1); // same as speedController
+    EffectController(speed: 1); // speedController와 같습니다
 ```
 
 
 ## `DelayedEffectController`
 
-Effect controller that executes its child controller after the prescribed `delay`. While the
-controller is executing the "delay" stage, the effect will be considered "not started", i.e. its
-`.started` property will be returning `false`.
+지정된 `delay` 후에 자식 컨트롤러를 실행하는 이펙트 컨트롤러입니다. 컨트롤러가 "지연" 단계를
+실행하는 동안 이펙트는 "시작되지 않은" 것으로 간주되며, 즉 `.started` 속성이 `false`를
+반환합니다.
 
 ```dart
 final controller = DelayedEffectController(LinearEffectController(1), delay: 5);
@@ -243,8 +235,8 @@ final controller = DelayedEffectController(LinearEffectController(1), delay: 5);
 
 ## `NoiseEffectController`
 
-This effect controller exhibits noisy behavior, i.e. it oscillates randomly around zero. Such effect
-controller can be used to implement a variety of shake effects.
+이 이펙트 컨트롤러는 노이즈 같은 동작을 보입니다. 즉, 0 주변에서 무작위로 진동합니다. 이런 이펙트
+컨트롤러는 다양한 흔들림 이펙트를 구현하는 데 사용할 수 있습니다.
 
 ```dart
 final controller = NoiseEffectController(duration: 0.6, frequency: 10);
@@ -253,28 +245,28 @@ final controller = NoiseEffectController(duration: 0.6, frequency: 10);
 
 ## `RandomEffectController`
 
-This controller wraps another controller and makes its duration random. The actual value for the
-duration is re-generated upon each reset, which makes this controller particularly useful within
-repeated contexts, such as [](#repeatedeffectcontroller) or [](#infiniteeffectcontroller).
+이 컨트롤러는 다른 컨트롤러를 감싸서 그 지속 시간을 무작위로 만듭니다. 지속 시간의 실제 값은
+초기화될 때마다 다시 생성되므로, 이 컨트롤러는 [](#repeatedeffectcontroller)나
+[](#infiniteeffectcontroller)처럼 반복되는 맥락에서 특히 유용합니다.
 
 ```dart
 final controller = RandomEffectController.uniform(
-  LinearEffectController(0),  // duration here is irrelevant
+  LinearEffectController(0),  // 여기서의 duration은 무관합니다
   min: 0.5,
   max: 1.5,
 );
 ```
 
-The user has the ability to control which `Random` source to use, as well as the exact distribution
-of the produced random durations. Two distributions, `.uniform` and `.exponential`, are included,
-any other can be implemented by the user.
+사용자는 어떤 `Random` 소스를 사용할지, 그리고 생성되는 무작위 지속 시간의 정확한 분포를 제어할
+수 있습니다. `.uniform`과 `.exponential` 두 가지 분포가 포함되어 있으며, 그 외의 분포는 사용자가
+직접 구현할 수 있습니다.
 
 
 ## `SineEffectController`
 
-An effect controller that represents a single period of the sine function. Use this to create
-natural-looking harmonic oscillations. Two perpendicular move effects governed by
-`SineEffectControllers` with different periods, will create a [Lissajous curve].
+사인 함수의 한 주기를 나타내는 이펙트 컨트롤러입니다. 자연스러워 보이는 조화 진동을 만들 때
+사용하세요. 주기가 서로 다른 `SineEffectControllers`로 제어되는 두 개의 수직 이동 이펙트는
+[Lissajous curve]를 만듭니다.
 
 ```dart
 final controller = SineEffectController(period: 1);
@@ -283,10 +275,9 @@ final controller = SineEffectController(period: 1);
 
 ## `ZigzagEffectController`
 
-Simple alternating effect controller. Over the course of one `period`, this controller will proceed
-linearly from 0 to 1, then to -1, and then back to 0. Use this for oscillating effects where the
-starting position should be the center of the oscillations, rather than the extreme (as provided
-by the standard alternating `EffectController`).
+단순한 왕복 이펙트 컨트롤러입니다. 한 `period` 동안 이 컨트롤러는 0에서 1로, 다시 -1로, 그리고
+다시 0으로 선형으로 진행합니다. 진동의 시작 위치가 (표준 왕복 `EffectController`처럼) 극단이
+아니라 진동의 중심이어야 하는 진동 이펙트에 사용하세요.
 
 ```dart
 final controller = ZigzagEffectController(period: 2);

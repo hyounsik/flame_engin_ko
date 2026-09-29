@@ -1,9 +1,11 @@
-# Combined Effect
+<a id="combined-effect"></a>
 
-This effect can be used to run multiple other effects simultaneously.
+# 결합 이펙트
 
-The combined effect can also be alternating (the sequence will first run forward, and then
-backward); and also repeat a certain predetermined number of times, or infinitely.
+이 이펙트는 여러 다른 이펙트를 동시에 실행하는 데 사용할 수 있습니다.
+
+결합 이펙트는 왕복하도록 할 수도 있고(먼저 정방향으로 실행한 뒤 역방향으로 실행합니다), 미리 정한
+횟수만큼 또는 무한히 반복할 수도 있습니다.
 
 ```{flutter-app}
 :sources: ../flame/examples

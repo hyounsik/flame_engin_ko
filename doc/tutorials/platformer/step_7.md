@@ -1,12 +1,16 @@
-# 7. Adding Menus
+<a id="7-adding-menus"></a>
 
-To add menus to the game, we will leverage Flame's built-in
-[overlay](../../flame/overlays.md) system.
+# 7. 메뉴 추가
+
+게임에 메뉴를 추가하기 위해 Flame에 내장된
+[오버레이](../../flame/overlays.md) 시스템을 활용하겠습니다.
 
 
-## Main Menu
+<a id="main-menu"></a>
 
-In the `lib/overlays` folder, create `main_menu.dart` and add the following code:
+## 메인 메뉴
+
+`lib/overlays` 폴더에 `main_menu.dart`를 만들고 다음 코드를 추가합니다.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -14,7 +18,7 @@ import 'package:flutter/material.dart';
 import '../ember_quest.dart';
 
 class MainMenu extends StatelessWidget {
-  // Reference to parent game.
+  // 부모 게임에 대한 참조입니다.
   final EmberQuestGame game;
 
   const MainMenu({super.key, required this.game});
@@ -88,17 +92,19 @@ Collect as many stars as you can and avoid enemies!''',
 
 ```
 
-This is a pretty self-explanatory file that just uses standard Flutter widgets to display
-information and provide a `Play` button. The only Flame-related line is
-`game.overlays.remove('MainMenu');` which simply removes the overlay so the user can play the
-game. It should be noted that the user can technically move Ember while this is displayed, but
-trapping the input is outside the scope of this tutorial as there are multiple ways this can be
-accomplished.
+이 파일은 표준 Flutter 위젯만 사용해 정보를 표시하고 `Play` 버튼을 제공하므로
+따로 설명할 필요가 거의 없습니다. Flame과 관련된 유일한 줄은
+`game.overlays.remove('MainMenu');`로, 사용자가 게임을 플레이할 수 있도록 오버레이를 제거하기만
+합니다. 참고로 이 메뉴가 표시되는 동안에도 기술적으로는 사용자가 Ember를 움직일 수 있지만,
+입력을 가로채는 방법은 여러 가지가 있으므로 이 튜토리얼의 범위를
+벗어납니다.
 
 
-## Game Over Menu
+<a id="game-over-menu"></a>
 
-Next, create a file called `lib/overlays/game_over.dart` and add the following code:
+## 게임 오버 메뉴
+
+다음으로 `lib/overlays/game_over.dart`라는 파일을 만들고 다음 코드를 추가합니다.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -106,7 +112,7 @@ import 'package:flutter/material.dart';
 import '../ember_quest.dart';
 
 class GameOver extends StatelessWidget {
-  // Reference to parent game.
+  // 부모 게임에 대한 참조입니다.
   final EmberQuestGame game;
   const GameOver({super.key, required this.game});
 
@@ -168,10 +174,10 @@ class GameOver extends StatelessWidget {
 }
 ```
 
-As with the Main Menu, this is all standard Flutter widgets except for the call to remove the
-overlay and also the call to `game.reset()` which we will create now.
+메인 메뉴와 마찬가지로, 오버레이를 제거하는 호출과 지금 만들 `game.reset()` 호출을
+제외하면 모두 표준 Flutter 위젯입니다.
 
-Open `lib/ember_quest.dart` and add / update the following code:
+`lib/ember_quest.dart`를 열고 다음 코드를 추가하거나 수정합니다.
 
 ```dart
 @override
@@ -191,7 +197,7 @@ Future<void> onLoad() async {
 }
 
 void initializeGame(bool loadHud) {
-  // Assume that size.x < 3200
+  // size.x < 3200이라고 가정합니다
   final segmentsToLoad = (size.x / 640).ceil();
   segmentsToLoad.clamp(0, segments.length);
 
@@ -215,15 +221,17 @@ void reset() {
 }
 ```
 
-You may notice that we have added a parameter to the `initializeGame` method which allows us to
-bypass adding the HUD to the game. This is because in the coming section, when Ember's health drops
-to 0, we will wipe the game, but we do not need to remove the HUD, as we just simply need to reset
-the values using `reset()`.
+`initializeGame` 메서드에 파라미터를 추가해 게임에 HUD를 추가하는 것을
+건너뛸 수 있게 한 것을 눈치챘을 것입니다. 이어지는 섹션에서 Ember의 체력이 0으로 떨어지면
+게임을 초기화할 텐데, 이때 HUD는 제거할 필요 없이 `reset()`으로 값만
+재설정하면 되기 때문입니다.
 
 
-## Displaying the Menus
+<a id="displaying-the-menus"></a>
 
-To display the menus, add the following code to `lib/main.dart`:
+## 메뉴 표시하기
+
+메뉴를 표시하려면 `lib/main.dart`에 다음 코드를 추가합니다.
 
 ```dart
 void main() {
@@ -240,26 +248,28 @@ void main() {
 }
 ```
 
-If the menus did not auto-import, add the following:
+메뉴가 자동으로 import되지 않았다면 다음을 추가합니다.
 
 ```dart
 import 'overlays/game_over.dart';
 import 'overlays/main_menu.dart';
 ```
 
-If you run the game now, you should be greeted with the Main Menu overlay. Pressing play will
-remove it and allow you to start playing the game.
+이제 게임을 실행하면 메인 메뉴 오버레이가 반겨 줄 것입니다. Play를 누르면
+메뉴가 제거되고 게임을 시작할 수 있습니다.
 
 
-### Health Check for Game Over
+<a id="health-check-for-game-over"></a>
 
-Our last step to finish Ember Quest is to add a game-over mechanism. This is fairly simple but
-requires us to place similar code in all of our components. So let's get started!
+### 게임 오버를 위한 체력 확인
 
-In `lib/actors/ember.dart`, in the `update` method, add the following:
+Ember Quest를 완성하기 위한 마지막 단계는 게임 오버 메커니즘을 추가하는 것입니다. 꽤 간단하지만
+모든 컴포넌트에 비슷한 코드를 넣어야 합니다. 그럼 시작해 봅시다!
+
+`lib/actors/ember.dart`의 `update` 메서드에 다음을 추가합니다.
 
 ```dart
-// If ember fell in pit, then game over.
+// ember가 구덩이에 빠지면 게임 오버입니다.
 if (position.y > gameRef.size.y + size.y) {
   gameRef.health = 0;
 }
@@ -269,7 +279,7 @@ if (gameRef.health <= 0) {
 }
 ```
 
-In `lib/actors/water_enemy.dart`, in the `update` method update the following code:
+`lib/actors/water_enemy.dart`의 `update` 메서드에서 다음 코드를 수정합니다.
 
 ```dart
 if (position.x < -size.x || gameRef.health <= 0) {
@@ -277,7 +287,7 @@ if (position.x < -size.x || gameRef.health <= 0) {
 }
 ```
 
-In `lib/objects/ground_block.dart`, in the `update` method update the following code:
+`lib/objects/ground_block.dart`의 `update` 메서드에서 다음 코드를 수정합니다.
 
 ```dart
 if (gameRef.health <= 0) {
@@ -285,7 +295,7 @@ if (gameRef.health <= 0) {
 }
 ```
 
-In `lib/objects/platform_block.dart`, in the `update` method update the following code:
+`lib/objects/platform_block.dart`의 `update` 메서드에서 다음 코드를 수정합니다.
 
 ```dart
 if (position.x < -size.x || gameRef.health <= 0) {
@@ -293,7 +303,7 @@ if (position.x < -size.x || gameRef.health <= 0) {
 }
 ```
 
-In `lib/objects/star.dart`, in the `update` method update the following code:
+`lib/objects/star.dart`의 `update` 메서드에서 다음 코드를 수정합니다.
 
 ```dart
 if (position.x < -size.x || gameRef.health <= 0) {
@@ -301,7 +311,7 @@ if (position.x < -size.x || gameRef.health <= 0) {
 }
 ```
 
-Finally, in `lib/ember_quest.dart`, add the following `update` method:
+마지막으로 `lib/ember_quest.dart`에 다음 `update` 메서드를 추가합니다.
 
 ```dart
 @override
@@ -314,10 +324,12 @@ void update(double dt) {
 ```
 
 
-## Congratulations
+<a id="congratulations"></a>
 
-You made it! You have a working Ember Quest. Press the button below to see what the resulting code
-looks like or to play it live.
+## 축하합니다
+
+해냈습니다! 이제 동작하는 Ember Quest가 완성되었습니다. 아래 버튼을 눌러 완성된 코드가
+어떤 모습인지 보거나 직접 플레이해 보세요.
 
 ```{flutter-app}
 :sources: ../tutorials/platformer/app

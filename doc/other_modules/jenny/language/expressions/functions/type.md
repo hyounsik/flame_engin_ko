@@ -1,47 +1,43 @@
-# Type conversion functions
+<a id="type-conversion-functions"></a>
 
-These functions convert values of one type into another type, if possible. All of these functions
-take a single argument of arbitrary type, and return the result of the type corresponding to the
-name of the function.
+# 타입 변환 함수
+
+이 함수들은 가능한 경우 한 타입의 값을 다른 타입으로 변환합니다. 이 함수들은 모두 임의 타입의 인자 하나를
+받아, 함수 이름에 해당하는 타입의 결과를 반환합니다.
 
 
 ## `bool(x)`
 
-Converts its argument into a boolean value.
+인자를 불리언 값으로 변환합니다.
 
-- If `x` is already a boolean, then it returns the argument as-is.
-- If `x` is numeric, then the result is `false` when `x` is `0`, and `true` for all other values
-  of `x`.
-- If `x` is string, then the function will check whether that string can be found within
-  `YarnProject.trueValues` or `YarnProject.falseValues` sets. If yes, then it will return the
-  `true` / `false` value respectively. Otherwise, an error will be thrown.
+- `x`가 이미 불리언이면 인자를 그대로 반환합니다.
+- `x`가 숫자이면 `x`가 `0`일 때 결과는 `false`이고, 그 외의 모든 값에 대해서는 `true`입니다.
+- `x`가 문자열이면 그 문자열이 `YarnProject.trueValues` 또는 `YarnProject.falseValues` 집합에 있는지
+  확인합니다. 있다면 각각 `true` / `false` 값을 반환합니다. 그렇지 않으면 오류가 발생합니다.
 
 
 ## `number(x)`
 
-Converts its argument `x` into a numeric value.
+인자 `x`를 숫자 값으로 변환합니다.
 
-- If `x` is boolean, then it returns `1` for `true` and `0` for `false`.
-- If `x` is numeric, then it is returned unmodified.
-- If `x` is string, then the function attempts to parse that string as a number. A runtime
-  exception will be raised if `x` does not have a valid format for a number. The following formats
-  are recognized:
-  - integer: `"-3"`, `"214"`
-  - decimal: `"0.745"`, `"3.14159"`, `".1"`, `"-3."`
-  - scientific: `"2e5"`, `"3.11e-05"`
-  - hexadecimal: `"0xDEAD"`, `"0x7F"`
+- `x`가 불리언이면 `true`에 대해 `1`을, `false`에 대해 `0`을 반환합니다.
+- `x`가 숫자이면 수정 없이 그대로 반환합니다.
+- `x`가 문자열이면 그 문자열을 숫자로 파싱하려고 시도합니다. `x`가 유효한 숫자 형식이 아니면 런타임
+  예외가 발생합니다. 인식되는 형식은 다음과 같습니다.
+  - 정수: `"-3"`, `"214"`
+  - 소수: `"0.745"`, `"3.14159"`, `".1"`, `"-3."`
+  - 과학적 표기법: `"2e5"`, `"3.11e-05"`
+  - 16진수: `"0xDEAD"`, `"0x7F"`
 
 
 ## `string(x)`
 
-Converts its argument `x` into a string value.
+인자 `x`를 문자열 값으로 변환합니다.
 
-- If `x` is boolean, returns strings `"true"` or `"false"`.
-- If `x` is numeric, converts it into a string representation using the standard Dart's
-  `.toString()` method, which attempts to produce the shortest string that can represent
-  the number `x`. In particular,
-  - if `x` is integer-valued, returns its decimal representation without a decimal point;
-  - if `x` is a double in the range `1e-6` to `1e21`, returns its decimal representation
-    with a decimal point;
-  - for all other doubles, returns `x` written in the scientific (exponential) format.
-- If `x` is a string, then it is returned as-is.
+- `x`가 불리언이면 문자열 `"true"` 또는 `"false"`를 반환합니다.
+- `x`가 숫자이면 Dart의 표준 `.toString()` 메서드를 사용해 문자열 표현으로 변환합니다. 이 메서드는
+  숫자 `x`를 표현할 수 있는 가장 짧은 문자열을 만들려고 합니다. 구체적으로는 다음과 같습니다.
+  - `x`가 정수 값이면 소수점 없는 십진 표현을 반환합니다.
+  - `x`가 `1e-6`에서 `1e21` 범위의 double이면 소수점이 있는 십진 표현을 반환합니다.
+  - 그 외의 모든 double에 대해서는 `x`를 과학적(지수) 형식으로 쓴 값을 반환합니다.
+- `x`가 문자열이면 그대로 반환합니다.

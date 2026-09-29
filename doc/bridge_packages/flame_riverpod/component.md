@@ -1,19 +1,21 @@
-# Component
+<a id="component"></a>
+
+# 컴포넌트
 
 
 ## ComponentRef
 
-`ComponentRef` exposes Riverpod functionality to individual `Component`s, and is comparable to
-`flutter_riverpod`'s `WidgetRef`.
+`ComponentRef`는 개별 `Component`에 Riverpod 기능을 노출하며, `flutter_riverpod`의
+`WidgetRef`에 해당합니다.
 
 
 ## RiverpodComponentMixin
 
-`RiverpodComponentMixin` manages the lifecycle of listeners on behalf of individual `Component`s.
+`RiverpodComponentMixin`은 개별 `Component`를 대신해 리스너의 생명주기를 관리합니다.
 
-`Component`s using this mixin must use `addToGameWidgetBuild` in their `onMount` method to add
-listeners (e.g. `ref.watch` or `ref.listen`) *prior to* calling `super.onMount`, which manages the
-staged listeners and disposes of them on the user's behalf inside `onRemove`.
+이 믹스인을 사용하는 `Component`는 `onMount` 메서드에서 `super.onMount`를 호출하기 *전에*
+`addToGameWidgetBuild`를 사용해 리스너(예: `ref.watch` 또는 `ref.listen`)를 추가해야 합니다. `super.onMount`는
+대기 중인 리스너를 관리하고, `onRemove` 안에서 사용자를 대신해 리스너를 해제합니다.
 
 ```dart
 
@@ -42,7 +44,7 @@ class RiverpodAwareTextComponent extends PositionComponent
 
 ## RiverpodGameMixin
 
-`RiverpodGameMixin` provides listeners from all components to the build method of the
-`RiverpodAwareGameWidget`.
-The `addToGameWidgetBuild` method is available in the `RiverpodGameMixin` as well,
-enabling you to access `ComponentRef` methods directly in your Game class.
+`RiverpodGameMixin`은 모든 컴포넌트의 리스너를 `RiverpodAwareGameWidget`의 build 메서드에
+제공합니다.
+`addToGameWidgetBuild` 메서드는 `RiverpodGameMixin`에서도 사용할 수 있으므로,
+Game 클래스에서 `ComponentRef` 메서드에 직접 접근할 수 있습니다.

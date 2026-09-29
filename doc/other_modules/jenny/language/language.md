@@ -1,22 +1,25 @@
-# YarnSpinner language
+<a id="yarnspinner-language"></a>
 
-**YarnSpinner** is the language in which `.yarn` files are written. You can check out the
-[official documentation] for the YarnSpinner language, however, here we will be describing the
-**Jenny** implementation, which may not contain all the original features, but may also contain
-some that were not implemented in the YarnSpinner yet.
+# YarnSpinner 언어
+
+**YarnSpinner**는 `.yarn` 파일을 작성하는 언어입니다. YarnSpinner 언어에 대해서는
+[공식 문서][official documentation]를 확인할 수 있지만, 여기서는 **Jenny** 구현을 설명합니다.
+Jenny 구현에는 원래 기능이 모두 포함되어 있지 않을 수도 있지만, 반대로 YarnSpinner에 아직
+구현되지 않은 기능이 포함되어 있을 수도 있습니다.
 
 
-## Yarn files
+<a id="yarn-files"></a>
 
-Any Yarn project will contain one or more `.yarn` files. These are plain text files in UTF-8
-encoding. As such, they can be edited in any text editor or IDE.
+## Yarn 파일
 
-Having multiple `.yarn` files helps you better organize your project, but Jenny doesn't impose any
-requirements on the number of files or their relationship.
+모든 Yarn 프로젝트에는 하나 이상의 `.yarn` 파일이 있습니다. 이 파일들은 UTF-8 인코딩의 일반 텍스트
+파일입니다. 따라서 어떤 텍스트 편집기나 IDE에서든 편집할 수 있습니다.
 
-Each `.yarn` file may contain **comments**, **tags**, **[commands]**, and **[nodes]**.
-For example:
+`.yarn` 파일을 여러 개 두면 프로젝트를 더 잘 정리할 수 있지만, Jenny는 파일의 개수나 파일 간의
+관계에 대해 어떤 요구 사항도 두지 않습니다.
 
+각 `.yarn` 파일에는 **주석**, **태그**, **[명령][commands]**, **[노드][nodes]**가 들어갈 수 있습니다.
+예를 들면 다음과 같습니다.
 ```yarn
 // This is a comment
 // The line below, however, is a tag:
@@ -32,49 +35,55 @@ title: Start
 ```
 
 
-### Comments
+<a id="comments"></a>
 
-A comment starts with `//` and continues until the end of the line. All the text inside a comment
-will be completely ignored by Jenny as if it wasn't there.
+### 주석
 
-There are no multi-line comments in YarnSpinner.
+주석은 `//`로 시작하여 줄의 끝까지 이어집니다. 주석 안의 모든 텍스트는 마치 존재하지 않는 것처럼
+Jenny가 완전히 무시합니다.
 
-
-### Tags
-
-File-level tags start with a `#` and continue until the end of the line. A tag can be used to
-include some per-file custom project metadata. These tags are not interpreted by Jenny in any way.
+YarnSpinner에는 여러 줄 주석이 없습니다.
 
 
-### Commands
+<a id="tags"></a>
 
-The commands are explained in more details [later][commands], but at this point it is
-worth pointing out that only a limited number of commands are allowed at the root level of a file
-(that is, outside of nodes). Currently, these commands are:
+### 태그
+
+파일 수준 태그는 `#`으로 시작하여 줄의 끝까지 이어집니다. 태그는 파일별 커스텀 프로젝트 메타데이터를
+포함하는 데 사용할 수 있습니다. 이 태그들은 Jenny가 어떤 방식으로도 해석하지 않습니다.
+
+
+<a id="commands"></a>
+
+### 명령
+
+명령은 [뒤에서][commands] 더 자세히 설명하지만, 여기서 짚고 넘어갈 점은 파일의 루트 수준
+(즉, 노드 바깥)에서는 제한된 수의 명령만 허용된다는 것입니다. 현재 허용되는 명령은 다음과 같습니다.
 
 - `<<declare>>`
 - `<<character>>`
 
-The commands outside of nodes are compile-time instructions, that is they are executed during the
-compilation of a YarnProject.
+노드 바깥의 명령은 컴파일 타임 명령어입니다. 즉, YarnProject를 컴파일하는 동안 실행됩니다.
 
 
-### Nodes
+<a id="nodes"></a>
 
-Nodes represent the main bulk of content in a yarn file, and are explained in a dedicated
-[section][nodes]. There could be multiple nodes in a single file, placed one after another.
-No special separator is needed between nodes: as soon as one node ends, the next one can begin.
+### 노드
+
+노드는 yarn 파일 콘텐츠의 대부분을 차지하며, 별도의 [섹션][nodes]에서 설명합니다. 하나의 파일에
+여러 노드를 차례로 배치할 수 있습니다. 노드 사이에는 특별한 구분자가 필요 없습니다. 한 노드가
+끝나면 곧바로 다음 노드가 시작될 수 있습니다.
 
 
 ```{toctree}
 :hidden:
 
-Nodes        <nodes.md>
-Lines        <lines.md>
-Options      <options.md>
-Commands     <commands/commands.md>
-Expressions  <expressions/expressions.md>
-Markup       <markup.md>
+노드         <nodes.md>
+줄           <lines.md>
+옵션         <options.md>
+명령         <commands/commands.md>
+표현식       <expressions/expressions.md>
+마크업       <markup.md>
 ```
 
 [commands]: commands/commands.md

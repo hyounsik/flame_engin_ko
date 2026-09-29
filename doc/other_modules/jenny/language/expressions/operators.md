@@ -1,18 +1,23 @@
-# Operators
+<a id="operators"></a>
 
-The **operators** are special symbols that perform common mathematical operations. For example,
-operator `+` performs summation, and thus we can write `$x + $y` to denote the sum of variables
-`$x` and `$y`. There are over 20 different operators in YarnSpinner, which can be loosely grouped
-into the following categories:
+# 연산자
 
-
-## Operator types
+**연산자**는 일반적인 수학 연산을 수행하는 특별한 기호입니다. 예를 들어 연산자 `+`는 덧셈을 수행하므로,
+`$x + $y`라고 써서 변수 `$x`와 `$y`의 합을 나타낼 수 있습니다. YarnSpinner에는 20개가 넘는 연산자가
+있으며, 대략 다음과 같은 범주로 묶을 수 있습니다.
 
 
-### Arithmetic
+<a id="operator-types"></a>
 
-The **arithmetic** operators, have the same meaning as in regular math. These apply to numeric
-arguments (with the exception of `+` which can also be used with strings):
+## 연산자 종류
+
+
+<a id="arithmetic"></a>
+
+### 산술
+
+**산술** 연산자는 일반 수학에서와 같은 의미를 가집니다. 숫자 인자에 적용됩니다(문자열에도 사용할 수
+있는 `+`는 예외입니다).
 
 ```{list-table}
 :align: left
@@ -20,39 +25,40 @@ arguments (with the exception of `+` which can also be used with strings):
 :header-rows: 1
 :widths: 1 2 9
 
-* - operator
-  - name
-  - notes
+* - 연산자
+  - 이름
+  - 비고
 * - `+`
-  - addition
+  - 덧셈
   -
 * - `-`
-  - subtraction
-  - Also, a unary minus
+  - 뺄셈
+  - 단항 마이너스로도 쓰입니다
 * - `*`
-  - multiplication
+  - 곱셈
   -
 * - `/`
-  - division
-  - Division by `0` is not allowed, and will throw a runtime error if it occurs.
+  - 나눗셈
+  - `0`으로 나누는 것은 허용되지 않으며, 발생하면 런타임 오류가 발생합니다.
 * - `%`
-  - modulo
-  - This operator can apply to both integer and decimal numbers, and it returns
-    the remainder of integer division of two numbers. The right-hand side of
-    `%` cannot be zero or a negative number, otherwise a runtime error will be
-    thrown. The result of `x % y` is always a number in the range `[0; y)`,
-    regardless of the sign of `x`.
+  - 나머지
+  - 이 연산자는 정수와 소수 모두에 적용할 수 있으며, 두 수의 정수 나눗셈의
+    나머지를 반환합니다. `%`의 오른쪽은 0이나 음수일 수 없으며, 그렇지 않으면
+    런타임 오류가 발생합니다. `x % y`의 결과는 `x`의 부호와 관계없이 항상
+    `[0; y)` 범위의 수입니다.
 * - `+`
-  - concatenation
-  - When applied to strings, the `+` operator simply glues them together. For
-    example, `"Hello" + "World"` produces string `"HelloWorld"`.
+  - 연결
+  - 문자열에 적용하면 `+` 연산자는 문자열을 단순히 이어 붙입니다. 예를 들어
+    `"Hello" + "World"`는 문자열 `"HelloWorld"`를 만듭니다.
 ```
 
 
-### Logical
+<a id="logical"></a>
 
-The **logical** operators apply to boolean values. These operators can be written either in
-symbolic or word form -- both forms are equivalent:
+### 논리
+
+**논리** 연산자는 불리언 값에 적용됩니다. 이 연산자들은 기호 형태나 단어 형태로 쓸 수 있으며,
+두 형태는 동일합니다.
 
 ```{list-table}
 :align: left
@@ -60,31 +66,31 @@ symbolic or word form -- both forms are equivalent:
 :header-rows: 1
 :widths: 1 2 9
 
-* - operator
-  - name
-  - notes
+* - 연산자
+  - 이름
+  - 비고
 * - `!`, `not`
-  - logical NOT
-  - This is a unary operator that inverts its operand: `!true` is `false`,
-    and `!false` is `true`.
+  - 논리 NOT
+  - 피연산자를 반전하는 단항 연산자입니다: `!true`는 `false`이고,
+    `!false`는 `true`입니다.
 * - `&&`, `and`
-  - logical AND
-  - Returns `true` if both of its arguments are `true`.
+  - 논리 AND
+  - 두 인자가 모두 `true`이면 `true`를 반환합니다.
 * - `||`, `or`
-  - logical OR
-  - Returns `true` if at least one of its arguments is `true`.
+  - 논리 OR
+  - 인자 중 적어도 하나가 `true`이면 `true`를 반환합니다.
 * - `^`, `xor`
-  - logical XOR
-  - Returns `true` if the arguments are different, and `false` if they are
-    the same.
+  - 논리 XOR
+  - 인자가 서로 다르면 `true`를, 같으면 `false`를 반환합니다.
 ```
 
 
-### Assignment
+<a id="assignment"></a>
 
-The **assignment** operators modify the value of a variable. The left-hand side of such an operator
-is the variable that shall be modified, the right-hand side is the expression of the same type as
-the variable on the left:
+### 할당
+
+**할당** 연산자는 변수의 값을 수정합니다. 이 연산자의 왼쪽은 수정할 변수이고, 오른쪽은 왼쪽 변수와
+같은 타입의 표현식입니다.
 
 ```{list-table}
 :align: left
@@ -92,42 +98,42 @@ the variable on the left:
 :header-rows: 1
 :widths: 1 2 9
 
-* - operator
-  - name
-  - notes
+* - 연산자
+  - 이름
+  - 비고
 * - `=`, `to`
-  - assign
-  - `$var = X` stores the value of `X` into the variable `$var`
+  - 할당
+  - `$var = X`는 `X`의 값을 변수 `$var`에 저장합니다
 * - `+=`
-  - increase
-  - `$var += X` is equivalent to `$var = $var + X`
+  - 증가
+  - `$var += X`는 `$var = $var + X`와 같습니다
 * - `-=`
-  - decrease
-  - `$var -= X` is equivalent to `$var = $var - X`
+  - 감소
+  - `$var -= X`는 `$var = $var - X`와 같습니다
 * - `*=`
-  - multiply
-  - `$var *= X` is equivalent to `$var = $var * X`
+  - 곱하기
+  - `$var *= X`는 `$var = $var * X`와 같습니다
 * - `/=`
-  - divide
-  - `$var /= X` is equivalent to `$var = $var / X`
+  - 나누기
+  - `$var /= X`는 `$var = $var / X`와 같습니다
 * - `%=`
-  - reduce modulo
-  - `$var %= X` is equivalent to `$var = $var % X`
+  - 나머지 연산
+  - `$var %= X`는 `$var = $var % X`와 같습니다
 ```
 
-Unlike all other operators, the assignment operators do not produce a value. This means they
-cannot be used inside a larger expression, for example the following is invalid: `3 + ($x += 7)`.
-Instead, the assignment operators are only usable at the top level of commands such as
-[\<\<set\>\>], [\<\<declare\>\>], and [\<\<local\>\>].
+다른 모든 연산자와 달리 할당 연산자는 값을 만들지 않습니다. 즉, 더 큰 표현식 안에서 사용할 수 없으며,
+예를 들어 `3 + ($x += 7)`은 유효하지 않습니다. 할당 연산자는 [\<\<set\>\>], [\<\<declare\>\>],
+[\<\<local\>\>] 같은 명령의 최상위 수준에서만 사용할 수 있습니다.
 
 
-### Relational
+<a id="relational"></a>
 
-The **relational** operators compare various values. The first two operators in this list can be
-applied to operands of any types, as long as the types are the same. The remaining four operators
-can only be used with numbers. Regardless of the types of operands, the result of every
-relational operator is a boolean value, which can be either assigned to a variable, or used in a
-larger expression:
+### 관계
+
+**관계** 연산자는 여러 값을 비교합니다. 이 목록의 처음 두 연산자는 타입이 같기만 하면 어떤 타입의
+피연산자에도 적용할 수 있습니다. 나머지 네 연산자는 숫자에만 사용할 수 있습니다. 피연산자의 타입과
+관계없이 모든 관계 연산자의 결과는 불리언 값이며, 변수에 할당하거나 더 큰 표현식에서 사용할 수
+있습니다.
 
 ```{list-table}
 :align: left
@@ -135,56 +141,54 @@ larger expression:
 :header-rows: 1
 :widths: 1 3 8
 
-* - operator
-  - name
-  - notes
+* - 연산자
+  - 이름
+  - 비고
 * - `==`
-  - equality
+  - 같음
   -
 * - `!=`
-  - inequality
+  - 같지 않음
   -
 * - `<`
-  - less than
+  - 미만
   -
 * - `<=`
-  - less than or equal
+  - 이하
   -
 * - `>`
-  - greater than
+  - 초과
   -
 * - `>=`
-  - greater than or equal
+  - 이상
   -
 ```
 
-Note that operator chaining is not supported. Thus, for example, `$x == $y == $z` will first
-compare variables `$x` and `$y`, then the result of that comparison, which is either `true` or
-`false`, will be compared with variable `$z`. Given that such expressions would be highly
-confusing to a reader, we recommend against using them. If you need to compare that all three
-values `$x`, `$y` and `$z` are the same, then you should use the `&&` operator instead:
-`$x == $y && $x == $z`.
+연산자 체이닝은 지원되지 않는다는 점에 유의하세요. 예를 들어 `$x == $y == $z`는 먼저 변수 `$x`와 `$y`를
+비교한 다음, 그 비교 결과(`true` 또는 `false`)를 변수 `$z`와 비교합니다. 이런 표현식은 읽는 사람을
+매우 혼란스럽게 하므로 사용하지 않는 것을 권장합니다. 세 값 `$x`, `$y`, `$z`가 모두 같은지 비교해야
+한다면 대신 `&&` 연산자를 사용하세요: `$x == $y && $x == $z`.
 
 
-## Precedence
+<a id="precedence"></a>
 
-Just as in mathematics, the operators have precedence ordering among them, meaning that some
-operators will always evaluate before the others. For example, if you write `3 + 4 * 5`, then
-the result will be `23` instead of `35` because multiplication has higher precedence than addition
-and thus evaluates first.
+## 우선순위
 
-The precedence order is as follows, from highest to lowest:
+수학에서와 마찬가지로 연산자 사이에는 우선순위가 있어, 어떤 연산자는 항상 다른 연산자보다 먼저
+평가됩니다. 예를 들어 `3 + 4 * 5`라고 쓰면 곱셈이 덧셈보다 우선순위가 높아 먼저 평가되므로, 결과는
+`35`가 아니라 `23`이 됩니다.
 
-- `*`, `/`, `%`;
-- `-`, `+`;
-- `==`, `!=`, `<`, `<=`, `>=`, `>`;
-- `!`;
-- `&&`, `^`;
-- `||`;
-- `=`, `+=`, `-=`, `*=`, `/=`, `%=`.
+우선순위는 높은 것부터 낮은 것 순으로 다음과 같습니다.
 
-You can use parentheses `()` in order to alter the order of evaluation. For example, `(3 + 4) * 5`
-is `35` instead of `23`.
+- `*`, `/`, `%`
+- `-`, `+`
+- `==`, `!=`, `<`, `<=`, `>=`, `>`
+- `!`
+- `&&`, `^`
+- `||`
+- `=`, `+=`, `-=`, `*=`, `/=`, `%=`
+
+괄호 `()`를 사용하면 평가 순서를 바꿀 수 있습니다. 예를 들어 `(3 + 4) * 5`는 `23`이 아니라 `35`입니다.
 
 
 [\<\<declare\>\>]: ../commands/declare.md

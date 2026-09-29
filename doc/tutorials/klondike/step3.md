@@ -1,36 +1,38 @@
-# 3. Cards
+<a id="3-cards"></a>
 
-In this chapter we will begin implementing the most visible component in the
-game -- the **Card** component, which corresponds to a single real-life card.
-There will be 52 `Card` objects in the game.
+# 3. 카드
 
-Each card has a **rank** (from 1 to 13, where 1 is an Ace, and 13 is a King)
-and a **suit** (from 0 to 3: hearts ♥, diamonds ♦, clubs ♣, and spades ♠).
-Also, each card will have a boolean flag **faceUp**, which controls whether
-the card is currently facing up or down. This property is important both for
-rendering, and for certain aspects of the gameplay logic.
+이번 장에서는 게임에서 가장 눈에 띄는 컴포넌트인 **Card** 컴포넌트의 구현을
+시작합니다. 이 컴포넌트는 실제 카드 한 장에 해당합니다.
+게임에는 52개의 `Card` 객체가 있습니다.
 
-The rank and the suit are simple properties of a card, they aren't components,
-so we need to make a decision on how to represent them. There are several
-possibilities: either as a simple `int`, or as an `enum`, or as objects. The
-choice will depend on what operations we need to perform with them. For the
-rank, we will need to be able to tell whether one rank is one higher/lower than
-another rank. Also, we need to produce the text label and a sprite corresponding
-to the given rank. For suits, we need to know whether two suits are of different
-colors, and also produce a text label and a sprite. Given these requirements,
-I decided to represent both `Rank` and `Suit` as classes.
+각 카드에는 **숫자(랭크)**(1부터 13까지로, 1은 에이스, 13은 킹)
+와 **무늬**(0부터 3까지: 하트 ♥, 다이아몬드 ♦, 클럽 ♣, 스페이드 ♠)가 있습니다.
+또한 각 카드에는 불리언 플래그 **faceUp**이 있어서, 카드가 현재 앞면이
+위로 향해 있는지 뒷면이 위로 향해 있는지를 제어합니다. 이 속성은 렌더링에도,
+게임플레이 로직의 일부 측면에도 중요합니다.
+
+숫자와 무늬는 카드의 단순한 속성일 뿐 컴포넌트가 아니므로,
+이를 어떻게 표현할지 결정해야 합니다. 몇 가지 선택지가 있습니다.
+단순한 `int`로 표현할 수도 있고, `enum`이나 객체로 표현할 수도 있습니다.
+어떤 것을 고를지는 이 값들로 어떤 연산을 해야 하는지에 달려 있습니다.
+숫자의 경우, 어떤 숫자가 다른 숫자보다 하나 높은지/낮은지 판단할 수 있어야 합니다.
+또한 주어진 숫자에 대응하는 텍스트 라벨과 스프라이트를
+만들어야 합니다. 무늬의 경우, 두 무늬의 색이 서로 다른지 알아야 하고,
+역시 텍스트 라벨과 스프라이트를 만들어야 합니다. 이러한 요구 사항을 고려해
+`Rank`와 `Suit`를 모두 클래스로 표현하기로 했습니다.
 
 
 ## Suit
 
-Create file `suit.dart` and declare an `@immutable class Suit` there, with no
-parent. The `@immutable` annotation here is just a hint for us that the objects
-of this class should not be modified after creation.
+`suit.dart` 파일을 만들고, 그 안에 부모 클래스가 없는 `@immutable class Suit`를
+선언하세요. 여기서 `@immutable` 어노테이션은 이 클래스의 객체가 생성된 뒤에는
+수정되어서는 안 된다는 것을 알려 주는 힌트일 뿐입니다.
 
-Next, we define the factory constructor for the class: `Suit.fromInt(i)`. We
-use a factory constructor here in order to enforce the singleton pattern for
-the class: instead of creating a new object every time, we are returning one
-of the pre-built objects that we store in the `_singletons` list:
+다음으로 클래스의 팩토리 생성자 `Suit.fromInt(i)`를 정의합니다.
+여기서 팩토리 생성자를 사용하는 이유는 이 클래스에 싱글턴 패턴을
+강제하기 위해서입니다. 매번 새 객체를 만드는 대신, `_singletons` 리스트에 저장해 둔
+미리 만들어진 객체 중 하나를 반환합니다.
 
 ```dart
   factory Suit.fromInt(int index) {
@@ -39,11 +41,11 @@ of the pre-built objects that we store in the `_singletons` list:
   }
 ```
 
-After that, there is a private constructor `Suit._()`. This constructor
-initializes the main properties of each `Suit` object: the numeric value, the
-string label, and the sprite object which we will later use to draw the suit
-symbol on the canvas. The sprite object is initialized using the
-`klondikeSprite()` function that we created in the previous chapter:
+그다음에는 private 생성자 `Suit._()`가 있습니다. 이 생성자는
+각 `Suit` 객체의 주요 속성을 초기화합니다. 바로 숫자 값,
+문자열 라벨, 그리고 나중에 캔버스에 무늬 기호를 그릴 때 사용할
+스프라이트 객체입니다. 스프라이트 객체는 앞 장에서 만든
+`klondikeSprite()` 함수를 사용해 초기화합니다.
 
 ```dart
   Suit._(this.value, this.label, double x, double y, double w, double h)
@@ -54,12 +56,12 @@ symbol on the canvas. The sprite object is initialized using the
   final Sprite sprite;
 ```
 
-Then comes the static list of all `Suit` objects in the game. Note that we
-define it as static variable so it is evaluated lazily (as if it was marked
-with the `late` keyword) meaning that it will be only initialized the first
-time it is needed. This is important: as we can see above, the constructor
-tries to retrieve an image from the global cache, so it can only be invoked
-after the image is loaded into the cache.
+이어서 게임의 모든 `Suit` 객체를 담는 static 리스트가 나옵니다. 이 리스트를
+static 변수로 정의했기 때문에 지연 평가된다는 점에 유의하세요(마치 `late` 키워드를
+붙인 것처럼). 즉, 처음 필요해질 때에만 초기화됩니다.
+이 점이 중요합니다. 위에서 볼 수 있듯이 생성자는
+전역 캐시에서 이미지를 가져오려고 하므로, 이미지가 캐시에 로드된 뒤에만
+호출될 수 있기 때문입니다.
 
 ```dart
   static final List<Suit> _singletons = [
@@ -70,17 +72,17 @@ after the image is loaded into the cache.
   ];
 ```
 
-The last four numbers in the constructor are the coordinates of the sprite
-image within the sprite sheet `klondike-sprites.png`. If you're wondering how I
-obtained these numbers, the answer is that I used a free online service
-[spritecow.com] -- it's a handy tool for locating sprites within a sprite sheet.
+생성자의 마지막 네 숫자는 스프라이트 시트 `klondike-sprites.png` 안에서
+스프라이트 이미지의 좌표입니다. 이 숫자를 어떻게 얻었는지 궁금하다면,
+무료 온라인 서비스인 [spritecow.com]을 사용했습니다.
+스프라이트 시트 안에서 스프라이트의 위치를 찾는 데 편리한 도구입니다.
 
-Lastly, I have simple getters to determine the "color" of a suit. This will be
-needed later when we need to enforce the rule that cards can only be placed
-into columns by alternating colors.
+마지막으로 무늬의 "색"을 판별하는 간단한 getter가 있습니다. 이는 나중에
+카드를 색이 번갈아 가도록만 열에 놓을 수 있다는 규칙을 강제해야 할 때
+필요합니다.
 
 ```dart
-  /// Hearts and Diamonds are red, while Clubs and Spades are black.
+  /// 하트와 다이아몬드는 빨간색이고, 클럽과 스페이드는 검은색입니다.
   bool get isRed => value <= 1;
   bool get isBlack => value >= 2;
 ```
@@ -88,9 +90,9 @@ into columns by alternating colors.
 
 ## Rank
 
-The `Rank` class is very similar to `Suit`. The main difference is that `Rank`
-contains two sprites instead of one, separately for ranks of "red" and "black"
-colors. The full code for the `Rank` class is as follows:
+`Rank` 클래스는 `Suit`와 매우 비슷합니다. 주요 차이점은 `Rank`가
+스프라이트를 하나가 아니라 두 개, 즉 "빨간색"과 "검은색" 숫자용으로 각각
+가진다는 것입니다. `Rank` 클래스의 전체 코드는 다음과 같습니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -140,19 +142,21 @@ class Rank {
 ```
 
 
-## Card component
+<a id="card-component"></a>
 
-Now that we have the `Rank` and the `Suit` classes, we can finally start
-implementing the **Card** component. Create file `components/card.dart` and
-declare the `Card` class extending from the `PositionComponent`:
+## Card 컴포넌트
+
+이제 `Rank`와 `Suit` 클래스가 준비되었으니, 드디어 **Card** 컴포넌트를
+구현하기 시작할 수 있습니다. `components/card.dart` 파일을 만들고
+`PositionComponent`를 확장하는 `Card` 클래스를 선언하세요.
 
 ```dart
 class Card extends PositionComponent {}
 ```
 
-The constructor of the class will take integer rank and suit, and make the
-card initially facing down. Also, we initialize the size of the component to
-be equal to the `cardSize` constant defined in the `KlondikeGame` class:
+이 클래스의 생성자는 정수형 숫자와 무늬를 받아, 카드가 처음에는
+뒷면이 위로 향하도록 만듭니다. 또한 컴포넌트의 크기를 `KlondikeGame` 클래스에
+정의된 `cardSize` 상수와 같게 초기화합니다.
 
 ```dart
   Card(int intRank, int intSuit)
@@ -166,9 +170,9 @@ be equal to the `cardSize` constant defined in the `KlondikeGame` class:
   bool _faceUp;
 ```
 
-The `_faceUp` property is private (indicated by the underscore) and non-final,
-meaning that it can change during the lifetime of a card. We should create some
-public accessors and mutators for this variable:
+`_faceUp` 속성은 private(밑줄로 표시)이고 final이 아니므로,
+카드의 수명 동안 바뀔 수 있습니다. 이 변수에 대한 public 접근자와
+변경자를 만들어야 합니다.
 
 ```dart
   bool get isFaceUp => _faceUp;
@@ -176,17 +180,17 @@ public accessors and mutators for this variable:
   void flip() => _faceUp = !_faceUp;
 ```
 
-Lastly, let's add a simple `toString()` implementation, which may turn out to
-be useful when we need to debug the game:
+마지막으로 간단한 `toString()` 구현을 추가합시다. 게임을 디버깅해야 할 때
+유용할 수 있습니다.
 
 ```dart
   @override
-  String toString() => rank.label + suit.label; // e.g. "Q♠" or "10♦"
+  String toString() => rank.label + suit.label; // 예: "Q♠" 또는 "10♦"
 ```
 
-Before we proceed with implementing the rendering, we need to add some cards
-into the game. Head over to the `KlondikeGame` class and add the following at
-the bottom of the `onLoad` method:
+렌더링 구현으로 넘어가기 전에 게임에 카드를 몇 장 추가해야 합니다.
+`KlondikeGame` 클래스로 가서 `onLoad` 메서드의 맨 아래에 다음을
+추가하세요.
 
 ```dart
     final random = Random();
@@ -195,23 +199,25 @@ the bottom of the `onLoad` method:
         final card = Card(random.nextInt(13) + 1, random.nextInt(4))
           ..position = Vector2(100 + i * 1150, 100 + j * 1500)
           ..addToParent(world);
-        if (random.nextDouble() < 0.9) { // flip face up with 90% probability
+        if (random.nextDouble() < 0.9) { // 90% 확률로 앞면이 위로 가도록 뒤집습니다
           card.flip();
         }
       }
     }
 ```
 
-This snippet is a temporary code -- we will remove it in the next chapter --
-but for now it lays down 28 random cards on the table, most of them facing up.
+이 코드 조각은 임시 코드로 다음 장에서 제거할 것이지만,
+지금은 테이블 위에 무작위 카드 28장을 깔아 주며, 대부분은 앞면이 위로 향해 있습니다.
 
 
-### Rendering
+<a id="rendering"></a>
 
-In order to be able to see a card, we need to implement its `render()` method.
-Since the card has two distinct states -- face up or down -- we will
-implement rendering for these two states separately. Add the following methods
-into the `Card` class:
+### 렌더링
+
+카드를 볼 수 있으려면 `render()` 메서드를 구현해야 합니다.
+카드에는 앞면이 위인 상태와 뒷면이 위인 상태라는 두 가지 뚜렷한 상태가 있으므로,
+두 상태의 렌더링을 따로 구현하겠습니다. `Card` 클래스에 다음 메서드를
+추가하세요.
 
 ```dart
   @override
@@ -230,17 +236,17 @@ into the `Card` class:
 
 ### renderBack()
 
-Since rendering the back of a card is simpler, we will do it first.
+카드 뒷면을 렌더링하는 것이 더 간단하므로 이것부터 하겠습니다.
 
-The `render()` method of a `PositionComponent` operates in a local coordinate
-system, which means we don't need to worry about where the card is located on
-the screen. This local coordinate system has the origin at the top-left corner
-of the component, and extends to the right by `width` and down by `height`
-pixels.
+`PositionComponent`의 `render()` 메서드는 로컬 좌표계에서 동작합니다.
+즉, 카드가 화면의 어디에 있는지 신경 쓸 필요가 없습니다.
+이 로컬 좌표계는 컴포넌트의 왼쪽 위 모서리를 원점으로 하며,
+오른쪽으로 `width`, 아래쪽으로 `height` 픽셀만큼
+뻗어 있습니다.
 
-There is a lot of artistic freedom in how to draw the back of a card, but my
-implementation contains a solid background, a border, a flame logo in the
-middle, and another decorative border:
+카드 뒷면을 어떻게 그릴지에는 예술적 자유가 많지만, 제
+구현은 단색 배경, 테두리, 가운데의 Flame 로고,
+그리고 또 하나의 장식용 테두리로 이루어져 있습니다.
 
 ```dart
   void _renderBack(Canvas canvas) {
@@ -251,11 +257,11 @@ middle, and another decorative border:
   }
 ```
 
-The most interesting part here is the rendering of a sprite: we want to
-render it in the middle (`size/2`), and we use `Anchor.center` to tell the
-engine that we want the *center* of the sprite to be at that point.
+여기서 가장 흥미로운 부분은 스프라이트 렌더링입니다. 스프라이트를
+가운데(`size/2`)에 렌더링하고 싶으므로, `Anchor.center`를 사용해 스프라이트의
+*중심*이 그 지점에 오도록 하고 싶다고 엔진에 알려 줍니다.
 
-Various properties used in the `_renderBack()` method are defined as follows:
+`_renderBack()` 메서드에서 사용하는 여러 속성은 다음과 같이 정의합니다.
 
 ```dart
   static final Paint backBackgroundPaint = Paint()
@@ -276,21 +282,20 @@ Various properties used in the `_renderBack()` method are defined as follows:
   static final Sprite flameSprite = klondikeSprite(1367, 6, 357, 501);
 ```
 
-I declared these properties as static because they will all be the same across
-all 52 card objects, so we might as well save some resources by having them
-initialized only once.
+이 속성들을 static으로 선언한 이유는 52개의 카드 객체 모두에서 같기 때문입니다.
+그러니 한 번만 초기화해서 리소스를 조금이라도 아끼는 편이
+낫습니다.
 
 
 ### renderFront()
 
-When rendering the face of a card, we will follow the standard card design: the
-rank and the suit in two opposite corners, plus the number of pips equal to the
-rank value. The court cards (jack, queen, king) will have special images in the
-center.
+카드 앞면을 렌더링할 때는 표준 카드 디자인을 따릅니다. 서로 반대편의 두 모서리에
+숫자와 무늬를 넣고, 숫자 값만큼 무늬 기호(pip)를 넣습니다. 그림 카드(잭, 퀸, 킹)는
+가운데에 특별한 이미지를 넣습니다.
 
-As before, we begin by declaring some constants that will be used for rendering.
-The background of a card will be black, whereas the border will be different
-depending on whether the card is of a "red" suit or "black":
+앞에서처럼 렌더링에 사용할 상수 몇 개를 선언하는 것으로 시작합니다.
+카드 배경은 검은색이고, 테두리는 카드가 "빨간색" 무늬인지 "검은색" 무늬인지에
+따라 달라집니다.
 
 ```dart
   static final Paint frontBackgroundPaint = Paint()
@@ -305,7 +310,7 @@ depending on whether the card is of a "red" suit or "black":
     ..strokeWidth = 10;
 ```
 
-Next, we also need the images for the court cards:
+다음으로 그림 카드용 이미지도 필요합니다.
 
 ```dart
   static final Sprite redJack = klondikeSprite(81, 565, 562, 488);
@@ -313,12 +318,12 @@ Next, we also need the images for the court cards:
   static final Sprite redKing = klondikeSprite(1305, 532, 407, 549);
 ```
 
-Note that I'm calling these sprites `redJack`, `redQueen`, and `redKing`. This
-is because, after some trial, I found that the images that I have don't look
-very well on black-suit cards. So what I decided to do is to take these images
-and *tint* them with a blueish hue. Tinting of a sprite can be achieved by
-using a paint with `colorFilter` set to the specified color and the `srcATop`
-blending mode:
+이 스프라이트들을 `redJack`, `redQueen`, `redKing`이라고 부르고 있다는 점에 주목하세요.
+몇 번 시도해 보니 제가 가진 이미지가 검은색 무늬 카드에서는
+그다지 보기 좋지 않았기 때문입니다. 그래서 이 이미지들을 가져와
+푸르스름한 색조로 *틴트(tint)* 하기로 했습니다. 스프라이트의 틴트는
+`colorFilter`를 지정한 색과 `srcATop` 블렌딩 모드로 설정한 paint를
+사용해 구현할 수 있습니다.
 
 ```dart
   static final blueFilter = Paint()
@@ -334,8 +339,8 @@ blending mode:
     ..paint = blueFilter;
 ```
 
-Now we can start coding the render method itself. First, draw the background
-and the card border:
+이제 render 메서드 자체를 코딩할 수 있습니다. 먼저 배경과
+카드 테두리를 그립니다.
 
 ```dart
   void _renderFront(Canvas canvas) {
@@ -347,11 +352,11 @@ and the card border:
   }
 ```
 
-In order to draw the rest of the card, I need one more helper method. This
-method will draw the provided sprite on the canvas at the specified place (the
-location is relative to the dimensions of the card). The sprite can be
-optionally scaled. In addition, if flag `rotate=true` is passed, the sprite
-will be drawn as if it was rotated 180º around the center of the card:
+카드의 나머지 부분을 그리려면 헬퍼 메서드가 하나 더 필요합니다. 이
+메서드는 주어진 스프라이트를 캔버스의 지정된 위치(카드 치수에 대한
+상대 위치)에 그립니다. 스프라이트는 선택적으로
+스케일할 수 있습니다. 또한 `rotate=true` 플래그를 전달하면 스프라이트가
+카드 중심을 기준으로 180º 회전한 것처럼 그려집니다.
 
 ```dart
   void _drawSprite(
@@ -380,8 +385,8 @@ will be drawn as if it was rotated 180º around the center of the card:
   }
 ```
 
-Let's draw the rank and the suit symbols in the corners of the card. Add the
-following to the `_renderFront()` method:
+카드 모서리에 숫자와 무늬 기호를 그려 봅시다. `_renderFront()` 메서드에
+다음을 추가하세요.
 
 ```dart
     final rankSprite = suit.isBlack ? rank.blackSprite : rank.redSprite;
@@ -392,10 +397,10 @@ following to the `_renderFront()` method:
     _drawSprite(canvas, suitSprite, 0.1, 0.18, scale: 0.5, rotate: true);
 ```
 
-The middle of the card is rendered in the same manner: we will create a big
-switch statement on the card's rank, and draw pips accordingly. The code
-below may seem long, but it is actually quite repetitive and consists only
-of drawing various sprites in different places on the card's face:
+카드 가운데도 같은 방식으로 렌더링합니다. 카드의 숫자에 대한 큰
+switch 문을 만들고, 그에 맞게 무늬 기호를 그립니다. 아래 코드는
+길어 보일 수 있지만, 실제로는 상당히 반복적이며 카드 앞면의 여러 위치에
+다양한 스프라이트를 그리는 것뿐입니다.
 
 ```dart
     switch (rank.value) {
@@ -473,14 +478,14 @@ of drawing various sprites in different places on the card's face:
     }
 ```
 
-And this is it with the rendering of the `Card` component. If you run the code
-now, you would see four rows of cards neatly spread on the table. Refreshing
-the page will lay down a new set of cards. Remember that we have laid these
-cards in this way only temporarily, in order to be able to check that rendering
-works properly.
+`Card` 컴포넌트의 렌더링은 여기까지입니다. 지금 코드를 실행하면
+네 줄의 카드가 테이블 위에 가지런히 펼쳐진 것을 볼 수 있습니다. 페이지를
+새로 고치면 새로운 카드 세트가 깔립니다. 렌더링이 제대로 동작하는지
+확인하기 위해 임시로만 카드를 이렇게 깔았다는 점을
+기억하세요.
 
-In the next chapter we will discuss how to implement interactions with the
-cards, that is, how to make them draggable and tappable.
+다음 장에서는 카드와의 상호작용, 즉 카드를 드래그하고 탭할 수 있게
+만드는 방법을 구현해 봅니다.
 
 ```{flutter-app}
 :sources: ../tutorials/klondike/app

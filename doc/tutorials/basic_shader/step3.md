@@ -1,28 +1,34 @@
-# 3. Shader
+<a id="3-shader"></a>
+
+# 3. 셰이더
 
 
-## Considerations
+<a id="considerations"></a>
 
-In this section we will create the fragment (pixel) shader program that runs on the GPU.
+## 고려 사항
 
-Keep in mind that shader code requires different thinking from regular Dart code, since the
-fragment shader runs once per pixel, every frame.
+이 섹션에서는 GPU에서 실행되는 프래그먼트(픽셀) 셰이더 프로그램을 만듭니다.
+
+프래그먼트 셰이더는 매 프레임 픽셀마다 한 번씩 실행되므로, 셰이더 코드는 일반적인 Dart 코드와는
+다른 사고방식이 필요하다는 점을 기억하세요.
 
 ```{note}
-Be mindful of branching and looping in shaders, as operations
-scale linearly with pixel count and loop iterations per frame.
+셰이더에서의 분기와 반복에 주의하세요. 연산량이 픽셀 수와
+프레임당 반복 횟수에 비례해 선형적으로 늘어납니다.
 ```
 
 ```{note}
-Shader optimization is out of scope for this tutorial. As a
-quick example, comparing squared distances instead of using
-`sqrt` would be more efficient.
+셰이더 최적화는 이 튜토리얼의 범위를 벗어납니다. 간단한
+예를 들면, `sqrt`를 사용하는 대신 거리의 제곱을
+비교하는 것이 더 효율적입니다.
 ```
 
 
-## Shader code
+<a id="shader-code"></a>
 
-Create a new directory at `assets/shaders/` and a file named `outline.frag`:
+## 셰이더 코드
+
+`assets/shaders/`에 새 디렉터리를 만들고 `outline.frag`라는 파일을 만듭니다.
 
 ```glsl
 #version 460 core
@@ -44,37 +50,37 @@ void main() {
   vec2 uv = FlutterFragCoord().xy / uSize;
   vec4 texColor = texture(uTexture, uv);
 
-  // If the current pixel is not transparent, render the original color
+  // 현재 픽셀이 투명하지 않으면 원래 색상을 렌더링합니다
   if (texColor.a > 0.0) {
     fragColor = texColor;
     return;
   }
 
-  // Check surrounding pixels for outline
+  // 외곽선을 위해 주변 픽셀을 확인합니다
   vec2 texelSize = 1.0 / uSize;
   bool foundOpaqueNearby = false;
 
-  // Sample in the bounding square pattern around the current pixel
-  // You must use static const loop counts in GLSL
+  // 현재 픽셀 주위의 정사각형 패턴으로 샘플링합니다
+  // GLSL에서는 반복 횟수로 정적 상수를 사용해야 합니다
   for (int x = -MAX_SAMPLE_DISTANCE; x <= MAX_SAMPLE_DISTANCE; x++) {
     for (int y = -MAX_SAMPLE_DISTANCE; y <= MAX_SAMPLE_DISTANCE; y++) {
       if (x == 0 && y == 0) continue;
 
-      // Check real distance instead of manhattan distance
+      // 맨해튼 거리 대신 실제 거리를 확인합니다
       float distance = sqrt(float( x*x + y*y ));
       if (distance > uOutlineWidth) continue;
 
-      // Sample the shifted pixel from the current pixel (uv)
+      // 현재 픽셀(uv)에서 이동한 위치의 픽셀을 샘플링합니다
       vec2 offset = vec2(float(x), float(y)) * texelSize;
       vec4 sampleColor = texture(uTexture, uv + offset);
 
       if (sampleColor.a > 0.0) {
-        // We found solid color in the iteration --> sprite is nearby
+        // 반복 중에 불투명한 색상을 찾았습니다 --> 근처에 스프라이트가 있습니다
         foundOpaqueNearby = true;
         break;
       }
     }
-    // Break out from outer loop too
+    // 바깥쪽 반복문에서도 빠져나옵니다
     if (foundOpaqueNearby) break;
   }
 
@@ -86,21 +92,23 @@ void main() {
 }
 ```
 
-For each transparent pixel, the shader checks whether any nearby pixel is opaque. If so, it
-colors the pixel with the outline color (passed in as a uniform). Otherwise, it stays fully
-transparent. This is why transparent `.png` images are required.
+셰이더는 투명한 각 픽셀에 대해 주변 픽셀 중 불투명한 것이 있는지 확인합니다. 있다면 그 픽셀을
+(uniform으로 전달된) 외곽선 색상으로 칠합니다. 그렇지 않으면 완전히 투명한 상태로 둡니다.
+투명한 `.png` 이미지가 필요한 이유가 바로 이것입니다.
 
 ```{note}
-GLSL loop bounds must be compile-time constants, so the
-`uOutlineWidth` uniform cannot be used directly. Make sure
-`MAX_SAMPLE_DISTANCE` is at least as large as the outline
-width you set in Dart.
+GLSL의 반복 범위는 컴파일 타임 상수여야 하므로
+`uOutlineWidth` uniform을 직접 사용할 수 없습니다.
+`MAX_SAMPLE_DISTANCE`가 Dart에서 설정한 외곽선 두께
+이상인지 확인하세요.
 ```
 
 
-## Shader resource
+<a id="shader-resource"></a>
 
-Register the shader in `pubspec.yaml` so Flutter bundles it at build time:
+## 셰이더 리소스
+
+Flutter가 빌드 시 셰이더를 번들링하도록 `pubspec.yaml`에 셰이더를 등록합니다.
 
 ```yaml
 flutter:
@@ -110,8 +118,8 @@ flutter:
     - assets/shaders/outline.frag
 ```
 
-Run the application. You should now see two sprites: one plain and one with a colored outline.
+애플리케이션을 실행합니다. 이제 두 개의 스프라이트가 보일 것입니다. 하나는 일반 스프라이트이고, 다른 하나는 색상 외곽선이 있는 스프라이트입니다.
 
 ![Image of the reference and the shader](../../images/tutorials/basic_shader/final_result.png)
 
-The basic shader is working. It's time to experiment!
+기본 셰이더가 동작합니다. 이제 실험해 볼 차례입니다!

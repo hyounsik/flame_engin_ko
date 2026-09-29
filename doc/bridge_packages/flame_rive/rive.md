@@ -1,23 +1,25 @@
 # flame_rive
 
-`flame_rive` is a bridge library for using [rive](https://rive.app/) animations in your Flame game.
-Rive is a real-time interactive design and animation tool and you use it to create animations.
+`flame_rive`는 Flame 게임에서 [rive](https://rive.app/) 애니메이션을 사용하기 위한 브릿지 라이브러리입니다.
+Rive는 실시간 인터랙티브 디자인 및 애니메이션 도구로, 애니메이션을 만드는 데 사용합니다.
 
-To use a file created by Rive in your game you need to add `flame_rive` to your pubspec.yaml, as can
-be seen in the
-[Flame Rive example](https://github.com/flame-engine/flame/tree/main/packages/flame_rive/example)
-and in the pub.dev [installation instructions](https://pub.dev/packages/flame_rive).
+Rive로 만든 파일을 게임에서 사용하려면 pubspec.yaml에 `flame_rive`를 추가해야 합니다.
+자세한 내용은
+[Flame Rive 예제](https://github.com/flame-engine/flame/tree/main/packages/flame_rive/example)와
+pub.dev의 [설치 안내](https://pub.dev/packages/flame_rive)에서 확인할 수 있습니다.
 
 
-## How to use it
+<a id="how-to-use-it"></a>
 
-First, start with adding the `animation.riv` file to the assets folder. Then load the artboard of
-the animation to the game using the `loadArtboard` method. After that, create the
-`StateMachine` from the artboard and pass it to the `RiveComponent`. The component will
-automatically advance the state machine for you.
+## 사용 방법
 
-Interactivity should be handled via [Data Binding](https://rive.app/docs/runtimes/data-binding)
-instead of state machine inputs, as they are deprecated in Rive 0.14.x.
+먼저 assets 폴더에 `animation.riv` 파일을 추가합니다. 그다음 `loadArtboard` 메서드를 사용해
+애니메이션의 artboard를 게임에 불러옵니다. 그런 다음 artboard에서
+`StateMachine`을 만들어 `RiveComponent`에 전달합니다. 컴포넌트가
+state machine을 자동으로 진행시켜 줍니다.
+
+Rive 0.14.x에서 state machine 입력은 지원 중단(deprecated)되었으므로, 상호작용은 state machine 입력 대신
+[Data Binding](https://rive.app/docs/runtimes/data-binding)으로 처리해야 합니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -63,11 +65,13 @@ class RiveExampleGame extends FlameGame {
 }
 ```
 
-You can use the state machine to manage the state of animation via data binding.
-Check out the example for more information.
+state machine과 data binding을 사용해 애니메이션의 상태를 관리할 수 있습니다.
+자세한 내용은 예제를 확인하세요.
 
 
-## Full Example
+<a id="full-example"></a>
 
-You can check an example
-[here](https://github.com/flame-engine/flame/tree/main/packages/flame_rive/example).
+## 전체 예제
+
+예제는
+[여기](https://github.com/flame-engine/flame/tree/main/packages/flame_rive/example)에서 확인할 수 있습니다.

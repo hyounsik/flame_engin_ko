@@ -1,42 +1,48 @@
-# Basic Concepts
+<a id="basic-concepts"></a>
 
-Before delving into the details, let's explore some key concepts and terminology used in 3D
-rendering and how they apply to `flame_3d`.
+# 기본 개념
 
-
-## Vertices, Surfaces, Meshes, and Models
-
-A **vertex** is a point in 3D space (think `Vector3`), with a few more properties such as a normal
-vector, texture coordinates, color and joint information.
-
-Using vertices arranged in triangles, you can create a **surface**. A surface is simply a collection
-of triangles that share the same material.
-
-Then, you can group multiple surfaces into a **mesh** - a "solid" shape in 3D world. A mesh can be
-as simple as a cube or a sphere, and many pre-defined options are provided by Flame, such as `Cube`,
-`Sphere`, `Plane`, and `Cylinder`. You can also create custom meshes by providing your own vertices
-and triangle indices.
-
-Finally, a **model** is a collection of meshes, usually loaded from an external file. Models can
-also contain animations, which can be played on the model class.
-
-Typically, for most games, unless you are working with basic shapes and polygons, all your
-components will be `ModelComponent`s loaded from external model files. Currently, `flame_3d`
-supports the formats `OBJ` (for very simple models, only vertices) and `GLTF` or `GLB` (for complex
-models, with custom materials and animations).
+자세한 내용을 살펴보기 전에, 3D 렌더링에서 사용하는 몇 가지 핵심 개념과 용어, 그리고 이것들이
+`flame_3d`에 어떻게 적용되는지 알아보겠습니다.
 
 
-## Component Hierarchy
+<a id="vertices-surfaces-meshes-and-models"></a>
 
-The main building block of a 3D scene is the `Component3D`, which is the base class for all 3D:
+## 정점, 서피스, 메시, 모델
+
+**정점(vertex)**은 3D 공간의 한 점(`Vector3`를 떠올리면 됩니다)이며, 법선
+벡터, 텍스처 좌표, 색상, joint 정보 같은 몇 가지 속성을 더 가집니다.
+
+삼각형으로 배열된 정점을 사용하면 **서피스(surface)**를 만들 수 있습니다. 서피스는 같은 재질을 공유하는
+삼각형들의 모음일 뿐입니다.
+
+그다음 여러 서피스를 묶어 3D 월드의 "입체" 도형인 **메시(mesh)**를 만들 수 있습니다. 메시는
+정육면체나 구처럼 단순할 수 있으며, Flame은 `Cube`, `Sphere`, `Plane`, `Cylinder` 같은
+미리 정의된 옵션을 많이 제공합니다. 직접 정점과 삼각형 인덱스를 제공해
+커스텀 메시를 만들 수도 있습니다.
+
+마지막으로 **모델(model)**은 메시들의 모음으로, 보통 외부 파일에서 불러옵니다. 모델은
+애니메이션도 포함할 수 있으며, 이 애니메이션은 모델 클래스에서 재생할 수 있습니다.
+
+일반적으로 대부분의 게임에서는 기본 도형과 폴리곤으로 작업하는 경우가 아니라면 모든
+컴포넌트가 외부 모델 파일에서 불러온 `ModelComponent`가 됩니다. 현재 `flame_3d`는
+`OBJ`(매우 단순한 모델용으로, 정점만 포함) 포맷과 `GLTF` 또는 `GLB`(커스텀 재질과 애니메이션을 가진
+복잡한 모델용) 포맷을 지원합니다.
+
+
+<a id="component-hierarchy"></a>
+
+## 컴포넌트 계층 구조
+
+3D 씬의 주요 구성 요소는 모든 3D 요소의 기본 클래스인 `Component3D`입니다.
 
 ```{include} diagrams/flame_3d_components.md
 ```
 
-Instead of extending `World` directly, your `FlameGame`'s world must be an instance `World3D`. You
-can add normal Flame `Component`s to it, which will be rendered as usual, and you can also add
-`Component3D`s, which will be rendered in 3D space. You can also add `LightComponent`s to the
-`World3D` (note: as of now, they need to be added to the root of the world), which will add light
-sources to the scene. Light sources are not rendered themselves, just change how other
-`Component3D`s are rendered.
+`FlameGame`의 월드는 `World`를 직접 상속하는 대신 `World3D`의 인스턴스여야 합니다.
+여기에 일반 Flame `Component`를 추가할 수 있으며 평소처럼 렌더링됩니다. 또한
+`Component3D`를 추가할 수도 있으며, 이는 3D 공간에 렌더링됩니다. `World3D`에 `LightComponent`를
+추가할 수도 있는데(참고: 현재는 월드의 루트에 추가해야 합니다), 이는 씬에 광원을
+추가합니다. 광원 자체는 렌더링되지 않으며, 다른 `Component3D`가 렌더링되는 방식만
+바꿉니다.
 

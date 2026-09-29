@@ -1,51 +1,57 @@
-# Commands
+<a id="commands"></a>
 
-The **commands** are special instructions surrounded with double angle-brackets: `<<stop>>`. There
-are both *built-in* and *user-defined* commands.
+# 명령
 
-The **built-in** commands are those that are supported by the YarnSpinner runtime itself. Typically
-they would alter the execution of the dialogue, or perform a similar dialogue-related function. The
-full list of such commands is given below.
+**명령**은 이중 꺾쇠괄호로 감싼 특별한 명령어입니다: `<<stop>>`. 명령에는 *내장* 명령과
+*사용자 정의* 명령이 있습니다.
 
-The **user-defined** commands are those that you yourself create and then use within your yarn
-scripts. For a full description of these commands, see the document on [user-defined commands].
+**내장** 명령은 YarnSpinner 런타임 자체가 지원하는 명령입니다. 일반적으로 대화의 실행을 바꾸거나
+그와 비슷한 대화 관련 기능을 수행합니다. 이런 명령의 전체 목록은 아래에 있습니다.
 
-
-## Built-in commands
+**사용자 정의** 명령은 여러분이 직접 만들어 yarn 스크립트 안에서 사용하는 명령입니다. 이런 명령에
+대한 자세한 설명은 [사용자 정의 명령][user-defined commands] 문서를 참고하세요.
 
 
-### Variables
+<a id="built-in-commands"></a>
+
+## 내장 명령
+
+
+<a id="variables"></a>
+
+### 변수
 
 **[\<\<character\>\>](character.md)**
-: Declares a character (person).
+: 캐릭터(인물)를 선언합니다.
 
 **[\<\<declare\>\>](declare.md)**
-: Declares a global variable.
+: 전역 변수를 선언합니다.
 
 **[\<\<local\>\>](local.md)**
-: Declares a local variable.
+: 지역 변수를 선언합니다.
 
 **[\<\<set\>\>](set.md)**
-: Updates the value of a variable (either local or global).
+: 변수(지역 또는 전역)의 값을 갱신합니다.
 
 
-### Control flow
+<a id="control-flow"></a>
+
+### 제어 흐름
 
 **[\<\<if\>\>](if.md)**
-: Conditionally executes certain statements. This is equivalent to the **if** keyword in most
-  programming languages.
+: 특정 문장들을 조건부로 실행합니다. 대부분의 프로그래밍 언어의 **if** 키워드에 해당합니다.
 
 **[\<\<jump\>\>](jump.md)**
-: Switches execution to another node.
+: 실행을 다른 노드로 전환합니다.
 
 **[\<\<stop\>\>](stop.md)**
-: Stops executing the current node.
+: 현재 노드의 실행을 중지합니다.
 
 **[\<\<visit\>\>](visit.md)**
-: Temporarily jumps to another node, and then comes back.
+: 일시적으로 다른 노드로 점프했다가 다시 돌아옵니다.
 
 **[\<\<wait\>\>](wait.md)**
-: Pauses the dialogue for the specified amount of time.
+: 지정한 시간 동안 대화를 일시 정지합니다.
 
 
 [user-defined commands]: user_defined_commands.md
@@ -62,5 +68,5 @@ scripts. For a full description of these commands, see the document on [user-def
 <<stop>>               <stop.md>
 <<visit>>              <visit.md>
 <<wait>>               <wait.md>
-User-defined commands  <user_defined_commands.md>
+사용자 정의 명령       <user_defined_commands.md>
 ```

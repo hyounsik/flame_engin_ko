@@ -1,8 +1,10 @@
-# Documentation Site
+<a id="documentation-site"></a>
 
-Flame's documentation is written in **Markdown**. It is then rendered into HTML with the help of
-the [Sphinx] engine and its [MyST] plugin. The rendered files are then manually (but with the help
-of a script) published to [flame-docs-site], where the site is served via [GitHub Pages].
+# 문서 사이트
+
+Flame의 문서는 **Markdown**으로 작성됩니다. 작성된 문서는 [Sphinx] 엔진과 그 [MyST] 플러그인의
+도움을 받아 HTML로 렌더링됩니다. 렌더링된 파일은 (스크립트의 도움을 받지만) 수동으로
+[flame-docs-site]에 게시되며, 사이트는 [GitHub Pages]를 통해 제공됩니다.
 
 [Sphinx]: https://www.sphinx-doc.org/en/master/
 [MyST]: https://myst-parser.readthedocs.io/en/latest/
@@ -12,15 +14,17 @@ of a script) published to [flame-docs-site], where the site is served via [GitHu
 
 ## Markdown
 
-The main documentation site is written in Markdown. We assume that you're already familiar with the
-basics of the Markdown syntax (if not, there are plenty of guides on the Internet). Instead, this
-section will focus on the Markdown extensions that are enabled in our build system.
+메인 문서 사이트는 Markdown으로 작성됩니다. 여러분이 Markdown 문법의 기초에 이미 익숙하다고
+가정합니다(그렇지 않다면 인터넷에 가이드가 많이 있습니다). 대신 이 섹션에서는 우리 빌드 시스템에서
+활성화된 Markdown 확장 기능에 초점을 맞춥니다.
 
 
-## Table of contents
+<a id="table-of-contents"></a>
 
-The table of contents for the site must be created manually. This is done using special `{toctree}`
-blocks, one per each subdirectory:
+## 목차
+
+사이트의 목차는 직접 만들어야 합니다. 이는 하위 디렉터리마다 하나씩 있는 특별한 `{toctree}`
+블록을 사용하여 이루어집니다.
 
 `````markdown
 ```{toctree}
@@ -31,14 +35,16 @@ Second Topic   <topic2.md>
 ```
 `````
 
-When adding new documents into the documentation site, make sure that they are mentioned in one of
-the toctrees -- otherwise you will see a warning during the build that the document is orphaned.
+문서 사이트에 새 문서를 추가할 때는 반드시 toctree 중 하나에 포함되도록 하세요. 그렇지 않으면
+빌드 중에 문서가 고아(orphaned) 상태라는 경고가 표시됩니다.
 
 
-## Admonitions
+<a id="admonitions"></a>
 
-Admonitions are emphasized blocks of text with a distinct appearance. They are created using the
-triple-backticks syntax:
+## 애드모니션
+
+애드모니션(admonition)은 독특한 모양으로 강조된 텍스트 블록입니다. 백틱 세 개 문법을 사용하여
+만듭니다.
 
 `````markdown
 ```{note}
@@ -56,26 +62,28 @@ Also check out this cool thingy.
 `````
 
 ```{note}
-Please note this very important caveat.
+이 매우 중요한 주의 사항에 유의하세요.
 ```
 
 ```{warning}
-Don't look down, or you will encounter an error.
+아래를 보지 마세요. 그러면 오류를 만나게 됩니다.
 ```
 
 ```{error}
-I told you so.
+그러게 내가 뭐랬어요.
 ```
 
 ```{seealso}
-Also check out this cool thingy.
+이 멋진 것도 확인해 보세요.
 ```
 
 
-## Deprecations
+<a id="deprecations"></a>
 
-The special `{deprecated}` block can be used to mark some part of documentation or syntax as being
-deprecated. This block requires specifying the version when the deprecation has occurred
+## 지원 중단
+
+특별한 `{deprecated}` 블록을 사용하면 문서나 문법의 일부를 지원 중단(deprecated)된 것으로
+표시할 수 있습니다. 이 블록에는 지원 중단이 발생한 버전을 지정해야 합니다.
 
 `````markdown
 ```{deprecated} v1.3.0
@@ -84,20 +92,22 @@ Please use this **other** thing instead.
 ```
 `````
 
-Which would be rendered like this:
+이는 다음과 같이 렌더링됩니다.
 
 ```{deprecated} v1.3.0
 
-Please use this **other** thing instead.
+대신 이 **다른** 것을 사용하세요.
 ```
 
 
-## Live examples
+<a id="live-examples"></a>
 
-Our documentation site includes a custom-built **flutter-app** directive which allows creating
-Flutter widgets and embedding them alongside the overall documentation content.
+## 라이브 예제
 
-In Markdown, the code for inserting an embed looks like this:
+우리 문서 사이트에는 직접 만든 **flutter-app** 지시문이 있어, Flutter 위젯을 만들어 문서 내용과
+함께 삽입할 수 있습니다.
+
+Markdown에서 임베드를 삽입하는 코드는 다음과 같습니다.
 
 `````markdown
 ```{flutter-app}
@@ -109,34 +119,33 @@ In Markdown, the code for inserting an embed looks like this:
 ```
 ``````
 
-Here's what the different options mean:
+각 옵션의 의미는 다음과 같습니다.
 
-- **sources**: specifies the name of the root directory where the Flutter code that you wish to run
-  is located. This directory must be a Flutter repository, and there must be a `pubspec.yaml` file
-  there. The path is considered relative to the `doc/_sphinx` directory.
+- **sources**: 실행하려는 Flutter 코드가 있는 루트 디렉터리의 이름을 지정합니다. 이 디렉터리는
+  Flutter 저장소여야 하며, 그 안에 `pubspec.yaml` 파일이 있어야 합니다. 경로는 `doc/_sphinx`
+  디렉터리를 기준으로 한 상대 경로로 간주됩니다.
 
-- **page**: a sub-path within the root directory given in `sources`. This option has two effects:
-  first, it is appended to the path of the html page of the widget, like so: `main.dart.html?$page`.
-  Secondly, the button to show the source code of the embed will display the code from the file or
-  directory with the name given by `page`.
+- **page**: `sources`로 지정한 루트 디렉터리 안의 하위 경로입니다. 이 옵션에는 두 가지 효과가 있습니다.
+  첫째, `main.dart.html?$page`처럼 위젯 html 페이지의 경로 뒤에 덧붙여집니다.
+  둘째, 임베드의 소스 코드를 보여 주는 버튼이 `page`로 지정한 이름의 파일이나 디렉터리의 코드를
+  표시합니다.
 
-  The purpose of this option is to be able to bundle multiple examples into a single executable.
-  When using this option, the `main.dart` file of the app should route the execution to the proper
-  widget according to the `page` being passed.
+  이 옵션의 목적은 여러 예제를 하나의 실행 파일로 묶을 수 있게 하는 것입니다.
+  이 옵션을 사용할 때는 앱의 `main.dart` 파일이 전달된 `page`에 따라 알맞은 위젯으로 실행을
+  라우팅해야 합니다.
 
-- **show**: contains a subset of modes: `widget`, `code`, `infobox`, and `popup`. The `widget` mode
-  creates an iframe with the embedded example, directly within the page. The `code` mode will show
-  a button that allows the user to see the code that produced this example. The `popup` mode also
-  shows a button, which displays the example in an overlay window. This is more suitable for
-  demoing larger apps. Using both "widget" and "popup" modes at the same time is not recommended.
-  Finally, the `infobox` mode will display the result in a floating window -- this mode is best
-  combined with `widget` and `code`.
+- **show**: `widget`, `code`, `infobox`, `popup` 모드 중 일부를 포함합니다. `widget` 모드는
+  페이지 안에 직접 예제를 임베드한 iframe을 만듭니다. `code` 모드는 이 예제를 만든 코드를
+  사용자가 볼 수 있게 하는 버튼을 표시합니다. `popup` 모드도 버튼을 표시하며, 이 버튼은 예제를
+  오버레이 창에 표시합니다. 이 방식은 더 큰 앱을 시연할 때 더 적합합니다. "widget"과 "popup"
+  모드를 동시에 사용하는 것은 권장하지 않습니다. 마지막으로 `infobox` 모드는 결과를 떠 있는 창에
+  표시합니다. 이 모드는 `widget`, `code`와 함께 사용하는 것이 가장 좋습니다.
 
-- **width**: an integer that defines the width of the embedded application.  If this is not defined,
-  the width will be 100%.
+- **width**: 임베드된 애플리케이션의 너비를 정의하는 정수입니다. 정의하지 않으면
+  너비는 100%가 됩니다.
 
-- **height**: an integer that defines the height of the embedded application. If this is not
-  defined, the height will be 350px.
+- **height**: 임베드된 애플리케이션의 높이를 정의하는 정수입니다. 정의하지 않으면
+  높이는 350px가 됩니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -145,86 +154,83 @@ Here's what the different options mean:
 ```
 
 
-## Standardization and Templates
+<a id="standardization-and-templates"></a>
 
-For every section or package added to the documentation, naming conventions, directory structure,
-and standardized table of contents are important.  Every section and package must have a table of
-contents or an entry in the parent markdown file to allow navigation from the left sidebar menu in
-logical or alphabetical order. Additionally, naming conventions should be followed for organization,
-such as:
+## 표준화와 템플릿
+
+문서에 추가되는 모든 섹션이나 패키지에는 명명 규칙, 디렉터리 구조, 표준화된 목차가 중요합니다.
+모든 섹션과 패키지는 왼쪽 사이드바 메뉴에서 논리적 순서나 알파벳 순서로 탐색할 수 있도록
+목차를 가지거나 부모 markdown 파일에 항목이 있어야 합니다. 또한 정리를 위해 다음과 같은
+명명 규칙을 따라야 합니다.
 
 - bridge_packages/package_name/package_name.md
 - documentation_section/documentation_section.md
 
 ```{note}
-Avoid having spaces in the paths to the docs since that will keep you from
-building the project due to
-[this bug](https://github.com/ipython/ipython/pull/13765).
+문서 경로에 공백이 들어가지 않도록 하세요.
+[이 버그](https://github.com/ipython/ipython/pull/13765) 때문에
+프로젝트를 빌드할 수 없게 됩니다.
 ```
 
 
-## Building documentation locally
+<a id="building-documentation-locally"></a>
 
-Building the documentation site on your own computer is fairly simple. All you need is the
-following:
+## 로컬에서 문서 빌드하기
 
-1. A working **Flutter** installation, accessible from the command line.
+자신의 컴퓨터에서 문서 사이트를 빌드하는 것은 꽤 간단합니다. 필요한 것은 다음과 같습니다.
 
-2. **Melos** command-line tool, as per the [contributing] guide.
+1. 명령줄에서 사용할 수 있는, 정상적으로 설치된 **Flutter**.
 
-3. A **Python** environment, with python version 3.8+ or higher. Having a dedicated python
-   virtual environment is recommended but not required.
+2. [기여하기][contributing] 가이드에 따른 **Melos** 명령줄 도구.
 
-4. Install the remaining requirements using the command
+3. python 3.8 이상의 **Python** 환경. 전용 python 가상 환경을 두는 것을 권장하지만
+   필수는 아닙니다.
+
+4. 다음 명령을 사용하여 나머지 요구 사항을 설치합니다.
 
    ```shell
    melos run doc-setup
    ```
 
-Once these prerequisites are met, you can build the documentation by using the built-in Melos
-target:
+이 전제 조건들이 갖춰지면 내장 Melos 타깃을 사용해 문서를 빌드할 수 있습니다.
 
 ```shell
 melos doc-build
 ```
 
-The **melos doc-build** command here renders the documentation site into HTML. This command needs to
-be re-run every time you make changes to any of the documents. Luckily, it is smart enough to only
-rebuild the documents that have changed since the previous run, so usually, a rebuild takes only a
-second or two.
+여기서 **melos doc-build** 명령은 문서 사이트를 HTML로 렌더링합니다. 이 명령은 문서를 변경할
+때마다 다시 실행해야 합니다. 다행히 이전 실행 이후 변경된 문서만 다시 빌드할 만큼 똑똑하기
+때문에, 보통 다시 빌드하는 데는 1~2초밖에 걸리지 않습니다.
 
-If you want to automatically recompile the docs every time there is a change to one of the files
-you can use the built-in Melos target below, which will also serve and open your default
-browser with the docs.
+파일 중 하나가 변경될 때마다 문서를 자동으로 다시 컴파일하고 싶다면 아래의 내장 Melos 타깃을
+사용하면 됩니다. 이 타깃은 문서를 서빙하고 기본 브라우저로 문서를 열어 주기도 합니다.
 
 ```shell
 melos doc-serve
 ```
 
-When using the **melos doc-serve** command, the **melos doc-build** is only needed when
-there are changes to the sphinx theme. This is because the serve command both automatically
-compiles the docs on changes and also hosts them locally. The docs are served at
-`http://localhost:8000/` by default.
+**melos doc-serve** 명령을 사용할 때는 sphinx 테마에 변경이 있을 때만 **melos doc-build**가
+필요합니다. serve 명령이 변경 시 문서를 자동으로 컴파일하고 로컬에서 호스팅까지 하기 때문입니다.
+문서는 기본적으로 `http://localhost:8000/`에서 제공됩니다.
 
-There are other make commands that you may find occasionally useful too:
+가끔 유용하게 쓸 수 있는 다른 make 명령도 있습니다.
 
-- **melos doc-clean** removes all cached generated files (in case the system gets stuck in a bad
-state).
-- **melos doc-linkcheck** to check whether there are any broken links in the documentation.
-- **melos doc-kill** removes any orphaned TCP threads running on port 8000.
+- **melos doc-clean**은 캐시된 생성 파일을 모두 제거합니다(시스템이 잘못된 상태에 빠진 경우를
+대비).
+- **melos doc-linkcheck**는 문서에 깨진 링크가 있는지 검사합니다.
+- **melos doc-kill**은 8000번 포트에서 실행 중인 고아 TCP 스레드를 모두 제거합니다.
 
-The generated html files will be in the `doc/_build/html` directory, you can view them directly
-by opening the file `doc/_build/html/index.html` in your browser. The only drawback is that the
-browser won't allow any dynamic content in a file opened from a local drive. The solution to this
-is to run **melos doc-serve**.
+생성된 html 파일은 `doc/_build/html` 디렉터리에 있으며, 브라우저에서 `doc/_build/html/index.html`
+파일을 열어 직접 볼 수 있습니다. 유일한 단점은 브라우저가 로컬 드라이브에서 연 파일에서는
+동적 콘텐츠를 허용하지 않는다는 점입니다. 해결 방법은 **melos doc-serve**를 실행하는 것입니다.
 
-If you ever run the **melos doc-clean** command, the server will need to be restarted, because the
-clean command deletes the entire `html` directory.
+**melos doc-clean** 명령을 실행했다면 서버를 다시 시작해야 합니다. clean 명령이 `html`
+디렉터리 전체를 삭제하기 때문입니다.
 
 ```{note}
-Avoid having spaces in the paths to the docs since that will keep you from
-building the project due to
-[this bug](https://github.com/ipython/ipython/pull/13765).
+문서 경로에 공백이 들어가지 않도록 하세요.
+[이 버그](https://github.com/ipython/ipython/pull/13765) 때문에
+프로젝트를 빌드할 수 없게 됩니다.
 ```
 
 

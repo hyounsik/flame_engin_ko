@@ -1,32 +1,32 @@
-# Collision Detection 💥
+<a id="collision-detection-"></a>
 
-Flame comes with a powerful built-in [collision detection system](https://docs.flame-engine.org/latest/flame/collision_detection.html),
-but this API is not strongly typed. Components always get the colliding component as a
-`PositionComponent` and developers need to manually check what type of class it is.
+# 충돌 감지 💥
 
-`flame_behaviors` is all about enforcing a strongly typed API. It provides a special behavior
-called `CollisionBehavior` that describes the type of entity being targeted for collision. It
-does not, however, do any real collision detection. That is done by the
-`PropagatingCollisionBehavior`.
+Flame에는 강력한 [충돌 감지 시스템](https://docs.flame-engine.org/latest/flame/collision_detection.html)이 기본으로 포함되어 있지만,
+이 API는 강하게 타입이 지정되어 있지 않습니다. 컴포넌트는 충돌한 컴포넌트를 항상
+`PositionComponent`로 받으며, 개발자가 그것이 어떤 타입의 클래스인지 직접 확인해야 합니다.
 
-The `PropagatingCollisionBehavior` handles the collision detection by registering a hitbox on the
-parent entity. When that hitbox has a collision, the `PropagatingCollisionBehavior` checks if the
-component that the parent entity is colliding with contains the target entity type specified in
-`CollisionBehavior`.
+`flame_behaviors`는 강하게 타입이 지정된 API를 강제하는 데 중점을 둡니다. 충돌 대상이 되는 엔티티의 타입을
+기술하는 `CollisionBehavior`라는 특별한 비헤이비어를 제공합니다. 하지만 이 비헤이비어가 실제 충돌 감지를
+수행하지는 않습니다. 실제 충돌 감지는
+`PropagatingCollisionBehavior`가 수행합니다.
 
-There are two main benefits of letting the `PropagatingCollisionBehavior` handle the collision detection,
-the first and most important one is performance. By only registering collision callbacks on the
-entities themselves, the collision detection system does not have to go through any "collidable"
-behaviors, for which there could be many per entity. We only do that now if we confirm a collision
-has happened.
+`PropagatingCollisionBehavior`는 부모 엔티티에 히트박스를 등록해 충돌 감지를 처리합니다. 해당 히트박스에
+충돌이 발생하면 `PropagatingCollisionBehavior`는 부모 엔티티와 충돌한 컴포넌트가
+`CollisionBehavior`에 지정된 대상 엔티티 타입을 포함하는지 확인합니다.
 
-The second benefit is that it allows for [separation of concerns][separation_of_concerns].
-Each `CollisionBehavior` handles a specific collision use case and ensures that the developer does
-not have to write a bunch of if statements in one big method to figure out what it is colliding
-with.
+`PropagatingCollisionBehavior`가 충돌 감지를 처리하게 하면 두 가지 주요 이점이 있습니다.
+첫 번째이자 가장 중요한 이점은 성능입니다. 엔티티 자체에만 충돌 콜백을 등록하므로
+충돌 감지 시스템이 엔티티마다 여러 개 있을 수 있는 "collidable" 비헤이비어들을 일일이 거칠
+필요가 없습니다. 이제는 충돌이 발생했음이 확인된 경우에만 그렇게 합니다.
 
-A good use case of this collisional behavior pattern can be seen in the `flame_behaviors`
-[example](https://github.com/flame-engine/flame/tree/main/packages/flame_behaviors/example)
+두 번째 이점은 [관심사 분리][separation_of_concerns]가 가능하다는 점입니다.
+각 `CollisionBehavior`는 특정 충돌 사용 사례를 처리하므로, 개발자가 무엇과 충돌하고 있는지 알아내기 위해
+하나의 큰 메서드 안에 여러 if 문을 작성할 필요가
+없습니다.
+
+이 충돌 비헤이비어 패턴의 좋은 사용 사례는 `flame_behaviors`
+[예제](https://github.com/flame-engine/flame/tree/main/packages/flame_behaviors/example)에서 볼 수 있습니다.
 
 ```dart
 class MyEntityCollisionBehavior
@@ -36,12 +36,12 @@ class MyEntityCollisionBehavior
     List<Vector2> intersectionPoints,
     MyCollidingEntity other,
   ) {
-    // We are starting colliding with MyCollidingEntity
+    // MyCollidingEntity와 충돌하기 시작했습니다
   }
 
   @override
   void onCollisionEnd(MyCollidingEntity other) {
-    // We stopped colliding with MyCollidingEntity
+    // MyCollidingEntity와의 충돌이 끝났습니다
   }
 }
 

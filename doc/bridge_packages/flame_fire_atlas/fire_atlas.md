@@ -1,72 +1,78 @@
 # Flame fire atlas
 
-Flame fire atlas is a texture atlas lib for Flame. By using `flame_fire_atlas` one can access images
-and animations stored in a `.fa` texture atlas by referring to them by their named keys.
+Flame fire atlas는 Flame용 텍스처 아틀라스 라이브러리입니다. `flame_fire_atlas`를 사용하면 `.fa` 텍스처
+아틀라스에 저장된 이미지와 애니메이션을 이름 키로 참조해 접근할 수 있습니다.
 
 
 ## FireAtlas
 
-FireAtlas is a tool for handling texture atlases. Atlases can be created using the
-[Fire Atlas Editor](https://fire-atlas.flame-engine.org).
+FireAtlas는 텍스처 아틀라스를 다루기 위한 도구입니다. 아틀라스는
+[Fire Atlas Editor](https://fire-atlas.flame-engine.org)로 만들 수 있습니다.
 
 
-### Creating Atlas
+<a id="creating-atlas"></a>
 
-To create a texture atlas open [Fire Atlas Editor](https://fire-atlas.flame-engine.org).
+### 아틀라스 만들기
 
-Select new atlas and give the atlas a name, tile width, tile height and an image and press okay.
-This will take you to the atlas editor.
+텍스처 아틀라스를 만들려면 [Fire Atlas Editor](https://fire-atlas.flame-engine.org)를 엽니다.
 
-To create a new `Sprite` in the atlas, select a portion and click the plus button on top left and
-give the selection a name and then select type `Sprite` and press `Create Sprite`. You can now
-see a preview in the right panel of editor.
+새 아틀라스를 선택하고 아틀라스 이름, 타일 너비, 타일 높이, 이미지를 지정한 뒤 확인을 누릅니다.
+그러면 아틀라스 에디터로 이동합니다.
 
-To create a new `SpriteAnimation` in the atlas, select a portion and click the plus button on top
-left and give the selection a name and then select type `Animation` and provide `frame count`
-and `steps times (in milliseconds)` and select the checkbox to loop the animation, and then
-press `Create Animation`. You can now see a preview of the animation in the right panel of the
-editor.
+아틀라스에 새 `Sprite`를 만들려면 영역을 선택하고 왼쪽 위의 더하기 버튼을 클릭한 뒤, 선택 영역에 이름을
+지정하고 타입으로 `Sprite`를 선택한 다음 `Create Sprite`를 누릅니다. 이제 에디터 오른쪽 패널에서
+미리보기를 볼 수 있습니다.
 
-Once you are done with editing you can download the fire atlas file from top left with
-the `download` icon button.
+아틀라스에 새 `SpriteAnimation`을 만들려면 영역을 선택하고 왼쪽 위의 더하기 버튼을 클릭한 뒤,
+선택 영역에 이름을 지정하고 타입으로 `Animation`을 선택합니다. 그다음 `frame count`와
+`steps times (in milliseconds)`를 입력하고, 애니메이션을 반복하려면 체크박스를 선택한 뒤
+`Create Animation`을 누릅니다. 이제 에디터 오른쪽 패널에서 애니메이션 미리보기를 볼 수
+있습니다.
 
-
-## Texture atlas
-
-A [Texture atlas](https://en.wikipedia.org/wiki/Texture_atlas) is an image that contains data from
-several smaller images that have been packed together to reduce overall dimensions. With it, you
-reduce the number of images loaded and can speed up the loading time of the game.
+편집을 마쳤으면 왼쪽 위의 `download` 아이콘 버튼으로 fire atlas 파일을
+다운로드할 수 있습니다.
 
 
-## Usage
+<a id="texture-atlas"></a>
 
-To use the bridge library in your game you just need to add `flame_fire_atlas` to your pubspec.yaml,
-as can be seen in
-the [Flame Fire Atlas example](https://github.com/flame-engine/flame/tree/main/packages/flame_fire_atlas/example)
-and in the pub.dev [installation instructions](https://pub.dev/packages/flame_fire_atlas).
+## 텍스처 아틀라스
 
-Then you have the following methods at your disposal:
+[텍스처 아틀라스](https://en.wikipedia.org/wiki/Texture_atlas)는 전체 크기를 줄이기 위해 여러 개의 작은
+이미지 데이터를 하나로 묶은 이미지입니다. 이를 사용하면 불러오는 이미지 수가 줄어들어
+게임의 로딩 시간을 단축할 수 있습니다.
+
+
+<a id="usage"></a>
+
+## 사용법
+
+게임에서 이 브릿지 라이브러리를 사용하려면 pubspec.yaml에 `flame_fire_atlas`를 추가하기만 하면 됩니다.
+자세한 내용은
+[Flame Fire Atlas 예제](https://github.com/flame-engine/flame/tree/main/packages/flame_fire_atlas/example)와
+pub.dev의 [설치 안내](https://pub.dev/packages/flame_fire_atlas)에서 확인할 수 있습니다.
+
+그러면 다음 메서드를 사용할 수 있습니다.
 
 ```dart
 import 'package:flame_fire_atlas/flame_fire_atlas.dart';
 
-// Load the atlas from your assets
-// file at assets/atlas.fa
+// 에셋에서 아틀라스를 불러옵니다
+// 파일 위치: assets/atlas.fa
 final atlas = await FireAtlas.loadAsset('assets/atlas.fa');
 
-//or when inside a game instance, the loadFireAtlas can be used:
-// file at assets/atlas.fa
+// 또는 게임 인스턴스 내부에서는 loadFireAtlas를 사용할 수 있습니다:
+// 파일 위치: assets/atlas.fa
 final atlas = await loadFireAtlas('assets/atlas.fa');
 
-// Get a Sprite with the given key.
+// 주어진 키로 Sprite를 가져옵니다.
 FireAtlas.getSprite('sprite_name')
 
-// Get a SpriteAnimation with the given key.
+// 주어진 키로 SpriteAnimation을 가져옵니다.
 FireAtlas.getAnimation('animation_name')
 ```
 
-To use FireAtlas in your game, load the fire atlas file in an `onLoad` method, either in your game
-or a component. Then you can use `getSprite` and `getAnimation` to retrieve the mapped assets.
+게임에서 FireAtlas를 사용하려면 게임이나 컴포넌트의 `onLoad` 메서드에서 fire atlas 파일을 불러옵니다.
+그런 다음 `getSprite`와 `getAnimation`을 사용해 매핑된 에셋을 가져올 수 있습니다.
 
 ```dart
 class ExampleGame extends FlameGame {
@@ -98,8 +104,10 @@ class ExampleGame extends FlameGame {
 ```
 
 
-## Full Example
+<a id="full-example"></a>
 
-You can check an example
-[here](https://github.com/flame-engine/flame/tree/main/packages/flame_fire_atlas/example).
+## 전체 예제
+
+예제는
+[여기](https://github.com/flame-engine/flame/tree/main/packages/flame_fire_atlas/example)에서 확인할 수 있습니다.
 

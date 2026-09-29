@@ -1,17 +1,19 @@
-# Getting Started
+<a id="getting-started"></a>
 
-This tutorial will guide you on the development of a full Flame game, starting from the ground up,
-step by step. By the end of it, you will have built a classic Space Shooter game, featuring
-animations, input using gestures, mouse and keyboard controls, collision detections, and so on.
+# 시작하기
 
-This first part will introduce you to:
+이 튜토리얼은 완전한 Flame 게임을 처음부터 한 단계씩 개발하는 과정을
+안내합니다. 튜토리얼을 마치면 애니메이션, 제스처 입력, 마우스와 키보드 조작, 충돌 감지 등을
+갖춘 고전적인 Space Shooter 게임을 만들게 됩니다.
 
-- `FlameGame`: The base class for games using the Flame Component System.
-- `GameWidget`: The `Widget` that will insert your game into the Flutter widget tree.
-- `PositionComponent`: One of the most basic Flame components holds both a position and
-dimension in the game space.
+이 첫 번째 파트에서는 다음을 소개합니다.
 
-Let's start by creating our game class and the `GameWidget` that will run it.
+- `FlameGame`: Flame 컴포넌트 시스템을 사용하는 게임의 기본 클래스입니다.
+- `GameWidget`: 게임을 Flutter 위젯 트리에 삽입하는 `Widget`입니다.
+- `PositionComponent`: 가장 기본적인 Flame 컴포넌트 중 하나로, 게임 공간에서의 위치와
+크기를 모두 가집니다.
+
+게임 클래스와 그 게임을 실행할 `GameWidget`을 만드는 것부터 시작해 봅시다.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -25,13 +27,13 @@ void main() {
 }
 ```
 
-That is it! If you run this, you will only see an empty black screen for now, from that, we can
-start implementing our game.
+이게 전부입니다! 이것을 실행하면 지금은 빈 검은 화면만 보이지만, 여기서부터
+게임을 구현해 나갈 수 있습니다.
 
-Next, let's create our player component. To do so, we will create a new class based on Flame's
-`PositionComponent`. This component is the base for all components that have a position and a size
-on the game screen. For now, our component will only render a white square; it could be
-implemented as follows:
+다음으로 플레이어 컴포넌트를 만들어 봅시다. 이를 위해 Flame의
+`PositionComponent`를 기반으로 하는 새 클래스를 만듭니다. 이 컴포넌트는 게임 화면에서 위치와 크기를 가지는
+모든 컴포넌트의 기반입니다. 지금은 컴포넌트가 흰색 사각형만 렌더링하도록 하겠습니다. 다음과 같이
+구현할 수 있습니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -47,9 +49,9 @@ class Player extends PositionComponent {
 }
 ```
 
-Now, let's add our new component to the game. Adding any component on game startup should be done
-in the `onLoad` method, so let's override `FlameGame.onLoad` and add our logic there. The modified
-code will look like the following:
+이제 새 컴포넌트를 게임에 추가해 봅시다. 게임 시작 시 컴포넌트를 추가하는 작업은
+`onLoad` 메서드에서 해야 하므로, `FlameGame.onLoad`를 오버라이드하고 그 안에 로직을 추가합시다. 수정된
+코드는 다음과 같습니다.
 
 ```dart
 class SpaceShooterGame extends FlameGame {
@@ -68,29 +70,31 @@ class SpaceShooterGame extends FlameGame {
 }
 ```
 
-If you run this, you will now see a white rectangle being rendered in the center of the screen.
+이것을 실행하면 이제 화면 가운데에 흰색 사각형이 렌더링되는 것을 볼 수 있습니다.
 
-A couple of points worth commenting:
+짚고 넘어갈 만한 점이 몇 가지 있습니다.
 
-- `size` is a `Vector2` variable from the game class and it holds the current dimension of the game
-area, where `x` is the horizontal dimension or the width, and `y` is the vertical dimension or the
-height.
-- By default, Flame follows Flutter's canvas anchoring, which means that (0, 0) is anchored on the
-top left corner of the canvas. So the game and all components use that same anchor by default. We
-can change this by changing our component's `anchor` attribute to `Anchor.center`, which will make
-our life way easier if you want to center the component on the screen.
+- `size`는 게임 클래스의 `Vector2` 변수로, 게임 영역의 현재 크기를 담고 있습니다.
+`x`는 가로 크기, 즉 너비이고, `y`는 세로 크기, 즉
+높이입니다.
+- 기본적으로 Flame은 Flutter의 캔버스 앵커링을 따릅니다. 즉, (0, 0)이 캔버스의
+왼쪽 위 모서리에 고정됩니다. 따라서 게임과 모든 컴포넌트는 기본적으로 같은 앵커를 사용합니다.
+컴포넌트의 `anchor` 속성을 `Anchor.center`로 바꾸면 이를 변경할 수 있으며, 화면에서 컴포넌트를
+가운데에 두고 싶을 때 훨씬 편해집니다.
 
-And that is it for this first part! In this first step, we learned the basics of how to create a
-game class, insert it into the Flutter widget tree, and render a simple component.
+이것으로 첫 번째 파트는 끝입니다! 이 첫 단계에서는 게임 클래스를 만들고,
+Flutter 위젯 트리에 삽입하고, 간단한 컴포넌트를 렌더링하는 기본을 배웠습니다.
 
 
-## Preparing the assets folder
+<a id="preparing-the-assets-folder"></a>
 
-Before we move on, let's prepare our project for the graphics we will be using in the next steps.
-Games need assets such as images, sprites, and animations, and our Space Shooter is no exception.
+## 에셋 폴더 준비
 
-First, create an `assets/images/` folder at the root of your project. Then tell Flutter about it
-by adding the following lines to your `pubspec.yaml`:
+다음으로 넘어가기 전에, 다음 단계에서 사용할 그래픽을 위해 프로젝트를 준비해 봅시다.
+게임에는 이미지, 스프라이트, 애니메이션 같은 에셋이 필요하며, Space Shooter도 예외는 아닙니다.
+
+먼저 프로젝트 루트에 `assets/images/` 폴더를 만듭니다. 그런 다음 `pubspec.yaml`에
+다음 줄을 추가해 Flutter에 알립니다.
 
 ```yaml
 flutter:
@@ -98,7 +102,7 @@ flutter:
     - assets/images/
 ```
 
-Your project structure should look like this:
+프로젝트 구조는 다음과 같아야 합니다.
 
 ```text
 space_shooter/
@@ -109,8 +113,8 @@ space_shooter/
  └─pubspec.yaml
 ```
 
-In the following steps, we will provide the image files that need to be saved into the
-`assets/images/` folder. Make sure to save each one as you encounter it.
+다음 단계들에서 `assets/images/` 폴더에 저장해야 하는 이미지 파일을
+제공합니다. 나올 때마다 빠짐없이 저장하세요.
 
 ```{flutter-app}
 :sources: ../tutorials/space_shooter/app
@@ -118,4 +122,4 @@ In the following steps, we will provide the image files that need to be saved in
 :show: popup code
 ```
 
-[Next step: Controlling the player and adding some graphics](./step_2.md)
+[다음 단계: 플레이어 조작과 그래픽 추가](./step_2.md)

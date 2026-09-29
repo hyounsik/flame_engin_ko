@@ -1,53 +1,60 @@
-# Getting Started
+<a id="getting-started"></a>
+
+# 시작하기
 
 
-## About Flame
+<a id="about-flame"></a>
 
-Flame is a modular Flutter game engine that provides a complete set of out-of-the-way solutions for
-games. It takes advantage of the powerful infrastructure provided by Flutter but simplifies the code
-you need to build your projects.
+## Flame 소개
 
-It provides you with a simple yet effective game loop implementation, and the necessary
-functionalities that you might need in a game. For instance; input, images, sprites, sprite sheets,
-animations, collision detection, and a component system that we call Flame Component System (FCS for
-short).
+Flame은 게임에 필요한 완전한 솔루션 세트를 방해되지 않는 방식으로 제공하는 모듈식 Flutter 게임 엔진입니다.
+Flutter가 제공하는 강력한 인프라를 활용하면서도, 프로젝트를 만드는 데 필요한 코드는
+단순하게 만들어 줍니다.
 
-We also provide stand-alone packages that extend the Flame functionality which can be found in the
-[Bridge Packages](bridge_packages/bridge_packages.md) section.
+간단하면서도 효과적인 게임 루프 구현과 게임에 필요할 수 있는 기능들을 제공합니다.
+예를 들어 입력, 이미지, 스프라이트, 스프라이트 시트, 애니메이션, 충돌 감지, 그리고 Flame Component System
+(줄여서 FCS)이라고 부르는 컴포넌트 시스템이 있습니다.
 
-You can pick and choose whichever parts you want, as they are all independent and modular.
+또한 Flame의 기능을 확장하는 독립 패키지들도 제공하며, 이는
+[브릿지 패키지](bridge_packages/bridge_packages.md) 섹션에서 찾아볼 수 있습니다.
 
-The engine and its ecosystem are constantly being improved by the community, so please feel free to
-reach out, open issues and PRs as well as make suggestions.
+모든 부분이 독립적이고 모듈식이므로 원하는 부분만 골라서 사용할 수 있습니다.
 
-Give us a star if you want to help give the engine exposure and grow the community. :)
+엔진과 그 생태계는 커뮤니티에 의해 꾸준히 개선되고 있으니, 언제든 편하게 연락하시고
+이슈와 PR을 열거나 제안해 주세요.
+
+엔진을 널리 알리고 커뮤니티를 키우는 데 도움을 주고 싶다면 스타를 눌러 주세요. :)
 
 
-## Installation
+<a id="installation"></a>
 
-Add the `flame` package as a dependency in your `pubspec.yaml` by running the following command:
+## 설치
+
+다음 명령을 실행하여 `pubspec.yaml`에 `flame` 패키지를 의존성으로 추가합니다.
 
 ```console
 flutter pub add flame
 ```
 
-The latest version can be found on [pub.dev](https://pub.dev/packages/flame/install).
+최신 버전은 [pub.dev](https://pub.dev/packages/flame/install)에서 확인할 수 있습니다.
 
-then run `flutter pub get` and you are ready to start using it!
+그런 다음 `flutter pub get`을 실행하면 바로 사용할 준비가 끝납니다!
 
 
-## Getting started
+<a id="getting-started-1"></a>
 
-There is a set of tutorials that you can follow to get started in the
-[tutorials folder](https://github.com/flame-engine/flame/tree/main/doc/tutorials).
+## 시작하기
 
-Simple examples for all features can be found in the
-[examples folder](https://github.com/flame-engine/flame/tree/main/examples).
+시작하는 데 따라 해 볼 수 있는 튜토리얼 모음이
+[tutorials 폴더](https://github.com/flame-engine/flame/tree/main/doc/tutorials)에 있습니다.
 
-To run Flame you need use the `GameWidget`, which is just another widget that can live anywhere in
-your widget tree. You can use it as the root widget of your app, or as a child of another widget.
+모든 기능에 대한 간단한 예제는
+[examples 폴더](https://github.com/flame-engine/flame/tree/main/examples)에서 찾을 수 있습니다.
 
-Here is a simple example of how to use the `GameWidget`:
+Flame을 실행하려면 `GameWidget`을 사용해야 합니다. `GameWidget`은 위젯 트리 어디에나 둘 수 있는
+평범한 위젯일 뿐입니다. 앱의 루트 위젯으로 사용할 수도 있고, 다른 위젯의 자식으로 사용할 수도 있습니다.
+
+다음은 `GameWidget`을 사용하는 간단한 예제입니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -62,15 +69,14 @@ void main() {
 }
 ```
 
-In Flame we provide a concept called the Flame Component System (FCS), which is a way to organize
-your game objects in a way that makes it easy to manage them. You can read more about it in the
-[Components](flame/components/components.md) section.
+Flame에는 Flame Component System(FCS)이라는 개념이 있는데, 게임 오브젝트를 관리하기 쉽도록
+구성하는 방법입니다. 자세한 내용은 [컴포넌트](flame/components/components.md) 섹션에서 읽을 수 있습니다.
 
-When you want to start a new game you either have to extend the `FlameGame` class or the `World`
-class. The `FlameGame` is the root of your game and is responsible for managing the game loop and
-the components. The `World` class is a component that can be used to create a world in your game.
+새 게임을 시작하려면 `FlameGame` 클래스나 `World` 클래스를 상속해야 합니다.
+`FlameGame`은 게임의 루트로, 게임 루프와 컴포넌트를 관리하는 역할을 합니다.
+`World` 클래스는 게임 안에 월드를 만드는 데 사용할 수 있는 컴포넌트입니다.
 
-So to create a simple game you can do something like this:
+따라서 간단한 게임을 만들려면 다음과 같이 할 수 있습니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -93,17 +99,16 @@ class MyWorld extends World {
 }
 ```
 
-As you can see, we have created a `MyWorld` class that extends the `World` class. We have overridden
-the `onLoad` method to add a `Player` component (which doesn't exist yet) to the world. In the
-`FlameGame` class we by default have a `camera` that is watching the world, and by default it is
-looking at the (0, 0) position of the world in the center of the screen, to learn more about the
-camera and the world you can read the [Camera Component](flame/camera.md) section.
+보시다시피 `World` 클래스를 상속하는 `MyWorld` 클래스를 만들었습니다. `onLoad` 메서드를
+오버라이드하여 (아직 존재하지 않는) `Player` 컴포넌트를 월드에 추가했습니다.
+`FlameGame` 클래스에는 기본적으로 월드를 지켜보는 `camera`가 있으며, 기본적으로 화면 중앙에서
+월드의 (0, 0) 위치를 바라봅니다. 카메라와 월드에 대해 더 알아보려면
+[카메라 컴포넌트](flame/camera.md) 섹션을 읽어 보세요.
 
-The `Player` component can be whatever type of component that you want, to get started we recommend
-to use the `SpriteComponent` class, which is a component that can render a sprite (image) on the
-screen.
+`Player` 컴포넌트는 원하는 어떤 종류의 컴포넌트든 될 수 있습니다. 처음 시작할 때는 화면에
+스프라이트(이미지)를 렌더링할 수 있는 컴포넌트인 `SpriteComponent` 클래스를 사용하는 것을 권장합니다.
 
-For example something like this:
+예를 들면 다음과 같습니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -121,24 +126,22 @@ class Player extends SpriteComponent {
 }
 ```
 
-In this example, we have created a `Player` class that extends the `SpriteComponent` class. We have
-overridden the `onLoad` method to set the sprite of the component to a sprite that we load from an
-image file called `player.png`. The image has to be in the `assets/images` directory in your project
-(see the [Assets Directory Structure](flame/structure.md)) and you have to add it to the
-[assets section](https://docs.flutter.dev/ui/assets/assets-and-images) of your `pubspec.yaml` file.
-In this class we also set the size of the component to 200x200 and the [anchor](flame/components/position_component.md#anchor)
-to the center of the component by sending them to the `super` constructor. We also let the user of
-the `Player` class set the position of the component when creating it
-(`Player(position: Vector2(0, 0))`).
+이 예제에서는 `SpriteComponent` 클래스를 상속하는 `Player` 클래스를 만들었습니다. `onLoad` 메서드를
+오버라이드하여 `player.png`라는 이미지 파일에서 불러온 스프라이트를 컴포넌트의 스프라이트로 설정했습니다.
+이미지는 프로젝트의 `assets/images` 디렉터리에 있어야 하며
+([에셋 디렉터리 구조](flame/structure.md) 참고), `pubspec.yaml` 파일의
+[assets 섹션](https://docs.flutter.dev/ui/assets/assets-and-images)에 추가해야 합니다.
+이 클래스에서는 또한 `super` 생성자에 값을 전달하여 컴포넌트의 크기를 200x200으로, [앵커](flame/components/position_component.md#anchor)를
+컴포넌트의 중앙으로 설정했습니다. 그리고 `Player` 클래스를 사용하는 쪽에서 생성할 때 컴포넌트의 위치를
+설정할 수 있게 했습니다(`Player(position: Vector2(0, 0))`).
 
-To handle input on a component you can add any of our [input mixins](flame/inputs/inputs.md) to the
-component. For example, if you want to handle tap input you can add the `TapCallbacks` mixin to the
-player component, and receive tap events within the bounds of the player component. Or if you want
-to handle tap input on the whole world you can add the `TapCallbacks` mixin to the extended `World`
-class.
+컴포넌트에서 입력을 처리하려면 [입력 믹스인](flame/inputs/inputs.md) 중 아무것이나 컴포넌트에
+추가하면 됩니다. 예를 들어 탭 입력을 처리하고 싶다면 player 컴포넌트에 `TapCallbacks` 믹스인을
+추가하여 player 컴포넌트의 경계 안에서 발생하는 탭 이벤트를 받을 수 있습니다. 또는 월드 전체에서
+탭 입력을 처리하고 싶다면 상속한 `World` 클래스에 `TapCallbacks` 믹스인을 추가하면 됩니다.
 
-The following example handles taps on the player component, and when the player component is
-tapped the size of the player will increase by 50 pixels in both width and height.
+다음 예제는 player 컴포넌트에 대한 탭을 처리하며, player 컴포넌트가 탭되면
+player의 크기가 너비와 높이 모두 50픽셀씩 커집니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -161,31 +164,35 @@ class Player extends SpriteComponent with TapCallbacks {
 }
 ```
 
-This is just a simple example of how to get started with Flame, there are many more features that you
-can use (and probably need) to create your game, but this should give you a good starting point.
+이것은 Flame을 시작하는 방법에 대한 간단한 예제일 뿐입니다. 게임을 만드는 데 사용할 수 있는
+(그리고 아마도 필요할) 기능은 훨씬 더 많지만, 좋은 출발점이 될 것입니다.
 
-You can also check out the [awesome flame repository](https://github.com/flame-engine/awesome-flame#user-content-articles--tutorials),
-it contains quite a lot of good tutorials and articles written by the community to get you started
-with Flame.
-
-
-## Outside of the scope of the engine
-
-Games sometimes require complex feature sets depending on what the game is all about. Some of these
-feature sets are outside of the scope of the Flame Engine ecosystem, in this section you can find
-them, and also some recommendations of packages/services that can be used:
+[awesome flame 저장소](https://github.com/flame-engine/awesome-flame#user-content-articles--tutorials)도
+확인해 보세요. Flame을 시작하는 데 도움이 되는, 커뮤니티가 작성한 좋은 튜토리얼과 글이
+꽤 많이 모여 있습니다.
 
 
-### Multiplayer (netcode)
+<a id="outside-of-the-scope-of-the-engine"></a>
 
-Flame doesn't bundle any network feature, which may be needed to write online multiplayer games.
+## 엔진의 범위를 벗어나는 것들
 
-If you are building a multiplayer game, here are some recommendations of packages/services:
+게임은 그 내용에 따라 복잡한 기능들을 필요로 하기도 합니다. 이러한 기능 중 일부는
+Flame Engine 생태계의 범위를 벗어나는데, 이 섹션에서는 그러한 기능들과 함께
+사용할 수 있는 패키지/서비스 추천을 소개합니다.
 
-- [Nakama](https://github.com/obrunsmann/flutter_nakama/): An open-source server designed
- to power modern games and apps.
-- [Firebase](https://firebase.google.com/): Provides dozens of services that can be used to write
-simpler multiplayer experiences.
-- [Supabase](https://supabase.com/): A cheaper alternative to Firebase, based on Postgres.
-- [PubNub](https://github.com/pubnub/dart): A real-time messaging network for syncing game lobbies
-and player updates.
+
+<a id="multiplayer-netcode"></a>
+
+### 멀티플레이어 (넷코드)
+
+Flame은 온라인 멀티플레이어 게임을 만드는 데 필요할 수 있는 네트워크 기능을 포함하지 않습니다.
+
+멀티플레이어 게임을 만든다면 다음 패키지/서비스를 추천합니다.
+
+- [Nakama](https://github.com/obrunsmann/flutter_nakama/): 현대적인 게임과 앱을 구동하도록
+ 설계된 오픈 소스 서버입니다.
+- [Firebase](https://firebase.google.com/): 간단한 멀티플레이어 경험을 만드는 데 사용할 수 있는
+수십 가지 서비스를 제공합니다.
+- [Supabase](https://supabase.com/): Postgres 기반의 Firebase보다 저렴한 대안입니다.
+- [PubNub](https://github.com/pubnub/dart): 게임 로비와 플레이어 업데이트를 동기화하기 위한
+실시간 메시징 네트워크입니다.

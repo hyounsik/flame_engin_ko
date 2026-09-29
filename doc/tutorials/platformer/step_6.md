@@ -1,20 +1,24 @@
-# 6. Adding the HUD
+<a id="6-adding-the-hud"></a>
+
+# 6. HUD 추가
 
 
-## Setting up the HUD
+<a id="setting-up-the-hud"></a>
 
-Now that the game is up and running, the rest of the code should come fairly easily. To prepare for
-the hud, we need to add some variables in `lib/ember_quest.dart`. Add the following to the top of
-the class:
+## HUD 설정
+
+이제 게임이 돌아가고 있으니 나머지 코드는 꽤 쉽게 작성할 수 있을 것입니다. HUD를 준비하기 위해
+`lib/ember_quest.dart`에 변수 몇 개를 추가해야 합니다. 클래스 맨 위에 다음을
+추가합니다.
 
 ```dart
 int starsCollected = 0;
 int health = 3;
 ```
 
-Start by creating a folder called `lib/overlays`, and in that folder, create a component called
-`heart.dart`. This is going to be the health monitoring component in the upper left-hand corner of
-the game. Add the following code:
+먼저 `lib/overlays`라는 폴더를 만들고, 그 폴더 안에 `heart.dart`라는 컴포넌트를
+만듭니다. 이것은 게임 왼쪽 위 모서리에 있는 체력 표시 컴포넌트가
+됩니다. 다음 코드를 추가합니다.
 
 ```dart
 import 'package:ember_quest/ember_quest.dart';
@@ -73,13 +77,13 @@ class HeartHealthComponent extends SpriteGroupComponent<HeartState>
 
 ```
 
-The `HeartHealthComponent` is just a [SpriteGroupComponent](../../flame/components/sprite_components.md#spritegroupcomponent)
-that uses the heart images that were created early on. The unique thing that is being done, is when
-the component is created, it requires a `heartNumber`, so in the `update` method, we check to see if
-the `gameRef.health` is less than the `heartNumber` and if so, change the state of the component
-to unavailable.
+`HeartHealthComponent`는 앞에서 만든 하트 이미지를 사용하는 [SpriteGroupComponent](../../flame/components/sprite_components.md#spritegroupcomponent)일
+뿐입니다. 특별한 점은 컴포넌트를 생성할 때
+`heartNumber`가 필요하다는 것입니다. 그래서 `update` 메서드에서
+`gameRef.health`가 `heartNumber`보다 작은지 확인하고, 그렇다면 컴포넌트의 상태를
+unavailable로 바꿉니다.
 
-To put this all together, create `hud.dart` in the same folder and add the following code:
+이 모든 것을 합치기 위해 같은 폴더에 `hud.dart`를 만들고 다음 코드를 추가합니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -146,30 +150,32 @@ class Hud extends PositionComponent with HasGameRef<EmberQuestGame> {
 
 ```
 
-In the `onLoad` method, you can see where we loop from 1 to the `gameRef.health` amount, to
-create the number of hearts necessary. The last step is to add the hud to the game.
+`onLoad` 메서드에서 1부터 `gameRef.health` 값까지 반복하면서 필요한 개수만큼
+하트를 만드는 것을 볼 수 있습니다. 마지막 단계는 게임에 HUD를 추가하는 것입니다.
 
-Go to `lib/ember_quest.dart` and add the following code in the `initializeGame` method:
+`lib/ember_quest.dart`로 가서 `initializeGame` 메서드에 다음 코드를 추가합니다.
 
 ```dart
 camera.viewport.add(Hud());
 ```
 
-If the auto-import did not occur, you will need to add:
+자동 import가 되지 않았다면 다음을 추가해야 합니다.
 
 ```dart
 import 'overlays/hud.dart';
 ```
 
-If you run the game now, you should see:
+이제 게임을 실행하면 다음과 같이 보일 것입니다.
 
-![HUD Loaded](../../images/tutorials/platformer/Step6HUD.jpg)
+![로드된 HUD](../../images/tutorials/platformer/Step6HUD.jpg)
 
 
-## Updating the HUD Data
+<a id="updating-the-hud-data"></a>
 
-The last thing we need to do before closing out the HUD is to update the data. To do this, we need
-to open `lib/actors/ember.dart` and add the following code:
+## HUD 데이터 업데이트
+
+HUD를 마무리하기 전에 마지막으로 해야 할 일은 데이터를 업데이트하는 것입니다. 이를 위해
+`lib/actors/ember.dart`를 열고 다음 코드를 추가해야 합니다.
 
 `onCollision`
 
@@ -200,6 +206,6 @@ void hit() {
 }
 ```
 
-If you run the game now, you will see that your health is updated and the stars are incremented as
-appropriate. Finally, in [](step_7), we will finish the game by adding the main menu and the
-game-over menu.
+이제 게임을 실행하면 체력이 업데이트되고 별 개수가 적절히 증가하는 것을
+볼 수 있습니다. 마지막으로 [](step_7)에서는 메인 메뉴와 게임 오버 메뉴를 추가해
+게임을 완성하겠습니다.

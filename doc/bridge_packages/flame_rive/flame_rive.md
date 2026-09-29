@@ -1,6 +1,6 @@
 # flame_rive
 
 ```{toctree}
-Overview    <rive.md>
+개요    <rive.md>
 
 ```

@@ -1,15 +1,17 @@
-# Development
+<a id="development"></a>
 
-- [Contributing](contributing.md)
-- [Documentation](documentation.md)
-- [Style Guide](style_guide.md)
-- [Tests Guide](testing_guide.md)
+# 개발
+
+- [기여하기](contributing.md)
+- [문서화](documentation.md)
+- [스타일 가이드](style_guide.md)
+- [테스트 가이드](testing_guide.md)
 
 ```{toctree}
 :hidden:
 
-Contributing   <contributing.md>
-Documentation  <documentation.md>
-Style Guide    <style_guide.md>
-Tests Guide    <testing_guide.md>
+기여하기          <contributing.md>
+문서화            <documentation.md>
+스타일 가이드     <style_guide.md>
+테스트 가이드     <testing_guide.md>
 ```

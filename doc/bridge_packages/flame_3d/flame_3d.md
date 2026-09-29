@@ -1,13 +1,13 @@
 # flame_3d
 
 ```{note}
-`flame_3d` is an extremely **experimental** package that is subject to many
-breaking changes at any time and without any warning. We do not consider it to
-be ready for production; but if you want to trail-blaze in a fresh, new cool
-space, feel free to give it a try and help us improve it!
+`flame_3d`는 극도로 **실험적인** 패키지로, 언제든 아무런 경고 없이
+호환성이 깨지는 변경이 많이 일어날 수 있습니다. 아직 프로덕션에 사용할
+준비가 되었다고 보지 않습니다. 하지만 새롭고 멋진 분야를 개척해 보고
+싶다면 자유롭게 사용해 보고 개선에 도움을 주세요!
 ```
 
 ```{toctree}
-Getting Started <getting_started.md>
-Basic Concepts <basic_concepts.md>
+시작하기 <getting_started.md>
+기본 개념 <basic_concepts.md>
 ```

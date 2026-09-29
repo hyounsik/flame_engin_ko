@@ -1,21 +1,22 @@
-# Palette
+<a id="palette"></a>
 
-Throughout your game you are going to need to use colors in lots of places. There are two classes on
-`dart:ui` that can be used, `Color` and `Paint`.
+# 팔레트
 
-The `Color` class represents a ARGB color in a hexadecimal integer
-format. So to create a `Color` instance, you just need to pass the color as an integer in the ARGB
-format.
+게임 곳곳에서 색상을 사용해야 합니다. `dart:ui`에는 이를 위해 사용할 수 있는 두 가지 클래스,
+`Color`와 `Paint`가 있습니다.
+
+`Color` 클래스는 16진수 정수 형식의 ARGB 색상을 나타냅니다.
+따라서 `Color` 인스턴스를 만들려면 ARGB 형식의 정수로 색상을 전달하기만 하면 됩니다.
 
 <!--- cSpell:ignore AARRGGBB -->
-You can use Dart's hexadecimal notation to make it really easy; for instance: `0xFF00FF00` is fully
-opaque green (the "mask" would be `0xAARRGGBB`).
+Dart의 16진수 표기법을 사용하면 아주 쉽습니다. 예를 들어 `0xFF00FF00`은 완전히
+불투명한 초록색입니다("마스크"는 `0xAARRGGBB`입니다).
 
-**Note**: The first two hexadecimal digits are for
-the alpha channel (transparency), unlike on regular (non-A) RGB. The max(FF = 255) for the two first
-digits means fully opaque, and the min (00 = 0) means fully transparent.
+**참고**: 일반적인(A가 없는) RGB와 달리, 처음 두 자리의 16진수는
+알파 채널(투명도)을 나타냅니다. 처음 두 자리가 최댓값(FF = 255)이면 완전히 불투명하고,
+최솟값(00 = 0)이면 완전히 투명합니다.
 
-In the Material Flutter package there is a `Colors` class that provides common colors as constants:
+Material Flutter 패키지에는 자주 쓰는 색상을 상수로 제공하는 `Colors` 클래스가 있습니다.
 
 ```dart
 import 'package:flutter/material.dart' show Colors;
@@ -23,45 +24,45 @@ import 'package:flutter/material.dart' show Colors;
 const black = Colors.black;
 ```
 
-Some more complex methods might also take a `Paint` object, which is a more complete structure that
-allows you to configure aspects related to stroke, colors, filters and blends.
-However, normally when using even the more complex APIs, you just want an instance of a `Paint`
-object representing just a single simple plain solid color.
+좀 더 복잡한 메서드는 `Paint` 객체를 받기도 합니다. `Paint`는 선(stroke), 색상, 필터, 블렌드와 관련된
+요소를 설정할 수 있는 보다 완전한 구조체입니다.
+하지만 복잡한 API를 사용할 때에도 보통은 단순한 단색 하나를 나타내는 `Paint`
+객체 인스턴스만 있으면 됩니다.
 
-**Note:** we don't recommend that you create a new `Paint` object every time you need a specific
-`Paint`, since it could potentially lead to a lot of unnecessary objects being created. A better way
-is to either define the `Paint` object somewhere and re-use it (however, do note that the `Paint`
-class is mutable, unlike `Color`), or to use the `Palette` class to define all the colors that you
-want to use in your game.
+**참고:** 특정 `Paint`가 필요할 때마다 새로운 `Paint` 객체를 만드는 것은 권장하지 않습니다.
+불필요한 객체가 많이 생성될 수 있기 때문입니다. 더 나은 방법은
+`Paint` 객체를 어딘가에 정의해 두고 재사용하거나(단, `Color`와 달리 `Paint`
+클래스는 변경 가능(mutable)하다는 점에 주의하세요), `Palette` 클래스를 사용해 게임에서 사용할
+모든 색상을 정의하는 것입니다.
 
-You can create such an object like this:
+이런 객체는 다음과 같이 만들 수 있습니다.
 
 ```dart
 Paint green = Paint()..color = const Color(0xFF00FF00);
 ```
 
-To help you with this and also keep your game's color palette consistent, Flame adds the `Palette`
-class. You can use it to easily access both `Color`s and `Paint`s where needed and also define
-the colors your game use as constants, so that you don't get those mixed up.
+이를 돕고 게임의 색상 팔레트를 일관되게 유지할 수 있도록 Flame은 `Palette`
+클래스를 제공합니다. 이 클래스를 사용하면 필요한 곳에서 `Color`와 `Paint`에 모두 쉽게 접근할 수 있고,
+게임에서 사용하는 색상을 상수로 정의해 서로 헷갈리지 않게 할 수 있습니다.
 
-The `BasicPalette` class is an example of what a palette can look like, and adds black and white as
-colors. So you can access black or white directly from the `BasicPalette`; for example,
-using `color`:
+`BasicPalette` 클래스는 팔레트가 어떤 모습일 수 있는지 보여주는 예시로, 검은색과 흰색을
+색상으로 제공합니다. 따라서 `BasicPalette`에서 검은색이나 흰색에 바로 접근할 수 있습니다. 예를 들어
+`color`를 사용하면 다음과 같습니다.
 
 ```dart
 TextConfig regular = TextConfig(color: BasicPalette.white.color);
 ```
 
-Or using `paint`:
+또는 `paint`를 사용하면 다음과 같습니다.
 
 ```dart
 canvas.drawRect(rect, BasicPalette.black.paint);
 ```
 
-However, the idea is that you can create your own palette, following the `BasicPalette` example, and
-add the color palette/scheme of your game. Then you will be able to statically access any color in
-your components and classes. Below is an example of a `Palette` implementation, from the [example
-game BGUG](https://github.com/bluefireteam/bgug/blob/master/lib/palette.dart):
+하지만 핵심은 `BasicPalette` 예시를 따라 직접 팔레트를 만들고, 게임의 색상 팔레트/스킴을
+추가하는 것입니다. 그러면 컴포넌트와 클래스 어디에서든 정적으로 원하는 색상에 접근할 수 있습니다.
+아래는 [예제
+게임 BGUG](https://github.com/bluefireteam/bgug/blob/master/lib/palette.dart)에서 가져온 `Palette` 구현 예시입니다.
 
 ```dart
 import 'dart:ui';
@@ -79,13 +80,12 @@ class Palette {
 }
 ```
 
-A `PaletteEntry` is a `const` class that holds information of a color and it has the following
-members:
+`PaletteEntry`는 색상 정보를 담는 `const` 클래스이며, 다음과 같은
+멤버를 가집니다.
 
-- `color`: returns the `Color` specified
-- `paint`: creates a new `Paint` with the color specified. `Paint` is a non-`const` class, so this
-  method actually creates a brand new instance every time it's called. It's safe to cascade
-  mutations to this.
+- `color`: 지정된 `Color`를 반환합니다.
+- `paint`: 지정된 색상으로 새로운 `Paint`를 생성합니다. `Paint`는 `const`가 아닌 클래스이므로, 이
+  메서드는 호출될 때마다 완전히 새로운 인스턴스를 생성합니다. 따라서 여기에 캐스케이드로 변경을 적용해도 안전합니다.
 
-It also exposes helper methods to derive a new `PaletteEntry` by transforming the underlying color,
-such as `withRed` or `lighten`.
+또한 `withRed`나 `lighten`처럼 내부 색상을 변환해 새로운 `PaletteEntry`를 만드는
+헬퍼 메서드도 제공합니다.

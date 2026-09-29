@@ -1,40 +1,42 @@
-# Collision Detection
+<a id="collision-detection"></a>
 
-Almost every game needs to know when objects touch or overlap. Without collision detection a player
-could walk through walls, bullets would pass through enemies, and coins could never be collected.
-Flame provides a built-in collision detection system so you can focus on what *happens* when objects
-collide rather than writing the intersection math yourself.
+# 충돌 감지
 
-Collision detection is needed in most games to detect and act upon two components intersecting each
-other. For example, an arrow hitting an enemy or the player picking up a coin.
+거의 모든 게임은 객체가 서로 닿거나 겹치는 순간을 알아야 합니다. 충돌 감지가 없다면 플레이어는 벽을
+통과해 걸어갈 수 있고, 총알은 적을 그대로 통과하며, 코인은 절대 수집할 수 없을 것입니다.
+Flame은 내장 충돌 감지 시스템을 제공하므로, 교차 계산을 직접 작성하는 대신 객체가 충돌했을 때
+*무슨 일이 일어나는지*에 집중할 수 있습니다.
 
-In most collision detection systems you use something called hitboxes to create more precise
-bounding boxes of your components. In Flame the hitboxes are areas of the component that can react
-to collisions and make [gesture input](inputs/inputs.md#gesturehitboxes) more accurate.
+충돌 감지는 대부분의 게임에서 두 컴포넌트가 서로 교차하는 것을 감지하고 그에 대응하기 위해
+필요합니다. 예를 들어 화살이 적을 맞히거나 플레이어가 코인을 줍는 경우입니다.
 
-The collision detection system supports three different types of shapes that you can build hitboxes
-from, these shapes are Polygon, Rectangle and Circle. Multiple hitboxes can be added to a
-component to form the area which can be used to either detect collisions or determine whether it
-contains a point. The latter is very useful for accurate gesture detection. The collision
-detection does not handle what should happen when two hitboxes collide, so it is up to the user
-to implement what will happen when for example two `PositionComponent`s have intersecting
-hitboxes.
+대부분의 충돌 감지 시스템에서는 히트박스라는 것을 사용해 컴포넌트의 경계 상자를 더 정밀하게 만듭니다.
+Flame에서 히트박스는 컴포넌트에서 충돌에 반응할 수 있는 영역이며,
+[제스처 입력](inputs/inputs.md#gesturehitboxes)을 더 정확하게 만들어 줍니다.
 
-Do note that the built-in collision detection system does not take collisions between two hitboxes
-that overshoot each other into account. This could happen when they either move very fast or
-`update` is called with a large delta time (for example if your app is not in the foreground).
-This behavior is called tunneling.
+충돌 감지 시스템은 히트박스를 만들 수 있는 세 가지 도형, 즉 Polygon, Rectangle, Circle을
+지원합니다. 하나의 컴포넌트에 여러 히트박스를 추가하여 충돌을 감지하거나 점을 포함하는지 판단하는 데
+쓸 영역을 구성할 수 있습니다. 후자는 정확한 제스처 감지에 매우 유용합니다. 충돌 감지는 두 히트박스가
+충돌했을 때 무엇을 해야 하는지는 처리하지 않습니다. 따라서 예를 들어 두 `PositionComponent`의
+히트박스가 교차했을 때 무슨 일이 일어날지는 사용자가 직접 구현해야 합니다.
+
+내장 충돌 감지 시스템은 서로를 지나쳐 버리는 두 히트박스 사이의 충돌은 고려하지 않는다는 점에
+유의하세요. 이는 히트박스가 매우 빠르게 움직이거나, `update`가 큰 델타 타임으로 호출될 때(예를 들어
+앱이 포그라운드에 있지 않을 때) 발생할 수 있습니다.
+이 현상을 터널링(tunneling)이라고 합니다.
 
 
-## Mixins
+<a id="mixins"></a>
+
+## 믹스인
 
 
 ### HasCollisionDetection
 
-If you want to use collision detection in your game you have to add the `HasCollisionDetection`
-mixin to your game so that it can keep track of the components that can collide.
+게임에서 충돌 감지를 사용하려면 게임에 `HasCollisionDetection` 믹스인을 추가해야 합니다. 그래야
+게임이 충돌할 수 있는 컴포넌트를 추적할 수 있습니다.
 
-Example:
+예시:
 
 ```dart
 class MyGame extends FlameGame with HasCollisionDetection {
@@ -42,32 +44,31 @@ class MyGame extends FlameGame with HasCollisionDetection {
 }
 ```
 
-Now when you add `ShapeHitbox`s to components that are then added to the game, they will
-automatically be checked for collisions.
+이제 컴포넌트에 `ShapeHitbox`를 추가하고 그 컴포넌트를 게임에 추가하면, 자동으로 충돌 검사가
+이루어집니다.
 
-You can also add `HasCollisionDetection` directly to another `Component` instead
-of the `FlameGame`,
-for example to the `World` that is used for the `CameraComponent`.
-If that is done, hitboxes that are added in that component's tree will only be compared to other
-hitboxes in that subtree, which makes it possible to have several worlds with collision detection
-within one `FlameGame`.
+`HasCollisionDetection`을 `FlameGame` 대신 다른 `Component`에 직접 추가할 수도
+있습니다.
+예를 들어 `CameraComponent`에 사용되는 `World`에 추가할 수 있습니다.
+이렇게 하면 해당 컴포넌트의 트리에 추가된 히트박스는 그 하위 트리에 있는 다른 히트박스와만
+비교되므로, 하나의 `FlameGame` 안에 충돌 감지가 있는 여러 월드를 둘 수 있습니다.
 
-Example:
+예시:
 
 ```dart
 class CollisionDetectionWorld extends World with HasCollisionDetection {}
 ```
 
 ```{note}
-Hitboxes will only be connected to one collision detection system and that is
-the closest parent that has the `HasCollisionDetection` mixin.
+히트박스는 하나의 충돌 감지 시스템에만 연결되며, 그 시스템은
+`HasCollisionDetection` 믹스인을 가진 가장 가까운 부모입니다.
 ```
 
 
 ### CollisionCallbacks
 
-To react to a collision you should add the `CollisionCallbacks` mixin to your component.
-Example:
+충돌에 반응하려면 컴포넌트에 `CollisionCallbacks` 믹스인을 추가해야 합니다.
+예시:
 
 
 ```{flutter-app}
@@ -100,40 +101,41 @@ class MyCollidable extends PositionComponent with CollisionCallbacks {
 }
 ```
 
-In this example we use Dart's `is` keyword to check what kind of component we collided with.
-The list of points is where the edges of the hitboxes intersect.
+이 예시에서는 Dart의 `is` 키워드를 사용해 어떤 종류의 컴포넌트와 충돌했는지 확인합니다.
+points 리스트는 히트박스의 가장자리가 교차하는 지점입니다.
 
-Note that the `onCollision` method will be called on both `PositionComponent`s if they have both
-implemented the `onCollision` method, and also on both hitboxes. The same goes for the
-`onCollisionStart` and `onCollisionEnd` methods, which are called when two components and hitboxes
-start or stop colliding with each other.
+두 `PositionComponent`가 모두 `onCollision` 메서드를 구현했다면 `onCollision` 메서드는 두 컴포넌트
+모두에서 호출되며, 두 히트박스에서도 호출된다는 점에 유의하세요. 두 컴포넌트와 히트박스가 서로
+충돌하기 시작하거나 충돌을 멈출 때 호출되는 `onCollisionStart`와 `onCollisionEnd` 메서드도
+마찬가지입니다.
 
-When a `PositionComponent` (and hitbox) starts to collide with another `PositionComponent`
-both `onCollisionStart` and `onCollision` are called, so if you don't need to do something specific
-when a collision starts you only need to override `onCollision`, and vice versa.
+`PositionComponent`(와 히트박스)가 다른 `PositionComponent`와 충돌하기 시작하면
+`onCollisionStart`와 `onCollision`이 모두 호출됩니다. 따라서 충돌이 시작될 때 특별히 해야 할 일이
+없다면 `onCollision`만 오버라이드하면 되며, 그 반대도 마찬가지입니다.
 
-If you want to check collisions with the screen edges, as we do in the example above, you can use
-the predefined [ScreenHitbox](#screenhitbox) class.
+위 예시처럼 화면 가장자리와의 충돌을 확인하고 싶다면 미리 정의된
+[ScreenHitbox](#screenhitbox) 클래스를 사용할 수 있습니다.
 
-By default all hitboxes are hollow, this means that one hitbox can be fully enclosed by another
-hitbox without triggering a collision. If you want to set your hitboxes to be solid you can set
-`isSolid = true`. A hollow hitbox inside of a solid hitbox will trigger a collision, but not the
-other way around. If there are no intersections with the edges on a solid hitbox the center
-position is instead returned.
+기본적으로 모든 히트박스는 속이 비어 있습니다(hollow). 즉, 한 히트박스가 다른 히트박스 안에 완전히
+들어가 있어도 충돌이 발생하지 않습니다. 히트박스를 속이 찬(solid) 상태로 만들고 싶다면
+`isSolid = true`로 설정하면 됩니다. solid 히트박스 안에 있는 hollow 히트박스는 충돌을 발생시키지만,
+그 반대는 아닙니다. solid 히트박스의 가장자리와 교차하는 지점이 없으면 대신 중심 위치가
+반환됩니다.
 
 
-### Collision order
+<a id="collision-order"></a>
 
-If a `Hitbox` collides with more than one other `Hitbox` within a given time step, then
-the `onCollision` callbacks will be called in an essentially random order. In some cases this can
-be a problem, such as in a bouncing ball game where the trajectory of the ball can differ depending
-on which other object was hit first. To help resolve this the `collisionsCompletedNotifier`
-listener can be used - this triggers at the end of the collision detection process.
+### 충돌 순서
 
-An example of how this might be used is to add a local variable in your `PositionComponent` to save
-the other components with which it's colliding:
-`List<PositionComponent> collisionComponents = [];`. The `onCollision` callback is then used to
-save all the other `PositionComponent`s to this list:
+한 타임 스텝 안에서 `Hitbox`가 둘 이상의 다른 `Hitbox`와 충돌하면, `onCollision` 콜백은 사실상
+무작위 순서로 호출됩니다. 경우에 따라서는 이것이 문제가 될 수 있습니다. 예를 들어 공이 튀는 게임에서는
+어떤 객체와 먼저 부딪혔는지에 따라 공의 궤적이 달라질 수 있습니다. 이를 해결하는 데 도움이 되도록
+`collisionsCompletedNotifier` 리스너를 사용할 수 있습니다. 이 리스너는 충돌 감지 과정이 끝날 때
+트리거됩니다.
+
+사용 예로, `PositionComponent`에 충돌 중인 다른 컴포넌트를 저장할 지역 변수를 추가할 수 있습니다:
+`List<PositionComponent> collisionComponents = [];`. 그런 다음 `onCollision` 콜백을 사용해
+다른 모든 `PositionComponent`를 이 리스트에 저장합니다.
 
 ```dart
 @override
@@ -144,8 +146,8 @@ void onCollision(List<Vector2> intersectionPoints, PositionComponent other) {
 
 ```
 
-Finally, one adds a listener to the `onLoad` method of the `PositionComponent` to call a function
-which will resolve how the collisions should be dealt with:
+마지막으로, `PositionComponent`의 `onLoad` 메서드에 리스너를 추가하여 충돌을 어떻게 처리할지
+결정하는 함수를 호출합니다.
 
 ```dart
 (gameRef as HasCollisionDetection)
@@ -156,13 +158,13 @@ which will resolve how the collisions should be dealt with:
 });
 ```
 
-The list `collisionComponents` would need to be cleared in each call to `update`.
+`collisionComponents` 리스트는 `update`가 호출될 때마다 비워 주어야 합니다.
 
 
 ## ShapeHitbox
 
-The `ShapeHitbox`s are normal components, so you add them to the component that you want to add
-hitboxes to just like any other component:
+`ShapeHitbox`는 일반 컴포넌트이므로, 다른 컴포넌트와 마찬가지로 히트박스를 추가하려는 컴포넌트에
+추가하면 됩니다.
 
 ```dart
 class MyComponent extends PositionComponent {
@@ -173,20 +175,18 @@ class MyComponent extends PositionComponent {
 }
 ```
 
-If you don't add any arguments to the hitbox, like above, the hitbox will try to fill its parent as
-much as possible. Apart from having the hitboxes fill their parents, there are two ways to
-initialize hitboxes. One is with the normal constructor where you define the hitbox by itself,
-with a size and a position etc. The other way is to use the `relative` constructor which defines
-the hitbox in relation to the size of its intended parent.
+위와 같이 히트박스에 아무 인자도 주지 않으면, 히트박스는 부모를 최대한 채우려고 합니다. 히트박스가
+부모를 채우게 하는 것 외에도 히트박스를 초기화하는 방법은 두 가지가 있습니다. 하나는 일반 생성자를
+사용해 크기와 위치 등으로 히트박스 자체를 정의하는 방법입니다. 다른 하나는 `relative` 생성자를
+사용해 대상 부모의 크기에 대한 상대값으로 히트박스를 정의하는 방법입니다.
 
 
-In some specific cases you might want to handle collisions only between hitboxes, without
-propagating `onCollision*` events to the hitbox's parent component. For example, a vehicle could
-have a body hitbox to control collisions and side hitboxes to check the possibility to turn left
-or right.
-So, colliding with a body hitbox means colliding with the component itself, whereas colliding with
-a side hitbox does not mean a real collision and should not be propagated to hitbox's parent.
-For this case you can set `triggersParentCollision` variable to `false`:
+특정한 경우에는 히트박스의 부모 컴포넌트로 `onCollision*` 이벤트를 전파하지 않고 히트박스끼리의
+충돌만 처리하고 싶을 수 있습니다. 예를 들어 차량에는 충돌을 제어하는 몸체 히트박스와, 왼쪽이나
+오른쪽으로 회전할 수 있는지 확인하는 측면 히트박스가 있을 수 있습니다.
+즉, 몸체 히트박스와 충돌하는 것은 컴포넌트 자체와 충돌하는 것이지만, 측면 히트박스와 충돌하는 것은
+실제 충돌이 아니므로 히트박스의 부모로 전파되어서는 안 됩니다.
+이런 경우 `triggersParentCollision` 변수를 `false`로 설정하면 됩니다.
 
 ```dart
 class MyComponent extends PositionComponent {
@@ -201,10 +201,10 @@ class MyComponent extends PositionComponent {
 
   void update(double dt) {
     if (utilityHitbox.isColliding) {
-      // do some specific things if hitbox is colliding
+      // 히트박스가 충돌 중일 때 특정 작업을 수행합니다
     }
   }
-// component's onCollision* functions, ignoring MySpecialHitbox collisions.
+// 컴포넌트의 onCollision* 함수들. MySpecialHitbox의 충돌은 무시됩니다.
 }
 
 class MySpecialHitbox extends RectangleHitbox {
@@ -212,72 +212,69 @@ class MySpecialHitbox extends RectangleHitbox {
     triggersParentCollision = false;
   }
 
-// hitbox specific onCollision* functions
+// 히트박스 전용 onCollision* 함수들
 
 }
 ```
 
-You can read more about how the different shapes are defined in the
-[ShapeComponents](components/shape_components.md) section.
+각 도형이 어떻게 정의되는지는 [ShapeComponents](components/shape_components.md) 섹션에서 더 자세히
+읽을 수 있습니다.
 
-Remember that you can add as many `ShapeHitbox`s as you want to your `PositionComponent` to make up
-more complex areas. For example a snowman with a hat could be represented by three `CircleHitbox`s
-and two `RectangleHitbox`s as its hat.
+더 복잡한 영역을 구성하기 위해 `PositionComponent`에 `ShapeHitbox`를 원하는 만큼 추가할 수 있다는
+점을 기억하세요. 예를 들어 모자를 쓴 눈사람은 세 개의 `CircleHitbox`와 모자에 해당하는 두 개의
+`RectangleHitbox`로 표현할 수 있습니다.
 
-A hitbox can be used either for collision detection or for making gesture detection more accurate
-on top of components, see more regarding the latter in the section about the
-[GestureHitboxes](inputs/inputs.md#gesturehitboxes) mixin.
+히트박스는 충돌 감지에 사용할 수도 있고, 컴포넌트 위에서의 제스처 감지를 더 정확하게 만드는 데
+사용할 수도 있습니다. 후자에 대해서는 [GestureHitboxes](inputs/inputs.md#gesturehitboxes) 믹스인에
+관한 섹션을 참고하세요.
 
 
 ### CollisionType
 
-The hitboxes have a field called `collisionType` which defines when a hitbox should collide with
-another. Usually you want to set as many hitboxes as possible to `CollisionType.passive` to make
-the collision detection more performant. By default the `CollisionType` is `active`.
+히트박스에는 `collisionType`이라는 필드가 있으며, 이 필드는 히트박스가 언제 다른 히트박스와
+충돌해야 하는지 정의합니다. 충돌 감지 성능을 높이려면 보통 가능한 한 많은 히트박스를
+`CollisionType.passive`로 설정하는 것이 좋습니다. 기본 `CollisionType`은 `active`입니다.
 
-The `CollisionType` enum contains the following values:
+`CollisionType` enum에는 다음 값이 있습니다.
 
-- `active` collides with other `Hitbox`es of type active or passive
-- `passive` collides with other `Hitbox`es of type active
-- `inactive` will not collide with any other `Hitbox`es
+- `active`는 active 또는 passive 타입의 다른 `Hitbox`와 충돌합니다
+- `passive`는 active 타입의 다른 `Hitbox`와 충돌합니다
+- `inactive`는 다른 어떤 `Hitbox`와도 충돌하지 않습니다
 
-So if you have hitboxes that you don't need to check collisions against each other you can mark
-them as passive by setting `collisionType: CollisionType.passive` in the constructor,
-this could for example be ground components or maybe your enemies don't need
-to check collisions between each other, then they could be marked as `passive` too.
+따라서 서로 간의 충돌을 검사할 필요가 없는 히트박스가 있다면 생성자에서
+`collisionType: CollisionType.passive`를 설정하여 passive로 지정할 수 있습니다.
+예를 들어 지면 컴포넌트가 여기에 해당할 수 있고, 적들끼리 서로 충돌을 검사할 필요가 없다면 적도
+`passive`로 지정할 수 있습니다.
 
-Imagine a game where there are a lot of bullets, that can't collide with each other, flying towards
-the player, then the player would be set to `CollisionType.active` and the bullets would be set to
-`CollisionType.passive`.
+서로 충돌할 수 없는 수많은 총알이 플레이어를 향해 날아오는 게임을 상상해 보세요. 이 경우 플레이어는
+`CollisionType.active`로, 총알은 `CollisionType.passive`로 설정하면 됩니다.
 
-Then we have the `inactive` type which simply doesn't get checked at all
-in the collision detection.
-This could be used for example if you have components outside of the screen that you don't care
-about at the moment but that might later come back in to view so they are not completely removed
-from the game.
+그리고 `inactive` 타입은 충돌 감지에서 아예 검사되지
+않습니다.
+예를 들어 지금은 신경 쓰지 않아도 되지만 나중에 다시 화면 안으로 들어올 수 있어서 게임에서 완전히
+제거하지는 않은, 화면 밖의 컴포넌트에 사용할 수 있습니다.
 
-These are just examples of how you could use these types, there will be a lot more use cases for
-them so don't hesitate to use them even if your use case isn't listed here.
+이것들은 이 타입들을 사용하는 방법의 예시일 뿐이며, 훨씬 더 많은 사용 사례가 있을 것입니다. 여러분의
+사용 사례가 여기에 나와 있지 않더라도 주저하지 말고 사용하세요.
 
 
 ### PolygonHitbox
 
-A `PolygonHitbox` can be either convex or concave. Collisions, `containsPoint` and ray casting work
-for both, since whether a point is inside of the polygon is decided by how many of its edges are
-crossed on the way out of it. The cost grows with the number of vertices though, so a polygon with
-many of them is more expensive to collide with and to cast rays against than one with a few.
+`PolygonHitbox`는 볼록할 수도 있고 오목할 수도 있습니다. 충돌, `containsPoint`, 레이 캐스팅은 둘 다에서
+동작합니다. 어떤 점이 다각형 안에 있는지는 그 점에서 바깥으로 나가는 동안 다각형의 변을 몇 개
+지나는지로 판단하기 때문입니다. 다만 비용은 꼭짓점 수에 따라 늘어나므로, 꼭짓점이 많은 다각형은 적은
+다각형보다 충돌 검사와 레이 캐스팅 비용이 더 큽니다.
 
-The other hitbox shapes don't have any mandatory constructor, that is because they can have a
-default calculated from the size of the collidable that they are attached to, but since a
-polygon can be made in an infinite number of ways inside of a bounding box you have to add the
-definition in the constructor for this shape.
+다른 히트박스 도형에는 필수 생성자가 없습니다. 붙어 있는 충돌체의 크기로부터 기본값을 계산할 수 있기
+때문입니다. 하지만 다각형은 경계 상자 안에서 무한히 많은 방식으로 만들 수 있으므로, 이 도형은
+생성자에서 정의를 직접 넣어 주어야 합니다.
 
-The `PolygonHitbox` has the same constructors as the [](components/shape_components.md#polygoncomponent),
-see that section for documentation regarding those.
+`PolygonHitbox`는 [](components/shape_components.md#polygoncomponent)와 같은 생성자를 가지고
+있습니다. 생성자에 대한 문서는 해당 섹션을 참고하세요.
 
-That includes `PolygonHitbox.fromPath`, which makes the hitbox
-[from a contour of a Path](components/shape_components.md#from-a-path). This is a quick way to get a
-hitbox that follows the outline of a sprite or a vector graphic, which usually is concave:
+여기에는 `PolygonHitbox.fromPath`도 포함되며, 이 생성자는
+[Path의 윤곽으로부터](components/shape_components.md#from-a-path) 히트박스를 만듭니다. 대개 오목한
+형태인 스프라이트나 벡터 그래픽의 외곽선을 따르는 히트박스를 빠르게 얻을 수 있는 방법입니다.
 
 ```dart
 class Spaceship extends SpriteComponent with CollisionCallbacks {
@@ -293,66 +290,65 @@ class Spaceship extends SpriteComponent with CollisionCallbacks {
 }
 ```
 
-Since the amount of vertices decides what the hitbox costs, use the highest `sampling` that still
-follows the outline closely enough for your game. The contour is walked when the hitbox is created,
-so create it once and not in every tick.
+꼭짓점 수가 히트박스의 비용을 결정하므로, 게임에 충분할 만큼 외곽선을 가깝게 따르는 범위 안에서 가장
+높은 `sampling` 값을 사용하세요. 윤곽은 히트박스가 생성될 때 순회되므로, 매 틱마다가 아니라 한 번만
+생성하세요.
 
 
 ### RectangleHitbox
 
-The `RectangleHitbox` has the same constructors as the [](components/shape_components.md#rectanglecomponent),
-see that section for documentation regarding those.
+`RectangleHitbox`는 [](components/shape_components.md#rectanglecomponent)와 같은 생성자를 가지고
+있습니다. 생성자에 대한 문서는 해당 섹션을 참고하세요.
 
 
 ### CircleHitbox
 
-The `CircleHitbox` has the same constructors as the [](components/shape_components.md#circlecomponent),
-see that section for documentation regarding those.
+`CircleHitbox`는 [](components/shape_components.md#circlecomponent)와 같은 생성자를 가지고
+있습니다. 생성자에 대한 문서는 해당 섹션을 참고하세요.
 
 
 ## ScreenHitbox
 
-`ScreenHitbox` is a component which represents the edges of your viewport/screen. If you add a
-`ScreenHitbox` to your game your other components with hitboxes will be notified when they
-collide with the edges. It doesn't take any arguments, it only depends on the `size` of the game
-that it is added to. To add it you can just do `add(ScreenHitbox())` in your game, if you don't
-want the `ScreenHitbox` itself to be notified when something collides with it. Since
-`ScreenHitbox` has the `CollisionCallbacks` mixin you can add your own `onCollisionCallback`,
-`onStartCollisionCallback` and `onEndCollisionCallback` functions to that object if needed.
+`ScreenHitbox`는 뷰포트/화면의 가장자리를 나타내는 컴포넌트입니다. 게임에 `ScreenHitbox`를 추가하면
+히트박스를 가진 다른 컴포넌트들이 가장자리와 충돌할 때 알림을 받습니다. 인자는 받지 않으며, 추가된
+게임의 `size`에만 의존합니다. `ScreenHitbox` 자체는 무언가와 충돌했을 때 알림을 받을 필요가 없다면
+게임에서 `add(ScreenHitbox())`만 하면 됩니다. `ScreenHitbox`에는 `CollisionCallbacks` 믹스인이
+있으므로, 필요하다면 해당 객체에 직접 `onCollisionCallback`, `onStartCollisionCallback`,
+`onEndCollisionCallback` 함수를 추가할 수 있습니다.
 
 
 ## CompositeHitbox
 
-In the `CompositeHitbox` you can add multiple hitboxes so that
-they emulate being one joined hitbox.
+`CompositeHitbox`에는 여러 히트박스를 추가하여 하나로 합쳐진 히트박스처럼
+동작하게 할 수 있습니다.
 
-If you want to form a hat for example you might want
-to use two [](#rectanglehitbox)s to follow that
-hat's edges properly, then you can add those hitboxes to an instance of this class and react to
-collisions to the whole hat, instead of for just each hitbox separately.
+예를 들어 모자를 만들고 싶다면, 모자의 가장자리를 제대로 따르기 위해 두 개의
+[](#rectanglehitbox)를 사용하고 싶을 수 있습니다. 그런 다음 그 히트박스들을 이 클래스의 인스턴스에
+추가하면, 각 히트박스별로 따로가 아니라 모자 전체에 대한 충돌에 반응할 수 있습니다.
 
 
-## Broad phase
+<a id="broad-phase"></a>
 
-If your game field isn't huge and does not have a lot of collidable components - you don't have to
-worry about the broad phase system that is used, so if the standard implementation is performant
-enough for you, you probably don't have to read this section.
+## 브로드 페이즈
 
-A broad phase is the first step of collision detection where potential collisions are calculated.
-Calculating these potential collisions is faster than checking the intersections exactly,
-and it removes the need to check all hitboxes against each other and
-therefore avoiding O(n²).
+게임 필드가 아주 크지 않고 충돌 가능한 컴포넌트가 많지 않다면, 사용되는 브로드 페이즈 시스템에
+대해 걱정할 필요가 없습니다. 따라서 표준 구현의 성능으로 충분하다면 이 섹션은 읽지 않아도 됩니다.
 
-The broad phase produces a set of potential collisions (a set of
-`CollisionProspect`s). This set is then used to check the exact intersections between
-hitboxes (sometimes called "narrow phase").
+브로드 페이즈는 충돌 감지의 첫 단계로, 잠재적인 충돌을 계산합니다.
+이러한 잠재적 충돌을 계산하는 것은 교차를 정확히 검사하는 것보다 빠르며,
+모든 히트박스를 서로 검사할 필요를 없애 주므로
+O(n²)를 피할 수 있습니다.
 
-By default, Flame's collision detection is using a sweep and prune broadphase step. If your game
-requires another type of broadphase you can write your own broadphase by extending `Broadphase` and
-manually setting the collision detection system that should be used.
+브로드 페이즈는 잠재적 충돌의 집합(`CollisionProspect`의 집합)을
+만들어 냅니다. 이 집합은 이후 히트박스 사이의 정확한 교차를 검사하는 데
+사용됩니다(이를 "내로 페이즈(narrow phase)"라고 부르기도 합니다).
 
-For example, if you have implemented a broadphase built on a magic algorithm
-instead of the standard sweep and prune, then you would do the following:
+기본적으로 Flame의 충돌 감지는 sweep and prune 브로드 페이즈 단계를 사용합니다. 게임에 다른 종류의
+브로드 페이즈가 필요하다면 `Broadphase`를 확장하여 직접 브로드 페이즈를 작성하고, 사용할 충돌 감지
+시스템을 수동으로 설정하면 됩니다.
+
+예를 들어 표준 sweep and prune 대신 마법 같은 알고리즘으로 만든 브로드 페이즈를 구현했다면,
+다음과 같이 합니다.
 
 ```dart
 class MyGame extends FlameGame with HasCollisionDetection {
@@ -364,14 +360,15 @@ class MyGame extends FlameGame with HasCollisionDetection {
 ```
 
 
-## Quad Tree broad phase
+<a id="quad-tree-broad-phase"></a>
 
-If your game field is large and the game contains a lot of collidable
-components (more than a hundred), standard sweep and prune can
-become inefficient. If it does, you can try to use the quad tree broad phase.
+## 쿼드 트리 브로드 페이즈
 
-To do this, add the `HasQuadTreeCollisionDetection` mixin to your game instead of
-`HasCollisionDetection` and call the `initializeCollisionDetection` function on game load:
+게임 필드가 크고 충돌 가능한 컴포넌트가 많다면(백 개 이상), 표준 sweep and prune은
+비효율적일 수 있습니다. 그런 경우 쿼드 트리 브로드 페이즈를 사용해 볼 수 있습니다.
+
+그렇게 하려면 게임에 `HasCollisionDetection` 대신 `HasQuadTreeCollisionDetection` 믹스인을 추가하고,
+게임 로드 시 `initializeCollisionDetection` 함수를 호출합니다.
 
 ```dart
 class MyGame extends FlameGame with HasQuadTreeCollisionDetection {
@@ -385,21 +382,20 @@ class MyGame extends FlameGame with HasQuadTreeCollisionDetection {
 }
 ```
 
-When calling `initializeCollisionDetection` you should pass it the correct map dimensions, to make
-the quad tree algorithm to work properly. There are also additional parameters to make the system
-more efficient:
+`initializeCollisionDetection`을 호출할 때는 쿼드 트리 알고리즘이 제대로 동작하도록 올바른 맵 크기를
+전달해야 합니다. 시스템을 더 효율적으로 만들기 위한 추가 파라미터도 있습니다.
 
-- `minimumDistance`: minimum distance between objects to consider them as possibly colliding.
-  If `null` - the check is disabled, it is default behavior
-- `maxObjects`: maximum objects count in one quadrant. Default to 25.
-- `maxDepth`: maximum nesting levels inside quadrant. Default to 10
+- `minimumDistance`: 객체들이 충돌할 가능성이 있다고 판단하기 위한 객체 간 최소 거리입니다.
+  `null`이면 검사가 비활성화되며, 이것이 기본 동작입니다
+- `maxObjects`: 한 사분면에 들어갈 수 있는 최대 객체 수입니다. 기본값은 25입니다.
+- `maxDepth`: 사분면 내부의 최대 중첩 수준입니다. 기본값은 10입니다
 
-If you use the quad tree system, you can make it even more efficient by implementing the
-`onComponentTypeCheck` function of the `CollisionCallbacks` mixin in your components.
-It is useful if you need to prevent collisions of items of different types.
-The result of the calculation is cached so
-you should not check any dynamic parameters here, the function is intended to be used as a pure
-type checker:
+쿼드 트리 시스템을 사용한다면, 컴포넌트에서 `CollisionCallbacks` 믹스인의 `onComponentTypeCheck`
+함수를 구현하여 더욱 효율적으로 만들 수 있습니다.
+서로 다른 타입의 항목 간 충돌을 막아야 할 때 유용합니다.
+계산 결과는 캐시되므로
+여기서 동적인 파라미터를 검사해서는 안 됩니다. 이 함수는 순수한 타입 검사기로 사용하도록
+의도되었습니다.
 
 ```dart
 class Bullet extends PositionComponent with CollisionCallbacks {
@@ -407,12 +403,12 @@ class Bullet extends PositionComponent with CollisionCallbacks {
   @override
   bool onComponentTypeCheck(PositionComponent other) {
     if (other is Player || other is Water) {
-      // do NOT collide with Player or Water
+      // Player나 Water와는 충돌하지 않습니다
       return false;
     }
-    // Just return true if you're not interested in
-    // the parent's type check result. Or call super
-    // to override the result with the parent's result.
+    // 부모의 타입 검사 결과에 관심이 없다면 그냥 true를
+    // 반환하세요. 또는 super를 호출해
+    // 부모의 결과로 결과를 덮어쓸 수 있습니다.
     return super.onComponentTypeCheck(other);
   }
 
@@ -421,10 +417,10 @@ class Bullet extends PositionComponent with CollisionCallbacks {
     List<Vector2> intersectionPoints,
     PositionComponent other,
   ) {
-    // Removes the component when it comes in contact with a Brick.
-    // Neither Player nor Water would be passed to this function
-    // because these classes are filtered out by [onComponentTypeCheck]
-    // in an earlier stage.
+    // Brick과 접촉하면 컴포넌트를 제거합니다.
+    // Player와 Water는 이전 단계에서 [onComponentTypeCheck]에 의해
+    // 걸러지므로 이 함수에 전달되지
+    // 않습니다.
     if (other is Brick) {
       removeFromParent();
     }
@@ -433,16 +429,16 @@ class Bullet extends PositionComponent with CollisionCallbacks {
 }
 ```
 
-After intensive gameplay a map could become over-clusterized with a lot of empty quadrants.
-Run `QuadTree.optimize()` to perform a cleanup of empty quadrants:
+격렬한 게임플레이가 이어지고 나면 맵에 빈 사분면이 많이 생겨 과도하게 클러스터화될 수 있습니다.
+`QuadTree.optimize()`를 실행하면 빈 사분면을 정리할 수 있습니다.
 
 ```dart
 class QuadTreeExample extends FlameGame
         with HasQuadTreeCollisionDetection {
 
-  /// A function called when intensive gameplay session is over
-  /// It also might be scheduled, but no need to run it on every update.
-  /// Use right interval depending on your game circumstances
+  /// 격렬한 게임플레이 세션이 끝났을 때 호출되는 함수
+  /// 예약해서 실행할 수도 있지만, 매 update마다 실행할 필요는 없습니다.
+  /// 게임 상황에 맞는 적절한 간격을 사용하세요
   onGameIdle() {
     (collisionDetection as QuadTreeCollisionDetection)
             .quadBroadphase
@@ -454,49 +450,53 @@ class QuadTreeExample extends FlameGame
 ```
 
 ```{note}
-Always experiment with different collision detection approaches
-and check how they perform on your game.
-It is not unheard of that `QuadTreeBroadphase` is significantly 
-_slower_ than the default.
-Don't assume that the more sophisticated approach is always faster.
+항상 다양한 충돌 감지 방식을 실험해 보고
+여러분의 게임에서 어떤 성능을 내는지 확인하세요.
+`QuadTreeBroadphase`가 기본값보다 훨씬 _느린_ 경우도
+드물지 않습니다.
+더 정교한 방식이 항상 더 빠르다고 가정하지 마세요.
 ```
 
 
-## Ray casting and Ray tracing
+<a id="ray-casting-and-ray-tracing"></a>
 
-Ray casting and ray tracing are methods for sending out rays from a point in your game and being
-able to see what these rays collide with and how they reflect after hitting something.
+## 레이 캐스팅과 레이 트레이싱
 
-For all of the following methods, if there are any hitboxes that you wish to ignore,
-you can add the `ignoreHitboxes` argument which is a list of the hitboxes
-that you wish to disregard for the call.
-This can be quite useful for example if you are casting rays from within a hitbox,
-which could be on your player or NPC;
-or if you don't want a ray to bounce off a `ScreenHitbox`.
+레이 캐스팅과 레이 트레이싱은 게임 안의 한 점에서 광선(ray)을 쏘아 보내고, 그 광선이 무엇과
+충돌하는지, 그리고 무언가에 부딪힌 뒤 어떻게 반사되는지 알아내는 방법입니다.
+
+아래의 모든 메서드에서 무시하고 싶은 히트박스가 있다면,
+호출 시 제외할 히트박스 리스트인 `ignoreHitboxes` 인자를
+추가할 수 있습니다.
+예를 들어 플레이어나 NPC에 있는 히트박스 안쪽에서 광선을 쏘는 경우,
+또는 광선이 `ScreenHitbox`에서 튕겨 나오지 않게 하고 싶은 경우에
+꽤 유용합니다.
 
 
-### Ray casting
+<a id="ray-casting"></a>
 
-Ray casting is the operation of casting out one or more rays from a point and see if they hit
-anything, in Flame's case, hitboxes.
+### 레이 캐스팅
 
-We provide two methods for doing so, `raycast` and `raycastAll`. The first one just casts out
-a single ray and gets back a result with information about what and where the ray hit, and some
-extra information like the distance, the normal and the reflection ray.
-The second one, `raycastAll`,
-works similarly but sends out multiple rays uniformly around the origin, or within an angle
-centered at the origin.
+레이 캐스팅은 한 점에서 하나 이상의 광선을 쏘아 무언가, Flame의 경우 히트박스에 부딪히는지 확인하는
+작업입니다.
 
-By default, `raycast` and `raycastAll` scan for the nearest hit irrespective of
-how far it lies from the ray origin.
-But in some use cases, it might be interesting to find hits only within a certain
-range. For such cases, an optional `maxDistance` can be provided.
+이를 위해 `raycast`와 `raycastAll` 두 가지 메서드를 제공합니다. 첫 번째 메서드는 광선 하나만 쏘고,
+광선이 무엇에 어디서 부딪혔는지에 대한 정보와 거리, 법선, 반사 광선 같은 추가 정보가 담긴 결과를
+돌려받습니다.
+두 번째 메서드인 `raycastAll`은
+비슷하게 동작하지만 원점 주위로, 또는 원점을 중심으로 한 각도 안에서 여러 광선을 균일하게
+쏘아 보냅니다.
 
-To use the ray casting functionality you have to have the `HasCollisionDetection` mixin on your
-game. After you have added that, you can call `collisionDetection.raycast(...)` on your game class,
-or with the `HasGameRef` mixin from other components as well.
+기본적으로 `raycast`와 `raycastAll`은 광선의 원점에서 얼마나 떨어져 있는지와 관계없이
+가장 가까운 충돌을 찾습니다.
+하지만 사용 사례에 따라서는 특정 범위 안의 충돌만 찾고 싶을 수도 있습니다.
+이런 경우에는 선택 사항인 `maxDistance`를 지정할 수 있습니다.
 
-Example:
+레이 캐스팅 기능을 사용하려면 게임에 `HasCollisionDetection` 믹스인이 있어야 합니다. 믹스인을 추가한
+뒤에는 게임 클래스에서 `collisionDetection.raycast(...)`를 호출할 수 있으며, `HasGameRef` 믹스인을
+사용하면 다른 컴포넌트에서도 호출할 수 있습니다.
+
+예시:
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -520,31 +520,29 @@ class MyGame extends FlameGame with HasCollisionDetection {
 }
 ```
 
-In this example one can see that the `Ray2` class is being used, this class defines a ray from an
-origin position and a direction (which are both defined by `Vector2`s). This particular ray starts
-from `0, 100` and shoots a ray straight to the right.
+이 예시에서는 `Ray2` 클래스를 사용하고 있습니다. 이 클래스는 원점 위치와 방향(둘 다 `Vector2`로
+정의됨)으로 광선을 정의합니다. 이 광선은 `0, 100`에서 시작하여 오른쪽으로 곧게 뻗어 나갑니다.
 
-The result from this operation will either be `null` if the ray didn't hit anything, or a
-`RaycastResult` which contains:
+이 작업의 결과는 광선이 아무것에도 부딪히지 않았다면 `null`이고, 그렇지 않으면 다음을 담은
+`RaycastResult`입니다.
 
-- Which hitbox the ray hit
-- The intersection point of the collision
-- The reflection ray, i.e. how the ray would reflect on the hitbox that it hit
-- The normal of the collision, i.e. a vector perpendicular to the face of the hitbox that it hits
+- 광선이 부딪힌 히트박스
+- 충돌의 교차점
+- 반사 광선, 즉 광선이 부딪힌 히트박스에서 어떻게 반사되는지
+- 충돌의 법선, 즉 광선이 부딪힌 히트박스 면에 수직인 벡터
 
-If you are concerned about performance you can pre-create a `RaycastResult` object that you send in
-to the method with the `out` argument, this will make it possible for the method to reuse this
-object instead of creating a new one for each iteration. This can be good if you do a lot of
-ray casting in your `update` methods.
+성능이 걱정된다면 `RaycastResult` 객체를 미리 만들어 `out` 인자로 메서드에 전달할 수 있습니다.
+그러면 메서드가 매 반복마다 새 객체를 만드는 대신 이 객체를 재사용할 수 있습니다. `update` 메서드에서
+레이 캐스팅을 많이 하는 경우에 좋습니다.
 
 
 #### raycastAll
 
-Sometimes you want to send out rays in all, or a limited range, of directions from an origin. This
-can have a lot of applications, for example you could calculate the field of view of a player or
-enemy, or it can also be used to create light sources.
+때로는 원점에서 모든 방향, 또는 제한된 범위의 방향으로 광선을 쏘고 싶을 때가 있습니다. 이는 다양하게
+응용할 수 있습니다. 예를 들어 플레이어나 적의 시야를 계산할 수도 있고, 광원을 만드는 데 사용할 수도
+있습니다.
 
-Example:
+예시:
 
 ```dart
 class MyGame extends FlameGame with HasCollisionDetection {
@@ -560,25 +558,27 @@ class MyGame extends FlameGame with HasCollisionDetection {
 }
 ```
 
-In this example we would send out 100 rays from (200, 200) uniformly spread in all directions.
+이 예시에서는 (200, 200)에서 모든 방향으로 균일하게 퍼지는 100개의 광선을 쏘아 보냅니다.
 
-If you want to limit the directions you can use the `startAngle` and the `sweepAngle` arguments.
-Where the `startAngle` (counting from straight up) is where the rays will start and then the rays
-will end at `startAngle + sweepAngle`.
+방향을 제한하고 싶다면 `startAngle`과 `sweepAngle` 인자를 사용할 수 있습니다.
+`startAngle`(바로 위쪽부터 계산)은 광선이 시작되는 각도이며, 광선은 `startAngle + sweepAngle`에서
+끝납니다.
 
-If you are concerned about performance you can re-use the `RaycastResult` objects that are created
-by the function by sending them in as a list with the `out` argument.
+성능이 걱정된다면 함수가 생성하는 `RaycastResult` 객체들을 리스트로 만들어 `out` 인자로 전달하여
+재사용할 수 있습니다.
 
 
-### Ray tracing
+<a id="ray-tracing"></a>
 
-Ray tracing is similar to ray casting, but instead of just checking what the ray hits you can
-continue to trace the ray and see what its reflection ray (the ray bouncing off the hitbox) will
-hit and then what that casted reflection ray's reflection ray will hit and so on, until you decide
-that you have traced the ray for long enough. If you imagine how a pool ball would bounce on a pool
-table for example, that information could be retrieved with the help of ray tracing.
+### 레이 트레이싱
 
-Example:
+레이 트레이싱은 레이 캐스팅과 비슷하지만, 광선이 무엇에 부딪히는지만 확인하는 것이 아니라 광선을
+계속 추적할 수 있습니다. 즉, 반사 광선(히트박스에서 튕겨 나온 광선)이 무엇에 부딪히는지, 그리고 그
+반사 광선의 반사 광선이 무엇에 부딪히는지 등을 충분히 추적했다고 판단할 때까지 확인할 수 있습니다.
+예를 들어 당구공이 당구대에서 어떻게 튕길지 상상해 보면, 그런 정보를 레이 트레이싱의 도움으로 얻을 수
+있습니다.
+
+예시:
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -610,51 +610,54 @@ class MyGame extends FlameGame with HasCollisionDetection {
 }
 ```
 
-In the example above we send out a ray from (0, 100) diagonally down to the right
-and we say that we want it to bounce on at most 100 hitboxes,
-it doesn't necessarily have to get 100 results since at
-some point one of the reflection rays might not hit a hitbox and then the method is done.
+위 예시에서는 (0, 100)에서 오른쪽 아래 대각선 방향으로 광선을 쏘고,
+최대 100개의 히트박스에서 튕기도록 지정합니다.
+반드시 100개의 결과가 나와야 하는 것은 아닙니다.
+어느 시점에 반사 광선 중 하나가 히트박스에 부딪히지 않으면 메서드가 종료되기 때문입니다.
 
-The method is lazy, which means that it will only do the calculations that you ask for, so you have
-to loop through the iterable that it returns to get the results, or do `toList()` to directly
-calculate all the results.
+이 메서드는 지연(lazy) 방식으로 동작합니다. 즉, 요청한 계산만 수행하므로 결과를 얻으려면 반환된
+iterable을 순회하거나, `toList()`를 호출하여 모든 결과를 바로 계산해야 합니다.
 
-In the for-loop it can be seen how this can be used, in that loop we check whether the current
-reflection rays intersection point (where the previous ray hit the hitbox) is further away than 300
-pixels from the origin of the starting ray, and if it is we don't care about the rest
-of the results (and then they don't have to be calculated either).
+for 루프에서 이를 어떻게 활용하는지 볼 수 있습니다. 이 루프에서는 현재 반사 광선의 교차점(이전
+광선이 히트박스에 부딪힌 지점)이 시작 광선의 원점에서 300픽셀보다 멀리 떨어져 있는지 확인하고,
+그렇다면 나머지 결과에는 관심을 두지 않습니다(그러면 나머지 결과는 계산할 필요도 없습니다).
 
-If you are concerned about performance you can re-use the `RaycastResult` objects that are created
-by the function by sending them in as a list with the `out` argument.
+성능이 걱정된다면 함수가 생성하는 `RaycastResult` 객체들을 리스트로 만들어 `out` 인자로 전달하여
+재사용할 수 있습니다.
 
 
-## Comparison to Forge2D
+<a id="comparison-to-forge2d"></a>
 
-If you want to have a full-blown physics engine in your game we recommend that you use
-Forge2D by adding
-[flame_forge2d](https://github.com/flame-engine/flame/tree/main/packages/flame_forge2d)
-as a dependency.
-But if you have a simpler use-case and just want to check for collisions of components and improve
-the accuracy of gestures, Flame's built-in collision detection will serve you very well.
+## Forge2D와의 비교
 
-If you have the following needs you should at least consider using [Forge2D](https://github.com/flame-engine/forge2d):
+게임에 본격적인 물리 엔진을 사용하고 싶다면
+[flame_forge2d](https://github.com/flame-engine/flame/tree/main/packages/flame_forge2d)를
+의존성으로 추가하여 Forge2D를 사용하기를
+권장합니다.
+하지만 사용 사례가 더 단순하고 컴포넌트의 충돌을 확인하고 제스처의 정확도를 높이는 정도만 원한다면,
+Flame의 내장 충돌 감지로도 충분히 잘 해낼 수 있습니다.
 
-- Realistic interacting forces
-- Particle systems that can interact with other bodies
-- Joints between bodies
+다음과 같은 요구 사항이 있다면 최소한 [Forge2D](https://github.com/flame-engine/forge2d) 사용을
+고려해 보세요.
 
-On the other hand, it is a good idea to just use the Flame collision detection system if you only
-need some of the following things (since it is simpler to not involve Forge2D):
+- 사실적으로 상호작용하는 힘
+- 다른 물체와 상호작용할 수 있는 파티클 시스템
+- 물체 사이의 조인트
 
-- The ability to act on some of your components colliding
-- The ability to act on your components colliding with the screen boundaries
-- Complex shapes to act as a hitbox for your component so that gestures will be more accurate
-- Hitboxes that can tell what part of a component that collided with something
+반면, 다음 중 일부만 필요하다면 Flame 충돌 감지 시스템만 사용하는 것이 좋습니다(Forge2D를 끌어들이지
+않는 편이 더 단순하기 때문입니다).
+
+- 일부 컴포넌트가 충돌할 때 대응하는 기능
+- 컴포넌트가 화면 경계와 충돌할 때 대응하는 기능
+- 제스처가 더 정확하도록 컴포넌트의 히트박스로 사용할 복잡한 도형
+- 컴포넌트의 어느 부분이 무언가와 충돌했는지 알려 주는 히트박스
 
 
-## Examples
+<a id="examples"></a>
+
+## 예제
 
 - [Collidable AnimationComponent](https://examples.flame-engine.org/#/Collision_Detection_Collidable_AnimationComponent)
 - [Circles](https://examples.flame-engine.org/#/Collision_Detection_Circles)
 - [Multiple shapes](https://examples.flame-engine.org/#/Collision_Detection_Multiple_shapes)
-- [More Examples](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/collision_detection)
+- [더 많은 예제](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/collision_detection)

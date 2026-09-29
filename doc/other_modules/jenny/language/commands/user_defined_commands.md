@@ -1,37 +1,34 @@
-# User-defined commands
+<a id="user-defined-commands"></a>
 
-In addition to the built-in commands, you can also declare your own **user-defined commands** for
-use in your yarn scripts. Typically, these commands would perform some in-game action that can be
-viewed as a natural part of the dialogue. For example, you can create commands for such action as
+# 사용자 정의 명령
+
+내장 명령 외에도 yarn 스크립트에서 사용할 **사용자 정의 명령**을 직접 선언할 수 있습니다.
+일반적으로 이런 명령은 대화의 자연스러운 일부로 볼 수 있는 게임 내 동작을 수행합니다. 예를 들어
 `<<wave>>`, `<<smile>>`, `<<frown>>`, `<<moveCamera>>`, `<<zoom>>`, `<<shakeCamera>>`,
 `<<fadeOut>>`, `<<walk>>`, `<<give>>`, `<<take>>`, `<<achievement>>`, `<<GainExperience>>`,
-`<<startQuest>>`, `<<finishQuest>>`, `<<openTrade>>`, `<<drawWeapon>>`, and so on.
+`<<startQuest>>`, `<<finishQuest>>`, `<<openTrade>>`, `<<drawWeapon>>` 같은 동작을 위한 명령을
+만들 수 있습니다.
 
-In many cases, the commands will need to take arguments. The arguments of a user-defined command
-are processed according to the following rules:
+많은 경우 명령은 인자를 받아야 합니다. 사용자 정의 명령의 인자는 다음 규칙에 따라 처리됩니다.
 
-- First, all content after the command name and until the closing `>>` is parsed according to the
-  rules of regular line parsing, where interpolated expressions are allowed but markup and hashtags
-  are not.
-- At runtime, the content of that line is evaluated, meaning that we substitute the values of all
-  expressions.
-- The evaluated argument string is then broken into individual arguments at whitespace, and the
-  types of these arguments are checked against the signature of the backing function.
-- Then, the backing function is called with the parsed arguments.
-- Lastly, all dialogue views in the dialogue runner receive the `onCommand()` event.
+- 먼저, 명령 이름 뒤부터 닫는 `>>`까지의 모든 내용은 일반 줄 파싱 규칙에 따라 파싱됩니다. 이때
+  보간 표현식은 허용되지만 마크업과 해시태그는 허용되지 않습니다.
+- 런타임에 그 줄의 내용이 평가됩니다. 즉, 모든 표현식의 값이 대입됩니다.
+- 평가된 인자 문자열은 공백을 기준으로 개별 인자로 나뉘며, 이 인자들의 타입이 뒷받침하는 함수의
+  시그니처와 맞는지 검사됩니다.
+- 그런 다음 파싱된 인자로 뒷받침하는 함수가 호출됩니다.
+- 마지막으로 대화 러너의 모든 대화 뷰가 `onCommand()` 이벤트를 받습니다.
 
-As a concrete example, consider the following command:
-
+구체적인 예로 다음 명령을 생각해 보겠습니다.
 ```yarn
 <<give Gold {round(100 * $multiplier)}>>
 ```
 
-First note that, unlike builtin commands, the arguments of the command are treated as text, and any
-expressions need to be placed in curly brackets.
+먼저 내장 명령과 달리 명령의 인자는 텍스트로 취급되므로, 표현식은 중괄호 안에 넣어야 한다는 점에
+유의하세요.
 
-Then, at runtime the expression is evaluated, and (assuming `$multiplier` is 1.5) the command's
-argument string becomes `"Gold 150"`. The string is then broken at white spaces and each argument
-is parsed according to its type in the backing Dart function. For example, if the function's
-signature is `void give(String item, int amount)`, then it will be invoked as `give("Gold", 150)`.
-If, on the other hand, the number or types of arguments do not match the expected signature, then
-a `DialogueException` will be raised.
+그런 다음 런타임에 표현식이 평가되고, (`$multiplier`가 1.5라고 가정하면) 명령의 인자 문자열은
+`"Gold 150"`이 됩니다. 이 문자열은 공백을 기준으로 나뉘고, 각 인자는 뒷받침하는 Dart 함수에서의
+타입에 따라 파싱됩니다. 예를 들어 함수의 시그니처가 `void give(String item, int amount)`라면
+`give("Gold", 150)`으로 호출됩니다. 반대로 인자의 개수나 타입이 예상한 시그니처와 맞지 않으면
+`DialogueException`이 발생합니다.

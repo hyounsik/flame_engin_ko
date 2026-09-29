@@ -1,29 +1,33 @@
-# Text Rendering
+<a id="text-rendering"></a>
 
-Flame has some dedicated classes to help you render text.
+# 텍스트 렌더링
 
-
-## Text Components
-
-The simplest way to render text with Flame is to leverage one of the provided text-rendering
-components:
-
-- `TextComponent` for rendering a single line of text
-- `TextBoxComponent` for bounding multi-line text within a sized box, including the possibility of a
-typing effect. You can use the `newLineNotifier` to be notified when a new line is added. Use the
-`onComplete` callback to execute a function when the text is completely printed.
-- `ScrollTextBoxComponent` enhances the functionality of `TextBoxComponent` by adding vertical
-scrolling capability when the text exceeds the boundaries of the enclosing box.
+Flame에는 텍스트 렌더링을 돕는 전용 클래스가 몇 가지 있습니다.
 
 
-All components are showcased in [this example](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/text_example.dart).
+<a id="text-components"></a>
+
+## 텍스트 컴포넌트
+
+Flame으로 텍스트를 렌더링하는 가장 간단한 방법은 제공되는 텍스트 렌더링
+컴포넌트 중 하나를 활용하는 것입니다.
+
+- `TextComponent`: 한 줄의 텍스트를 렌더링합니다.
+- `TextBoxComponent`: 여러 줄의 텍스트를 크기가 정해진 박스 안에 담으며, 타이핑 효과도
+지원합니다. `newLineNotifier`를 사용하면 새 줄이 추가될 때 알림을 받을 수 있습니다. 텍스트가 모두
+출력되었을 때 함수를 실행하려면 `onComplete` 콜백을 사용하세요.
+- `ScrollTextBoxComponent`: 텍스트가 감싸는 박스의 경계를 넘을 때 세로 스크롤 기능을 추가해
+`TextBoxComponent`의 기능을 확장합니다.
+
+
+모든 컴포넌트는 [이 예제](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/text_example.dart)에서 확인할 수 있습니다.
 
 
 ### TextComponent
 
-`TextComponent` is a simple component that renders a single line of text.
+`TextComponent`는 한 줄의 텍스트를 렌더링하는 간단한 컴포넌트입니다.
 
-Simple usage:
+간단한 사용법:
 
 ```dart
 class MyGame extends FlameGame {
@@ -39,10 +43,9 @@ class MyGame extends FlameGame {
 }
 ```
 
-In order to configure aspects of the rendering like font family, size, color, etc, you need to
-provide (or amend) a `TextRenderer` with such information; while you can read more details about
-this interface below, the simplest implementation you can use is the `TextPaint`, which takes a
-Flutter `TextStyle`:
+폰트 패밀리, 크기, 색상 등 렌더링 관련 요소를 설정하려면 해당 정보를 담은
+`TextRenderer`를 제공(또는 수정)해야 합니다. 이 인터페이스에 대한 자세한 내용은 아래에서 볼 수 있으며,
+사용할 수 있는 가장 간단한 구현은 Flutter의 `TextStyle`을 받는 `TextPaint`입니다.
 
 ```dart
 final regular = TextPaint(
@@ -67,35 +70,35 @@ class MyGame extends FlameGame {
 }
 ```
 
-You can find all the options under [TextComponent's
-API](https://pub.dev/documentation/flame/latest/components/TextComponent-class.html).
+모든 옵션은 [TextComponent의
+API](https://pub.dev/documentation/flame/latest/components/TextComponent-class.html)에서 확인할 수 있습니다.
 
 
 ### TextBoxComponent
 
-`TextBoxComponent` is very similar to `TextComponent`, but as its name suggest it is used to render
-text inside a bounding box, creating line breaks according to the provided box size.
+`TextBoxComponent`는 `TextComponent`와 매우 비슷하지만, 이름에서 알 수 있듯이 경계 박스 안에
+텍스트를 렌더링하는 데 사용되며, 제공된 박스 크기에 따라 줄바꿈을 만듭니다.
 
-You can decide if the box should grow as the text is written or if it should be static by the
-`growingBox` variable in the `TextBoxConfig`. A static box could either have a fixed size (setting
-the `size` property of the `TextBoxComponent`), or to automatically shrink to fit the text content.
+`TextBoxConfig`의 `growingBox` 변수로 텍스트가 작성됨에 따라 박스가 커질지, 아니면 고정될지를
+결정할 수 있습니다. 고정된 박스는 크기를 고정하거나(`TextBoxComponent`의
+`size` 속성 설정), 텍스트 내용에 맞게 자동으로 줄어들 수 있습니다.
 
-In addition, the `align` property allows you to control the horizontal and vertical alignment of
-the text content. For example, setting `align` to `Anchor.center` will center the text within its
-bounding box both vertically and horizontally.
+또한 `align` 속성을 사용하면 텍스트 내용의 가로 및 세로 정렬을 제어할 수 있습니다.
+예를 들어 `align`을 `Anchor.center`로 설정하면 텍스트가 경계 박스 안에서
+세로와 가로 모두 가운데에 정렬됩니다.
 
-If you want to change the margins of the box use the `margins` variable in the `TextBoxConfig`.
+박스의 여백을 변경하려면 `TextBoxConfig`의 `margins` 변수를 사용하세요.
 
-Finally, if you want to simulate a "typing" effect, by showing each character of the string one by
-one as if being typed in real-time, you can provide the `boxConfig.timePerChar` parameter.
+마지막으로, 문자열의 각 문자를 실시간으로 타이핑하는 것처럼 하나씩 보여 주는
+"타이핑" 효과를 흉내 내고 싶다면 `boxConfig.timePerChar` 파라미터를 제공하면 됩니다.
 
-To control the typing effect, call `skip` to show the entire text at once, and `resetAnimation` to
-reset the typing effect back to the beginning without having to recreate the component. Do note
-that `skip` sets `boxConfig.timePerChar` to `0` so when attempting to replay the typing effect
-after calling `skip`, make sure to re-set the `boxConfig.timePerChar` right before or after
-calling `resetAnimation`.
+타이핑 효과를 제어하려면, 전체 텍스트를 한 번에 보여 주는 `skip`과, 컴포넌트를 다시 만들 필요 없이
+타이핑 효과를 처음으로 되돌리는 `resetAnimation`을 호출하세요. `skip`은
+`boxConfig.timePerChar`를 `0`으로 설정한다는 점에 유의하세요. 따라서 `skip`을 호출한 후
+타이핑 효과를 다시 재생하려면 `resetAnimation`을 호출하기 직전이나 직후에
+`boxConfig.timePerChar`를 다시 설정해야 합니다.
 
-Example usage:
+사용 예:
 
 ```dart
 class MyTextBox extends TextBoxComponent {
@@ -119,21 +122,21 @@ class MyTextBox extends TextBoxComponent {
 ```
 
 
-You can find all the options under [TextBoxComponent's
-API](https://pub.dev/documentation/flame/latest/components/TextBoxComponent-class.html).
+모든 옵션은 [TextBoxComponent의
+API](https://pub.dev/documentation/flame/latest/components/TextBoxComponent-class.html)에서 확인할 수 있습니다.
 
 
 ### ScrollTextBoxComponent
 
-The `ScrollTextBoxComponent` is an advanced version of the `TextBoxComponent`,
-designed for displaying scrollable text within a defined area.
-This component is particularly useful for creating interfaces where large amounts of text
-need to be presented in a constrained space, such as dialogues or information panels.
+`ScrollTextBoxComponent`는 `TextBoxComponent`의 고급 버전으로,
+정해진 영역 안에 스크롤 가능한 텍스트를 표시하도록 설계되었습니다.
+이 컴포넌트는 대화창이나 정보 패널처럼 많은 양의 텍스트를
+제한된 공간에 보여 줘야 하는 인터페이스를 만들 때 특히 유용합니다.
 
-Note that the `align` property of `TextBoxComponent` is not available.
+`TextBoxComponent`의 `align` 속성은 사용할 수 없다는 점에 유의하세요.
 
 
-Example usage:
+사용 예:
 
 
 ```dart
@@ -150,11 +153,11 @@ class MyScrollableText extends ScrollTextBoxComponent {
 
 ### TextElementComponent
 
-If you want to render an arbitrary TextElement, ranging from a single InlineTextElement to a
-formatted DocumentRoot, you can use the `TextElementComponent`.
+단일 InlineTextElement부터 서식이 적용된 DocumentRoot까지, 임의의 TextElement를 렌더링하고 싶다면
+`TextElementComponent`를 사용할 수 있습니다.
 
-A simple example is to create a DocumentRoot to render a sequence of block elements (think of an
-HTML "div") containing rich text:
+간단한 예로, 리치 텍스트를 담은 블록 요소(HTML의 "div"를 떠올리면 됩니다)의 시퀀스를
+렌더링하는 DocumentRoot를 만들 수 있습니다.
 
 ```dart
   final document = DocumentRoot([
@@ -171,13 +174,13 @@ HTML "div") containing rich text:
   );
 ```
 
-Note that the size can be specified in two ways; either via:
+크기는 두 가지 방법으로 지정할 수 있다는 점에 유의하세요.
 
-- the size property common to all `PositionComponents`; or
-- the width/height included within the `DocumentStyle` applied.
+- 모든 `PositionComponents`에 공통인 size 속성, 또는
+- 적용된 `DocumentStyle`에 포함된 width/height
 
-An example applying a style to the document (which can include the size but other parameters as
-well):
+문서에 스타일을 적용하는 예제입니다(스타일에는 크기뿐 아니라 다른 파라미터도
+포함할 수 있습니다).
 
 ```dart
   final style = DocumentStyle(
@@ -198,21 +201,21 @@ well):
   );
 ```
 
-See a more elaborate [example of rich-text, formatted
-text blocks rendering](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart).
+좀 더 정교한 [리치 텍스트, 서식이 적용된
+텍스트 블록 렌더링 예제](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart)를 참고하세요.
 
-For more details about the underlying mechanics of the text rendering pipeline, see "Text Elements,
-Text Nodes, and Text Styles" below.
+텍스트 렌더링 파이프라인의 내부 동작에 대한 자세한 내용은 아래의 "Text Elements,
+Text Nodes, and Text Styles"를 참고하세요.
 
 
 ### Flame Markdown
 
-In order to more easily create rich-text-based DocumentRoots, from simple strings with bold/italics
-to complete structured documents, Flame provides the `flame_markdown` bridge package that connects
-the `markdown` library with Flame's text rendering infrastructure.
+굵게/기울임꼴이 있는 간단한 문자열부터 완전히 구조화된 문서까지, 리치 텍스트 기반 DocumentRoot를
+더 쉽게 만들 수 있도록 Flame은 `markdown` 라이브러리와 Flame의 텍스트 렌더링 인프라를 연결하는
+`flame_markdown` 브릿지 패키지를 제공합니다.
 
-Just use the `FlameMarkdown` helper class and the `toDocument` method to convert a markdown string
-into a DocumentRoot (which can then be used to create a `TextElementComponent`):
+`FlameMarkdown` 헬퍼 클래스의 `toDocument` 메서드를 사용해 마크다운 문자열을
+DocumentRoot로 변환하기만 하면 됩니다(이를 사용해 `TextElementComponent`를 만들 수 있습니다).
 
 ```dart
 import 'package:flame/text.dart';
@@ -234,18 +237,20 @@ final component = await TextElementComponent.fromDocument(
 ```
 
 
-## Infrastructure
+<a id="infrastructure"></a>
 
-If you are not using the Flame Component System, want to understand the infrastructure behind text
-rendering, want to customize fonts and styles used, or want to create your own custom renderers,
-this section is for you.
+## 인프라
 
-- `TextRenderer`: renderers know "how" to render text; in essence they contain the style information
-  to render any string
-- `TextElement`: an element is formatted, "laid-out" piece of text, include the string ("what") and
-  the style ("how")
+Flame Component System을 사용하지 않거나, 텍스트 렌더링의 기반 인프라를 이해하고 싶거나,
+사용하는 폰트와 스타일을 사용자 정의하고 싶거나, 직접 사용자 정의 렌더러를 만들고 싶다면
+이 섹션을 참고하세요.
 
-The following diagram showcases the class and inheritance structure of the text rendering pipeline:
+- `TextRenderer`: 렌더러는 텍스트를 "어떻게" 렌더링할지 알고 있습니다. 본질적으로 어떤 문자열이든
+  렌더링하기 위한 스타일 정보를 담고 있습니다.
+- `TextElement`: 요소는 서식이 적용되고 "레이아웃된" 텍스트 조각으로, 문자열("무엇을")과
+  스타일("어떻게")을 포함합니다.
+
+다음 다이어그램은 텍스트 렌더링 파이프라인의 클래스 및 상속 구조를 보여 줍니다.
 
 ```{mermaid}
 %%{init: { 'theme': 'dark' } }%%
@@ -285,31 +290,30 @@ classDiagram
     TextElement --> Others
 ```
 
-
 ### TextRenderer
 
-`TextRenderer` is the abstract class used by Flame to render text. Implementations of `TextRenderer`
-must include the information about the "how" the text is rendered. Font style, size, color, etc. It
-should be able to combine that information with a given string of text, via the `format` method, to
-generate a `TextElement`.
+`TextRenderer`는 Flame이 텍스트를 렌더링하는 데 사용하는 추상 클래스입니다. `TextRenderer`의 구현은
+텍스트를 "어떻게" 렌더링할지에 대한 정보, 즉 폰트 스타일, 크기, 색상 등을 포함해야 합니다.
+또한 `format` 메서드를 통해 이 정보를 주어진 텍스트 문자열과 결합해
+`TextElement`를 생성할 수 있어야 합니다.
 
-Flame provides two concrete implementations:
+Flame은 두 가지 구체적인 구현을 제공합니다.
 
-- `TextPaint`: most used, uses Flutter `TextPainter` to render regular text
-- `SpriteFontRenderer`: uses a `SpriteFont` (a sprite sheet-based font) to render bitmap text
-- `DebugTextRenderer`: only intended to be used for Golden Tests
+- `TextPaint`: 가장 많이 사용되며, Flutter의 `TextPainter`를 사용해 일반 텍스트를 렌더링합니다.
+- `SpriteFontRenderer`: `SpriteFont`(스프라이트 시트 기반 폰트)를 사용해 비트맵 텍스트를 렌더링합니다.
+- `DebugTextRenderer`: 골든 테스트(Golden Test) 전용입니다.
 
-But you can also provide your own if you want to extend to other customized forms of text rendering.
+하지만 다른 형태의 사용자 정의 텍스트 렌더링으로 확장하고 싶다면 직접 구현을 제공할 수도 있습니다.
 
-The main job of a `TextRenderer` is to format a string of text into a `TextElement`, that then can
-be rendered onto the screen:
+`TextRenderer`의 주된 역할은 텍스트 문자열을 `TextElement`로 포맷하는 것이며, 이렇게 만든 요소는
+화면에 렌더링할 수 있습니다.
 
 ```dart
 final textElement = textRenderer.format("Flame is awesome")
 textElement.render(...) 
 ```
 
-However the renderer provides a helper method to directly create the element and render it:
+하지만 렌더러는 요소를 바로 만들어 렌더링하는 헬퍼 메서드도 제공합니다.
 
 ```dart
 textRenderer.render(
@@ -323,15 +327,15 @@ textRenderer.render(
 
 #### TextPaint
 
-`TextPaint` is the built-in implementation of text rendering in Flame. It is based on top of
-Flutter's `TextPainter` class (hence the name), and it can be configured by the style class
-`TextStyle`, which contains all typographical information required to render text; i.e., font size
-and color, font family, etc.
+`TextPaint`는 Flame에 내장된 텍스트 렌더링 구현입니다. Flutter의 `TextPainter` 클래스를
+기반으로 하며(그래서 이런 이름이 붙었습니다), 스타일 클래스인 `TextStyle`로 설정할 수 있습니다.
+`TextStyle`은 텍스트 렌더링에 필요한 모든 타이포그래피 정보, 즉 폰트 크기와
+색상, 폰트 패밀리 등을 담고 있습니다.
 
-Outside of the style you can also optionally provide one extra parameter which is the
-`textDirection` (but that is typically already set to `ltr` or left-to-right).
+스타일 외에도 선택적으로 추가 파라미터 하나를 제공할 수 있는데, 바로
+`textDirection`입니다(다만 이 값은 보통 이미 `ltr`, 즉 왼쪽에서 오른쪽으로 설정되어 있습니다).
 
-Example usage:
+사용 예:
 
 ```dart
 const TextPaint textPaint = TextPaint(
@@ -342,66 +346,67 @@ const TextPaint textPaint = TextPaint(
 );
 ```
 
-Note: there are several packages that contain the class `TextStyle`. We export the right one (from
-Flutter) via the `text` module:
+참고: `TextStyle` 클래스를 포함한 패키지가 여러 개 있습니다. Flame은 `text` 모듈을 통해
+올바른 것(Flutter의 것)을 export합니다.
 
 ```dart
 import 'package:flame/text.dart';
 ```
 
-But if you want to import it explicitly, make sure that you import it from
-`package:flutter/painting.dart` (or from material or widgets). If you also need to import `dart:ui`,
-you might need to hide its version of `TextStyle`, since that module contains a different class with
-the same name:
+하지만 명시적으로 import하고 싶다면
+`package:flutter/painting.dart`(또는 material이나 widgets)에서 import해야 합니다. `dart:ui`도 import해야 한다면,
+해당 모듈에는 같은 이름의 다른 클래스가 있으므로 그쪽의 `TextStyle`을
+숨겨야(hide) 할 수도 있습니다.
 
 ```dart
 import 'package:flutter/painting.dart';
 import 'dart:ui' hide TextStyle;
 ```
 
-Following are some common properties of `TextStyle`(see the [full
-list of `TextStyle` properties](https://api.flutter.dev/flutter/painting/TextStyle-class.html)):
+다음은 `TextStyle`의 몇 가지 일반적인 속성입니다([`TextStyle` 속성의 전체
+목록](https://api.flutter.dev/flutter/painting/TextStyle-class.html) 참고).
 
-- `fontFamily`: a commonly available font, like Arial (default), or a custom font added in your
- pubspec (see [how to add a custom font](https://docs.flutter.dev/cookbook/design/fonts)).
-- `fontSize`: font size, in pts (default `24.0`).
-- `height`: height of text line, as a multiple of font size (default `null`).
-- `color`: the color, as a `ui.Color` (default white).
+- `fontFamily`: Arial(기본값) 같은 일반적으로 사용 가능한 폰트, 또는 pubspec에 추가한
+ 사용자 정의 폰트([사용자 정의 폰트 추가 방법](https://docs.flutter.dev/cookbook/design/fonts) 참고).
+- `fontSize`: 폰트 크기(pt 단위, 기본값 `24.0`).
+- `height`: 텍스트 줄의 높이. 폰트 크기의 배수로 지정합니다(기본값 `null`).
+- `color`: `ui.Color`로 지정하는 색상(기본값 흰색).
 
-For more information regarding colors and how to create them, see the [Colors and
-Palette](palette.md) guide.
+색상과 색상을 만드는 방법에 대한 자세한 내용은 [색상과
+팔레트](palette.md) 가이드를 참고하세요.
 
 
 #### SpriteFontRenderer
 
-The other renderer option provided out of the box is `SpriteFontRenderer`, which allows you to
-provide a `SpriteFont` based off of a sprite sheet. TODO
+기본으로 제공되는 또 다른 렌더러 옵션은 `SpriteFontRenderer`로, 스프라이트 시트를 기반으로 한
+`SpriteFont`를 제공할 수 있게 해 줍니다. TODO
 
 
 #### DebugTextRenderer
 
-This renderer is intended to be used for Golden Tests. Rendering normal font-based text in Golden
-Tests is unreliable due to differences in font definitions across platforms and different algorithms
-used for anti-aliasing. This renderer will render text as if each word was a solid rectangle, making
-it possible to test the layout, positioning and sizing of the elements without having to rely on
-font-based rendering.
+이 렌더러는 골든 테스트에서 사용하기 위한 것입니다. 골든 테스트에서 일반적인 폰트 기반 텍스트를 렌더링하면
+플랫폼마다 폰트 정의가 다르고 안티앨리어싱에 사용되는 알고리즘이 달라서
+신뢰할 수 없습니다. 이 렌더러는 각 단어를 단색 사각형처럼 렌더링하므로,
+폰트 기반 렌더링에 의존하지 않고도 요소의 레이아웃, 위치, 크기를 테스트할 수 있습니다.
 
 
-## Inline Text Elements
+<a id="inline-text-elements"></a>
 
-A `TextElement` is a "pre-compiled", formatted and laid-out piece of text with a specific styling
-applied, ready to be rendered at any given position.
+## 인라인 텍스트 요소
 
-A `InlineTextElement` implements the `TextElement` interface and must implement their two methods,
-one that teaches how to translate it around and another on how to draw it to the canvas:
+`TextElement`는 특정 스타일이 적용되어 "미리 컴파일되고", 서식이 적용되고 레이아웃된 텍스트 조각으로,
+어떤 위치에서든 바로 렌더링할 수 있습니다.
+
+`InlineTextElement`는 `TextElement` 인터페이스를 구현하며, 두 가지 메서드를 구현해야 합니다.
+하나는 요소를 이동시키는 방법을, 다른 하나는 캔버스에 그리는 방법을 알려 줍니다.
 
 ```dart
   void translate(double dx, double dy);
   void draw(Canvas canvas);
 ```
 
-These methods are intended to be overwritten by the implementations of `InlineTextElement`, and
-probably will not be called directly by users; because a convenient `render` method is provided:
+이 메서드들은 `InlineTextElement`의 구현에서 오버라이드하기 위한 것이며, 사용자가 직접
+호출하는 일은 거의 없을 것입니다. 편리한 `render` 메서드가 제공되기 때문입니다.
 
 ```dart
   void render(
@@ -411,63 +416,67 @@ probably will not be called directly by users; because a convenient `render` met
   })
 ```
 
-That allows the element to be rendered at a specific position, using a given anchor.
+이 메서드를 사용하면 주어진 앵커를 사용해 특정 위치에 요소를 렌더링할 수 있습니다.
 
-The interface also mandates (and provides) a getter for the `LineMetrics` object associated with
-that `InlineTextElement`, which allows you (and the `render` implementation) to access sizing
-information related to the element (width, height, ascend, etc).
+이 인터페이스는 또한 해당 `InlineTextElement`에 연결된 `LineMetrics` 객체의 getter를 요구(및 제공)합니다.
+이를 통해 사용자(및 `render` 구현)는 요소와 관련된 크기
+정보(너비, 높이, ascent 등)에 접근할 수 있습니다.
 
 ```dart
   LineMetrics get metrics;
 ```
 
 
-## Text Elements, Text Nodes, and Text Styles
+<a id="text-elements-text-nodes-and-text-styles"></a>
 
-While normal renderers always work with a `InlineTextElement` directly, there is a bigger underlying
-infrastructure that can be used to render more rich or formatter text.
+## Text Elements, Text Nodes, Text Styles
 
-Text Elements are a superset of Inline Text Elements that represent an arbitrary rendering block
-within a rich-text document. Essentially, they are concrete and "physical": they are objects that
-are ready to be rendered on a canvas.
+일반적인 렌더러는 항상 `InlineTextElement`를 직접 다루지만, 그 밑에는 더 풍부하거나 서식이 적용된
+텍스트를 렌더링하는 데 사용할 수 있는 더 큰 인프라가 있습니다.
 
-This property distinguishes them from Text Nodes, which are structured pieces of text, and from Text
-Styles (called `FlameTextStyle` in code to make it easier to work alongside Flutter's `TextStyle`),
-which are descriptors for how arbitrary pieces of text ought to be rendered.
+Text Element는 Inline Text Element의 상위 집합으로, 리치 텍스트 문서 안의 임의의 렌더링 블록을
+나타냅니다. 본질적으로 이들은 구체적이고 "물리적인" 것으로, 캔버스에 렌더링될
+준비가 된 객체입니다.
 
-So, in the most general case, a user would use a `TextNode` to describe a desired piece of rich
-text; define a `FlameTextStyle` to apply to it; and use that to generate a `TextElement`. Depending
-on the type of rendering, the `TextElement` generated will be an `InlineTextElement`, which brings
-us back to the normal flow of the rendering pipeline. The unique property of the Inline-Text-type
-element is that it exposes a LineMetrics that can be used for advanced rendering; while the other
-elements only expose a simpler `draw` method which is unaware of sizing and positioning.
+이 특성이 Text Element를 Text Node 및 Text Style과 구분합니다. Text Node는 구조화된 텍스트 조각이고,
+Text Style(Flutter의 `TextStyle`과 함께 사용하기 쉽도록 코드에서는 `FlameTextStyle`이라고 부릅니다)은
+임의의 텍스트 조각을 어떻게 렌더링해야 하는지를 기술하는 디스크립터입니다.
 
-However, the other types of Text Elements, Text Nodes, and Text Styles must be used if the intent is
-to create an entire document (multiple blocks or paragraphs), enriched with formatted text. In order
-to render an arbitrary TextElement, you can alternatively use the `TextElementComponent` (see above).
+따라서 가장 일반적인 경우, 사용자는 `TextNode`로 원하는 리치
+텍스트 조각을 기술하고, 여기에 적용할 `FlameTextStyle`을 정의한 다음, 이를 사용해 `TextElement`를 생성합니다.
+렌더링 유형에 따라 생성된 `TextElement`는 `InlineTextElement`가 되며, 이렇게 되면
+다시 렌더링 파이프라인의 일반적인 흐름으로 돌아오게 됩니다. Inline Text 유형 요소의 고유한 특성은
+고급 렌더링에 사용할 수 있는 LineMetrics를 노출한다는 점입니다. 반면 다른
+요소들은 크기와 위치를 알지 못하는 더 단순한 `draw` 메서드만 노출합니다.
 
-See [examples of such usage](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart).
+하지만 서식이 적용된 텍스트로 풍부하게 꾸민 문서 전체(여러 블록이나 문단)를 만들려는 경우에는
+다른 유형의 Text Element, Text Node, Text Style을 사용해야 합니다.
+임의의 TextElement를 렌더링하려면 대신 `TextElementComponent`를 사용할 수도 있습니다(위 참고).
+
+[이러한 사용 예제](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart)를 참고하세요.
 
 
-### Text Nodes and the Document Root
+<a id="text-nodes-and-the-document-root"></a>
 
-A `DocumentRoot` is not a `TextNode` (inheritance-wise) in itself but represents a grouping of
-`BlockNodes` that layout a "page" or "document" of rich text laid out in multiple blocks or
-paragraphs. It represents the entire document and can receive a global Style.
+### Text Node와 Document Root
 
-The first step to define your rich-text document is to create a Node, which will likely be a
-`DocumentRoot`.
+`DocumentRoot`는 (상속 관계상) 그 자체로 `TextNode`는 아니지만, 여러 블록이나
+문단으로 배치된 리치 텍스트의 "페이지" 또는 "문서"를 구성하는 `BlockNodes`의 그룹을 나타냅니다.
+문서 전체를 나타내며 전역 스타일을 받을 수 있습니다.
 
-It will first contain the top-most list of Block Nodes that can define headers, paragraphs or
-columns.
+리치 텍스트 문서를 정의하는 첫 번째 단계는 노드를 만드는 것이며, 대개
+`DocumentRoot`가 될 것입니다.
 
-Then each of those blocks can contain other blocks or the Inline Text Nodes, either Plain Text Nodes
-or some rich-text with specific formatting.
+이 노드는 먼저 헤더, 문단, 열(column)을 정의할 수 있는 최상위 Block Node 리스트를
+포함합니다.
 
-Note that the hierarchy defined by the node structure is also used for styling purposes as per
-defined in the `FlameTextStyle` class.
+그런 다음 각 블록은 다른 블록이나 Inline Text Node를 포함할 수 있으며, Inline Text Node는 Plain Text Node일 수도,
+특정 서식이 적용된 리치 텍스트일 수도 있습니다.
 
-The actual nodes all inherit from `TextNode` and are broken down by the following diagram:
+노드 구조로 정의된 계층은 `FlameTextStyle` 클래스에 정의된 대로
+스타일링 목적으로도 사용된다는 점에 유의하세요.
+
+실제 노드들은 모두 `TextNode`를 상속하며, 다음 다이어그램과 같이 구분됩니다.
 
 ```{mermaid}
 %%{init: { 'theme': 'dark' } }%%
@@ -533,17 +542,18 @@ graph TD
     InlineTextNode --> ItalicTextNode
 ```
 
+<a id="flame-text-styles"></a>
 
-### (Flame) Text Styles
+### (Flame) Text Style
 
-Text Styles can be applied to nodes to generate elements. They all inherit from `FlameTextStyle`
-abstract class (which is named as is to avoid confusion with Flutter's `TextStyle`).
+Text Style을 노드에 적용해 요소를 생성할 수 있습니다. 이들은 모두 `FlameTextStyle`
+추상 클래스를 상속합니다(Flutter의 `TextStyle`과 혼동하지 않도록 이런 이름이 붙었습니다).
 
-They follow a tree-like structure, always having `DocumentStyle` as the root; this structure is
-leveraged to apply cascading style to the analogous Node structure. In fact, they are pretty similar
-to, and can be thought of as, CSS definitions.
+이들은 트리와 같은 구조를 따르며, 항상 `DocumentStyle`을 루트로 가집니다. 이 구조는
+대응하는 노드 구조에 계단식(cascading) 스타일을 적용하는 데 활용됩니다. 사실 이들은 CSS 정의와
+꽤 비슷하며, CSS 정의로 생각해도 됩니다.
 
-The full inheritance chain can be seen on the following diagram:
+전체 상속 체인은 다음 다이어그램에서 볼 수 있습니다.
 
 ```{mermaid}
 %%{init: { 'theme': 'dark' } }%%
@@ -589,35 +599,35 @@ classDiagram
     FlameTextStyle <|-- InlineTextStyle
 ```
 
+<a id="text-elements"></a>
 
-### Text Elements
+### Text Element
 
-Finally, we have the elements, that represent a combination of a node ("what") with a style ("how"),
-and therefore represent a pre-compiled, laid-out piece of rich text to be rendered on the Canvas.
+마지막으로 요소(element)가 있습니다. 요소는 노드("무엇을")와 스타일("어떻게")의 조합을 나타내며,
+따라서 캔버스에 렌더링될, 미리 컴파일되고 레이아웃된 리치 텍스트 조각을 나타냅니다.
 
-Inline Text Elements specifically can alternatively be thought of as a combination of a
-`TextRenderer` (simplified "how") and a string (single line of "what").
+특히 Inline Text Element는
+`TextRenderer`(단순화된 "어떻게")와 문자열(한 줄의 "무엇을")의 조합으로 생각할 수도 있습니다.
 
-That is because an `InlineTextStyle` can be converted to a specific `TextRenderer` via the
-`asTextRenderer` method, which is then used to lay out each line of text into a unique
-`InlineTextElement`.
+`InlineTextStyle`은 `asTextRenderer` 메서드를 통해 특정 `TextRenderer`로 변환될 수 있고,
+이 렌더러를 사용해 텍스트의 각 줄을 고유한 `InlineTextElement`로 레이아웃하기 때문입니다.
 
-When using the renderer directly, the entire layout process is skipped, and a single
-`TextPainterTextElement` or `SpriteFontTextElement` is returned.
+렌더러를 직접 사용하면 레이아웃 과정 전체가 생략되고, 단일
+`TextPainterTextElement` 또는 `SpriteFontTextElement`가 반환됩니다.
 
-As you can see, both definitions of an Element are, essentially, equivalent, all things considered.
-But it still leaves us with two paths for rendering text. Which one to pick? How to solve this
-conundrum?
+보시다시피 요소에 대한 두 정의는 모든 것을 고려하면 본질적으로 동일합니다.
+하지만 여전히 텍스트를 렌더링하는 두 가지 경로가 남습니다. 어느 쪽을 골라야 할까요? 이 난제를
+어떻게 해결할까요?
 
-When in doubt, the following guidelines can help you picking the best path for you:
+확신이 서지 않는다면 다음 지침이 자신에게 가장 적합한 경로를 고르는 데 도움이 될 것입니다.
 
-- for the simplest way to render text, use `TextPaint` (basic renderer implementation)
-  - you can use the FCS provided component `TextComponent` for that.
-- for rendering Sprite Fonts, you must use `SpriteFontRenderer` (a renderer implementation that
-  accepts a `SpriteFont`);
-- for rendering multiple lines of text, with automatic line breaks, you have two options:
-  - use the FCS `TextBoxComponent`, which uses any text renderer to draw each line of text as an
-    Element, and does its own layout and line breaking;
-  - use the Text Node & Style system to create your pre-laid-out Elements. Note: there is no current
-    FCS component for it.
-- finally, in order to have formatted (or rich) text, you must use Text Nodes & Styles.
+- 텍스트를 렌더링하는 가장 간단한 방법이 필요하다면 `TextPaint`(기본 렌더러 구현)를 사용하세요.
+  - 이를 위해 FCS가 제공하는 `TextComponent` 컴포넌트를 사용할 수 있습니다.
+- 스프라이트 폰트를 렌더링하려면 `SpriteFontRenderer`(`SpriteFont`를 받는 렌더러 구현)를
+  사용해야 합니다.
+- 자동 줄바꿈이 적용된 여러 줄의 텍스트를 렌더링하려면 두 가지 선택지가 있습니다.
+  - FCS의 `TextBoxComponent`를 사용합니다. 이 컴포넌트는 어떤 텍스트 렌더러든 사용해 텍스트의 각 줄을
+    요소로 그리며, 자체적으로 레이아웃과 줄바꿈을 처리합니다.
+  - Text Node & Style 시스템을 사용해 미리 레이아웃된 요소를 만듭니다. 참고: 현재 이를 위한
+    FCS 컴포넌트는 없습니다.
+- 마지막으로, 서식이 적용된(또는 리치) 텍스트가 필요하다면 Text Node & Style을 사용해야 합니다.

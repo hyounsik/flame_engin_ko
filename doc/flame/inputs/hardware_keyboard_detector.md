@@ -1,8 +1,8 @@
 # HardwareKeyboardDetector
 
 ```{note}
-Most of the time you will want to use the `KeyboardEvents` class or the
-`KeyboardHandler` mixin instead of this component.
+대부분의 경우 이 컴포넌트 대신 `KeyboardEvents` 클래스나
+`KeyboardHandler` 믹스인을 사용하는 것이 좋습니다.
 ```
 
 ```{dartdoc}

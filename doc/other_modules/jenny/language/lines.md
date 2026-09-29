@@ -1,27 +1,30 @@
-# Lines
+<a id="lines"></a>
 
-A **line** is the most common element of the Yarn dialogue. It's just a single phrase that a
-character in the game says. In a `.yarn` file, a **line** is represented by a single line of text
-in a [node body]. A line may contain the following elements:
+# 줄
 
-- A character ID;
-- Normal text;
-- Escaped text;
-- Interpolated expressions;
-- Markup;
-- Hashtags;
-- A comment at the end of the line;
-- (a line, however, cannot contain commands).
+**줄(line)**은 Yarn 대화에서 가장 흔한 요소입니다. 게임 속 캐릭터가 말하는 하나의 대사일 뿐입니다.
+`.yarn` 파일에서 **줄**은 [노드 본문][node body]의 텍스트 한 줄로 표현됩니다. 줄에는 다음 요소가
+들어갈 수 있습니다.
 
-A **line** is represented with the [DialogueLine] class in Jenny runtime.
+- 캐릭터 ID
+- 일반 텍스트
+- 이스케이프된 텍스트
+- 보간 표현식
+- 마크업
+- 해시태그
+- 줄 끝의 주석
+- (단, 줄에는 명령을 넣을 수 없습니다.)
+
+**줄**은 Jenny 런타임에서 [DialogueLine] 클래스로 표현됩니다.
 
 
-## Character ID
+<a id="character-id"></a>
 
-If a line starts with a single word followed by a `:`, then that word is presumed to be the name
-of the character who is speaking that line. In the following example there are two characters
-talking to each other: Prosser and Ford, and the last line has no character ID.
+## 캐릭터 ID
 
+줄이 한 단어와 그 뒤의 `:`로 시작하면, 그 단어는 해당 줄을 말하는 캐릭터의 이름으로 간주됩니다.
+다음 예제에서는 Prosser와 Ford라는 두 캐릭터가 서로 대화하고 있으며, 마지막 줄에는 캐릭터 ID가
+없습니다.
 ```yarn
 title: Bulldozer_Conversation
 ---
@@ -35,10 +38,9 @@ Ford: In, as you say, the mud.
 ===
 ```
 
-It is worth emphasizing that a character ID must be a valid ID -- that is, it cannot contain
-spaces or other special characters. In the example below "Harry Potter" is not a valid character ID,
-while all other alternatives are ok.
-
+캐릭터 ID는 반드시 유효한 ID여야 한다는 점을 강조할 필요가 있습니다. 즉, 공백이나 다른 특수 문자를
+포함할 수 없습니다. 아래 예제에서 "Harry Potter"는 유효한 캐릭터 ID가 아니지만, 나머지는 모두
+괜찮습니다.
 ```yarn
 title: Hello
 ---
@@ -49,9 +51,8 @@ Harry: Hello, Hermione!
 ===
 ```
 
-If you want to have a line that starts with a `WORD + ':'`, but you don't want that word to be
-interpreted as a character name, then the colon can be [escaped](#escaped-text):
-
+`WORD + ':'`로 시작하는 줄을 쓰고 싶지만 그 단어가 캐릭터 이름으로 해석되기를 원하지 않는다면,
+콜론을 [이스케이프](#이스케이프된-텍스트)할 수 있습니다.
 ```yarn
 title: Warning
 ---
@@ -60,17 +61,18 @@ Attention\: The cake is NOT a lie
 ```
 
 ```{note}
-All characters must be **declared** using the [\<\<character\>\>] command
-before they can be used in a script.
+모든 캐릭터는 스크립트에서 사용하기 전에 [\<\<character\>\>] 명령으로
+**선언**해야 합니다.
 ```
 
 
-## Interpolated expressions
+<a id="interpolated-expressions"></a>
 
-You can insert dynamic text into a line with the help of **interpolated expression**s. These
-expressions are surrounded with curly braces `{}`, and everything inside the braces will be
-evaluated, and then the result of the evaluation will be inserted into the text.
+## 보간 표현식
 
+**보간 표현식(interpolated expression)**을 사용하면 줄에 동적인 텍스트를 삽입할 수 있습니다.
+이 표현식은 중괄호 `{}`로 감싸며, 중괄호 안의 모든 내용이 평가된 뒤 평가 결과가 텍스트에
+삽입됩니다.
 ```yarn
 title: Greeting
 ---
@@ -79,9 +81,8 @@ Player: I have only {plural($money, "% coin")}, do you have anything I can affor
 ===
 ```
 
-The expressions will be evaluated at runtime when the line is delivered, which means it can produce
-different text during different runs of the line.
-
+표현식은 줄이 전달되는 런타임에 평가되므로, 같은 줄이라도 실행할 때마다 다른 텍스트를 만들 수
+있습니다.
 ```yarn
 title: Exam_Greeting
 ---
@@ -98,19 +99,19 @@ title: Exam_Greeting
 ===
 ```
 
-After evaluation, the text of the expression will be inserted into the line as-is, without any
-further processing. Which means that the text of the expression may contain special characters
-(such as `[`, `]`, `{`, `}`, `\`, etc), and they don't need to be escaped. It also means that the
-expression cannot contain markup, or produce a hashtag, etc.
+평가가 끝나면 표현식의 텍스트는 추가 처리 없이 그대로 줄에 삽입됩니다. 즉, 표현식의 텍스트에는
+특수 문자(`[`, `]`, `{`, `}`, `\` 등)가 들어 있을 수 있으며, 이를 이스케이프할 필요가 없습니다.
+또한 표현식은 마크업을 포함하거나 해시태그를 만들어 낼 수 없다는 뜻이기도 합니다.
 
-Read more about expressions in the [Expressions] section.
+표현식에 대한 자세한 내용은 [표현식][Expressions] 섹션을 참고하세요.
 
 
-## Markup
+<a id="markup"></a>
 
-The **markup** is a mechanism for text annotation. It is somewhat similar to HTML tags, except that
-it uses square brackets `[]` instead of angular ones:
+## 마크업
 
+**마크업**은 텍스트 주석(annotation)을 위한 메커니즘입니다. HTML 태그와 다소 비슷하지만,
+꺾쇠괄호 대신 대괄호 `[]`를 사용합니다.
 ```yarn
 title: Markup
 ---
@@ -118,22 +119,23 @@ Wizard: No, no, no! [em]This is insanity![/em]
 ===
 ```
 
-The markup tags do not alter the text of the line, they merely insert annotations in it. Thus, the
-line above will be delivered in game as "No, no, no! This is insanity!", however there will be
-additional information attached to the line that shows that the last 17 characters were marked with
-the `em` tag.
+마크업 태그는 줄의 텍스트를 바꾸지 않으며, 단지 텍스트에 주석을 삽입할 뿐입니다. 따라서 위의 줄은
+게임에서 "No, no, no! This is insanity!"로 전달되지만, 마지막 17개 문자가 `em` 태그로 표시되었다는
+추가 정보가 줄에 함께 붙어 있습니다.
 
-Markup tags can be nested, or be zero-width, they can also include parameters whose values can be
-dynamic. Read more about this in the [Markup] document.
+마크업 태그는 중첩될 수도 있고 너비가 0일 수도 있으며, 값이 동적일 수 있는 파라미터를 포함할 수도
+있습니다. 자세한 내용은 [마크업][Markup] 문서를 참고하세요.
 
 
-## Hashtags
+<a id="hashtags"></a>
 
-Hashtags may appear at the end of the line, and take the following form: `#text`. That is, a hashtag
-is a `#` symbol followed by any text that doesn't contain whitespace.
+## 해시태그
 
-Hashtags are used to add line-level metadata. There can be no line content after a hashtag (though
-comments are allowed). A line can have multiple hashtags associated with it.
+해시태그는 줄의 끝에 올 수 있으며 `#text` 형식을 가집니다. 즉, 해시태그는 `#` 기호 뒤에 공백을
+포함하지 않는 임의의 텍스트가 오는 것입니다.
+
+해시태그는 줄 수준의 메타데이터를 추가하는 데 사용됩니다. 해시태그 뒤에는 줄 내용이 올 수
+없습니다(주석은 허용됩니다). 한 줄에 여러 해시태그를 연결할 수 있습니다.
 
 <!-- cSpell:ignore HPMOR (Harry Potter and the Methods of Rationality) -->
 ```yarn
@@ -148,20 +150,19 @@ Harry: There is light in the world, and it is us! #volume:+2
 ===
 ```
 
-In most cases the Jenny engine does not interpret the tags, but merely stores them as part of the
-line information. It is up to the programmer to examine these tags at runtime.
+대부분의 경우 Jenny 엔진은 태그를 해석하지 않고 줄 정보의 일부로 저장만 합니다. 런타임에 이 태그들을
+살펴보는 것은 프로그래머의 몫입니다.
 
 
-## Escaped text
+<a id="escaped-text"></a>
 
-Whenever you have a line that needs to include a character that would normally be interpreted as
-one of the special syntaxes mentioned above, then such a character can be **escaped** with a
-backslash `\`.
+## 이스케이프된 텍스트
 
-The following escape sequences are recognized: `\\`, `\/`, `\#`, `\<`, `\>`, `\[`, `\]`, `\{`, `\}`,
-`\:`, `\-`, `\n`. In addition, there is also `\⏎` (i.e. backslash followed immediately by a
-newline).
+줄에 넣어야 하는 문자가 원래는 위에서 언급한 특수 문법 중 하나로 해석되는 문자라면, 그 문자를
+백슬래시 `\`로 **이스케이프**할 수 있습니다.
 
+인식되는 이스케이프 시퀀스는 다음과 같습니다: `\\`, `\/`, `\#`, `\<`, `\>`, `\[`, `\]`, `\{`, `\}`,
+`\:`, `\-`, `\n`. 또한 `\⏎`(즉, 백슬래시 바로 뒤에 줄바꿈이 오는 것)도 있습니다.
 ```yarn
 title: Escapes
 ---
@@ -173,10 +174,9 @@ Not a \[markup\]
 ===
 ```
 
-The `\⏎` escape can be used to split a single long line into multiple physical lines, that would
-still be treated by Jenny as if it was a single line. This escape sequence consumes both the
-newline symbol and all the whitespace at the start of the next line:
-
+`\⏎` 이스케이프를 사용하면 하나의 긴 줄을 여러 물리적 줄로 나누면서도, Jenny가 여전히 한 줄처럼
+처리하게 할 수 있습니다. 이 이스케이프 시퀀스는 줄바꿈 기호와 다음 줄 시작 부분의 공백을
+모두 소비합니다.
 ```yarn
 title: One_long_line
 ---

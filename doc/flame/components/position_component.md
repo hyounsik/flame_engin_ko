@@ -1,89 +1,96 @@
 # PositionComponent
 
-Most visible objects in a game need a position, size, and rotation. `PositionComponent` provides
-these transform properties, making it the base class for nearly every visual element in Flame:
-sprites, animations, shapes, and your own custom components. It mirrors the concept of a
-[`Positioned`](https://api.flutter.dev/flutter/widgets/Positioned-class.html) widget in Flutter, but
-in a game-oriented coordinate system.
+게임에서 눈에 보이는 대부분의 객체에는 위치, 크기, 회전이 필요합니다. `PositionComponent`는 이러한
+변환 속성을 제공하므로, 스프라이트, 애니메이션, 도형, 직접 만든 커스텀 컴포넌트 등 Flame의 거의 모든
+시각 요소의 기반 클래스가 됩니다. Flutter의
+[`Positioned`](https://api.flutter.dev/flutter/widgets/Positioned-class.html) 위젯과 같은 개념이지만,
+게임에 맞춘 좌표계를 사용합니다.
 
-This class represents a positioned object on the screen, be it a floating rectangle, a rotating
-sprite, or anything else with position and size. It can also represent a group of positioned
-components if children are added to it.
+이 클래스는 떠다니는 사각형이든, 회전하는 스프라이트든, 위치와 크기를 가진 무엇이든 화면에 배치된
+객체를 나타냅니다. 자식을 추가하면 배치된 컴포넌트들의 그룹을 나타낼 수도 있습니다.
 
-The base of the `PositionComponent` is that it has a `position`, `size`, `scale`, `angle` and
-`anchor` which transforms how the component is rendered.
-
-
-## Position
-
-The `position` is just a `Vector2` which represents the position of the component's anchor in
-relation to its parent; if the parent is a `FlameGame`, it is in relation to the viewport.
+`PositionComponent`의 기본은 컴포넌트가 렌더링되는 방식을 변환하는 `position`, `size`, `scale`,
+`angle`, `anchor`를 가진다는 것입니다.
 
 
-## Size
+<a id="position"></a>
 
-The `size` of the component when the zoom level of the camera is 1.0 (no zoom, default).
-The `size` is *not* in relation to the parent of the component.
+## 위치
 
-
-## Scale
-
-The `scale` is how much the component and its children should be scaled. Since it is represented
-by a `Vector2`, you can scale in a uniform way by changing `x` and `y` with the same amount, or in a
-non-uniform way, by changing `x` or `y` by different amounts.
+`position`은 부모를 기준으로 한 컴포넌트 앵커의 위치를 나타내는 `Vector2`일 뿐입니다. 부모가
+`FlameGame`이면 뷰포트를 기준으로 합니다.
 
 
-## Angle
+<a id="size"></a>
 
-The `angle` is the rotation angle around the anchor, represented as a double in radians. It is
-relative to the parent's angle.
+## 크기
+
+`size`는 카메라의 줌 레벨이 1.0(줌 없음, 기본값)일 때의 컴포넌트 크기입니다.
+`size`는 컴포넌트의 부모를 기준으로 하지 *않습니다*.
 
 
-## Native Angle
+<a id="scale"></a>
 
-The `nativeAngle` is an angle in radians, measured clockwise, representing the default orientation
-of the component. It can be used to define the direction in which the component is facing when
-[angle](#angle) is zero.
+## 스케일
 
-It is especially helpful when making a sprite based component look at a specific target. If the
-original image of the sprite is not facing in the up/north direction, the calculated angle to make
-the component look at the target will need some offset to make it look correct. For such cases,
-`nativeAngle` can be used to let the component know what direction the original image is facing.
+`scale`은 컴포넌트와 그 자식들을 얼마나 확대/축소할지를 나타냅니다. `Vector2`로 표현되므로 `x`와
+`y`를 같은 양만큼 바꿔 균일하게 스케일링하거나, `x`나 `y`를 서로 다른 양만큼 바꿔 불균일하게
+스케일링할 수 있습니다.
 
-An example could be a bullet image pointing in the east direction. In this case `nativeAngle` can
-be set to pi/2 radians. Following are some common directions and their corresponding native
-angle values.
 
-Direction | Native Angle | In degrees
+<a id="angle"></a>
+
+## 각도
+
+`angle`은 앵커를 중심으로 한 회전 각도이며, 라디안 단위의 double로 표현됩니다. 부모의 각도를
+기준으로 합니다.
+
+
+<a id="native-angle"></a>
+
+## 기본 각도(Native Angle)
+
+`nativeAngle`은 시계 방향으로 측정한 라디안 단위의 각도로, 컴포넌트의 기본 방향을 나타냅니다.
+[angle](#각도)이 0일 때 컴포넌트가 바라보는 방향을 정의하는 데 사용할 수 있습니다.
+
+스프라이트 기반 컴포넌트가 특정 대상을 바라보게 할 때 특히 유용합니다. 스프라이트의 원본 이미지가
+위/북쪽 방향을 향하고 있지 않다면, 컴포넌트가 대상을 바라보도록 계산한 각도에 오프셋을 더해야 올바르게
+보입니다. 이런 경우 `nativeAngle`을 사용해 원본 이미지가 어느 방향을 향하고 있는지 컴포넌트에 알려 줄
+수 있습니다.
+
+예를 들어 동쪽 방향을 가리키는 총알 이미지가 있다면 `nativeAngle`을 pi/2 라디안으로 설정할 수
+있습니다. 다음은 자주 쓰이는 방향과 그에 해당하는 기본 각도 값입니다.
+
+방향 | 기본 각도 | 도(degree) 단위
 ----------|--------------|-------------
-Up/North  | 0            | 0
-Down/South| pi or -pi    | 180 or -180
-Left/West | -pi/2        | -90
-Right/East| pi/2         | 90
+위/북쪽  | 0            | 0
+아래/남쪽| pi 또는 -pi    | 180 또는 -180
+왼쪽/서쪽 | -pi/2        | -90
+오른쪽/동쪽| pi/2         | 90
 
 
-## Anchor
+<a id="anchor"></a>
+
+## 앵커
 
 ```{flutter-app}
 :sources: ../../flame/examples
 :page: anchor
 :show: widget code infobox
-This example shows effect of changing `anchor` point of parent
-(red) and child (blue) components. Tap on them to cycle through
-the anchor points. Note that the local position of the child
-component is (0, 0) at all times.
+이 예제는 부모(빨간색) 컴포넌트와 자식(파란색) 컴포넌트의
+`anchor` 지점을 바꿨을 때의 효과를 보여 줍니다. 컴포넌트를 탭하면
+앵커 지점이 순서대로 바뀝니다. 자식 컴포넌트의 로컬 위치는
+항상 (0, 0)이라는 점에 주목하세요.
 ```
 
-The `anchor` is where on the component that the position and rotation should be defined from (the
-default is `Anchor.topLeft`). So if you have the anchor set as `Anchor.center` the component's
-position on the screen will be in the center of the component and if an `angle` is applied, it is
-rotated around the anchor, so in this case around the center of the component. You can think of it
-as the point within the component by which Flame "grabs" it.
+`anchor`는 컴포넌트에서 위치와 회전의 기준이 되는 지점입니다(기본값은 `Anchor.topLeft`). 따라서
+앵커를 `Anchor.center`로 설정하면 화면상의 컴포넌트 위치는 컴포넌트의 중심이 되고, `angle`을 적용하면
+앵커를 중심으로, 즉 이 경우 컴포넌트의 중심을 기준으로 회전합니다. Flame이 컴포넌트를 "잡는"
+컴포넌트 내부의 지점이라고 생각하면 됩니다.
 
-When `position` or `absolutePosition` of a component is queried, the returned coordinates are that
-of the `anchor` of the component. In case you want to find the position of a specific anchor
-point of a component which is not actually the `anchor` of that component, you can use the
-`positionOfAnchor` and `absolutePositionOfAnchor` methods.
+컴포넌트의 `position`이나 `absolutePosition`을 조회하면 반환되는 좌표는 컴포넌트 `anchor`의
+좌표입니다. 컴포넌트의 실제 `anchor`가 아닌 특정 앵커 지점의 위치를 알고 싶다면
+`positionOfAnchor`와 `absolutePositionOfAnchor` 메서드를 사용할 수 있습니다.
 
 ```dart
 final comp = PositionComponent(
@@ -91,29 +98,30 @@ final comp = PositionComponent(
   anchor: Anchor.center,
 );
 
-// Returns (0,0)
+// (0,0)을 반환합니다
 final p1 = component.position;
 
-// Returns (10, 10)
+// (10, 10)을 반환합니다
 final p2 = component.positionOfAnchor(Anchor.bottomRight);
 ```
 
-A common pitfall when using `anchor` is confusing it as being the attachment point for children
-components. For example, setting `anchor` to `Anchor.center` for a parent component does not mean
-that the children components will be placed w.r.t the center of parent.
+`anchor`를 사용할 때 흔히 하는 실수는 이를 자식 컴포넌트가 붙는 지점으로 착각하는 것입니다. 예를 들어
+부모 컴포넌트의 `anchor`를 `Anchor.center`로 설정한다고 해서 자식 컴포넌트가 부모의 중심을 기준으로
+배치되는 것은 아닙니다.
 
 ```{note}
-Local origin for a child component is always the top-left
-corner of its parent component, irrespective of their
-`anchor` values.
+자식 컴포넌트의 로컬 원점은 `anchor` 값과 관계없이
+항상 부모 컴포넌트의 왼쪽 위 모서리입니다.
 ```
 
 
-## PositionComponent children
+<a id="positioncomponent-children"></a>
 
-All children of the `PositionComponent` will be transformed in relation to the parent, which means
-that the `position`, `angle` and `scale` will be relative to the parent's state.
-So if you, for example, wanted to position a child in the center of the parent you would do this:
+## PositionComponent 자식
+
+`PositionComponent`의 모든 자식은 부모를 기준으로 변환됩니다. 즉 `position`, `angle`, `scale`은
+부모의 상태에 상대적입니다.
+예를 들어 자식을 부모의 중심에 배치하고 싶다면 다음과 같이 합니다:
 
 ```dart
 @override
@@ -130,26 +138,26 @@ void onLoad() {
 }
 ```
 
-Remember that most components that are rendered on the screen are `PositionComponent`s, so
-this pattern can be used in for example [SpriteComponent](sprite_components.md#spritecomponent)
-and [SpriteAnimationComponent](sprite_components.md#spriteanimationcomponent) too.
+화면에 렌더링되는 대부분의 컴포넌트는 `PositionComponent`라는 점을 기억하세요. 따라서 이 패턴은
+[SpriteComponent](sprite_components.md#spritecomponent)나
+[SpriteAnimationComponent](sprite_components.md#spriteanimationcomponent) 등에서도 사용할 수 있습니다.
 
 
-## Render PositionComponent
+<a id="render-positioncomponent"></a>
 
-When implementing the `render` method for a component that extends `PositionComponent` remember to
-render from the top left corner (0.0). Your render method should not handle where on the screen your
-component should be rendered. To handle where and how your component should be rendered use the
-`position`, `angle` and `anchor` properties and Flame will automatically handle the rest for you.
+## PositionComponent 렌더링
 
-If you want to know where on the screen the bounding box of the component is you can use the
-`toRect` method.
+`PositionComponent`를 상속하는 컴포넌트의 `render` 메서드를 구현할 때는 왼쪽 위 모서리(0.0)를
+기준으로 렌더링해야 한다는 점을 기억하세요. render 메서드는 컴포넌트가 화면의 어디에 렌더링될지를
+처리해서는 안 됩니다. 컴포넌트를 어디에 어떻게 렌더링할지는 `position`, `angle`, `anchor` 속성으로
+처리하면 나머지는 Flame이 자동으로 처리해 줍니다.
 
-In the event that you want to change the direction of your component's rendering, you can also use
-`flipHorizontally()` and `flipVertically()` to flip anything drawn to canvas during
-`render(Canvas canvas)`, around the anchor point. These methods are available on all
-`PositionComponent` objects, and are especially useful on `SpriteComponent` and
-`SpriteAnimationComponent`.
+컴포넌트의 바운딩 박스가 화면의 어디에 있는지 알고 싶다면 `toRect` 메서드를 사용할 수 있습니다.
 
-In case you want to flip a component around its center without having to change the anchor to
-`Anchor.center`, you can use `flipHorizontallyAroundCenter()` and `flipVerticallyAroundCenter()`.
+컴포넌트의 렌더링 방향을 바꾸고 싶다면 `flipHorizontally()`와 `flipVertically()`를 사용해
+`render(Canvas canvas)` 중에 캔버스에 그려지는 모든 것을 앵커 지점을 기준으로 뒤집을 수도 있습니다.
+이 메서드들은 모든 `PositionComponent` 객체에서 사용할 수 있으며, 특히 `SpriteComponent`와
+`SpriteAnimationComponent`에서 유용합니다.
+
+앵커를 `Anchor.center`로 바꾸지 않고 컴포넌트를 중심 기준으로 뒤집고 싶다면
+`flipHorizontallyAroundCenter()`와 `flipVerticallyAroundCenter()`를 사용할 수 있습니다.

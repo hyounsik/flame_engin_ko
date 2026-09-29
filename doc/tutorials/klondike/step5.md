@@ -1,36 +1,40 @@
-# 5. Animations, restarting, buttons and a New World
+<a id="5-animations-restarting-buttons-and-a-new-world"></a>
 
-In this chapter we will be showing various ways to make the Klondike game more fun and easier to
-play. The topics to be covered are:
+# 5. 애니메이션, 재시작, 버튼, 그리고 새로운 월드
 
-- Klondike Draw 1 and Draw 3
-- Animating and automating moves
-- Detecting and celebrating a win
-- Ending and restarting the game
-- How to implement your own FlameGame world
-- Simple action-buttons
-- Anchors and co-ordinates
-- Random number generation and seeding
-- Effects and EffectControllers
+이번 장에서는 클론다이크 게임을 더 재미있고 쉽게 플레이할 수 있게 만드는 여러 방법을
+보여 줍니다. 다룰 주제는 다음과 같습니다.
+
+- 클론다이크 Draw 1과 Draw 3
+- 이동을 애니메이션하고 자동화하기
+- 승리를 감지하고 축하하기
+- 게임 종료와 재시작
+- 자신만의 FlameGame 월드를 구현하는 방법
+- 간단한 액션 버튼
+- 앵커와 좌표
+- 난수 생성과 시드
+- 이펙트와 EffectController
 
 
-## The Klondike draw
+<a id="the-klondike-draw"></a>
 
-The Klondike patience game (or solitaire game in the USA) has two main variants: Draw 3 and Draw 1.
-Currently the Klondike Flame Game is Draw 3, which is a lot more difficult than Draw 1, because
-although you can see 3 cards, you can only move one of them and that move changes the "phase" of
-other cards. So different cards are going to become available, not easy.
+## 클론다이크 드로우
 
-In Klondike Draw 1 just one card at a time is drawn from the Stock and shown, so every card in it is
-available, and you can go through the Stock as many times as you like, just as in Klondike Draw 3.
+클론다이크 페이션스 게임(미국에서는 솔리테어 게임)에는 Draw 3와 Draw 1이라는 두 가지 주요 변형이 있습니다.
+현재 클론다이크 Flame 게임은 Draw 3인데, 이는 Draw 1보다 훨씬 어렵습니다.
+카드 3장을 볼 수는 있지만 그중 한 장만 옮길 수 있고, 그 이동이 다른 카드들의
+"위상"을 바꾸기 때문입니다. 그래서 사용할 수 있게 되는 카드가 달라지므로 쉽지 않습니다.
 
-So how do we implement Klondike Draw 1? Clearly only the Stock and Waste piles are involved, so
-maybe we should have KlondikeGame provide a value 1 or 3 to each of them. They both have code for
-constructors, so we could just add an extra parameter to that code, but in Flame there is another
-way, which works even if your component has a default constructor (no code for it) or your game has
-many game-wide values. Let us call our value `klondikeDraw`. In your class declaration add the
-`HasGameRef<MyGame>` mixin, then write `gameRef.klondikeDraw` wherever you need the value 1 or 3.
-For class StockPile we will have:
+클론다이크 Draw 1에서는 스톡에서 한 번에 한 장씩만 뽑아 보여 주므로, 스톡의 모든 카드를
+사용할 수 있고, 클론다이크 Draw 3와 마찬가지로 스톡을 원하는 만큼 여러 번 넘길 수 있습니다.
+
+그렇다면 클론다이크 Draw 1은 어떻게 구현할까요? 분명히 스톡 파일과 웨이스트 파일만 관련되어 있으니,
+KlondikeGame이 두 파일 각각에 1 또는 3이라는 값을 제공하면 될 것 같습니다. 두 클래스 모두
+생성자 코드가 있으므로 그 코드에 파라미터를 하나 추가해도 되지만, Flame에는 또 다른
+방법이 있습니다. 이 방법은 컴포넌트에 기본 생성자만 있거나(생성자 코드가 없거나) 게임 전역에서
+쓰이는 값이 많을 때도 동작합니다. 이 값을 `klondikeDraw`라고 부릅시다. 클래스 선언에
+`HasGameRef<MyGame>` 믹스인을 추가하고, 1 또는 3이라는 값이 필요한 곳마다 `gameRef.klondikeDraw`라고 쓰면 됩니다.
+StockPile 클래스는 다음과 같습니다.
 
 ```dart
 class StockPile extends PositionComponent
@@ -38,7 +42,7 @@ class StockPile extends PositionComponent
     implements Pile {
 ```
 
-and
+그리고
 
 ```dart
   @override
@@ -61,7 +65,7 @@ and
   }
 ```
 
-For class WastePile we will have:
+WastePile 클래스는 다음과 같습니다.
 
 ```dart
 class WastePile extends PositionComponent
@@ -69,11 +73,11 @@ class WastePile extends PositionComponent
     implements Pile {
 ```
 
-and
+그리고
 
 ```dart
   void _fanOutTopCards() {
-    if (gameRef.klondikeDraw == 1) {   // No fan-out in Klondike Draw 1.
+    if (gameRef.klondikeDraw == 1) {   // 클론다이크 Draw 1에서는 부채꼴로 펼치지 않습니다.
       return;
     }
     final n = _cards.length;
@@ -89,38 +93,40 @@ and
   }
 ```
 
-That makes the Stock and Waste piles play either Klondike Draw 1 or Klondike Draw 3, but how do you
-tell them which variant to play? For now, we will add a place-holder to the KlondikeGame class.
-We just comment out whichever one we do not want and then rebuild.
+이렇게 하면 스톡 파일과 웨이스트 파일이 클론다이크 Draw 1이나 Draw 3 중 하나로 동작하게 되지만,
+어느 변형으로 플레이할지는 어떻게 알려 줄까요? 지금은 KlondikeGame 클래스에 플레이스홀더를 추가하겠습니다.
+원하지 않는 쪽을 주석 처리하고 다시 빌드하기만 하면 됩니다.
 
 ```dart
   // final int klondikeDraw = 3;
   final int klondikeDraw = 1;
 ```
 
-This is fine as a temporary measure, when we have not yet decided how to handle some aspect of
-our design, but ultimately we will have to provide some kind of **input** for the player to choose
-which flavor of Klondike to play, such as a menu screen, a settings screen or a button. Flame can
-incorporate Flutter widgets into a game and the next Tutorial (Ember) shows how to add a menu
-widget, as its final step.
+설계의 일부를 어떻게 처리할지 아직 정하지 못했을 때 임시 방편으로는 괜찮지만,
+결국에는 플레이어가 어떤 방식의 클론다이크를 플레이할지 고를 수 있도록 메뉴 화면, 설정 화면,
+버튼 같은 일종의 **입력**을 제공해야 합니다. Flame은 게임 안에 Flutter 위젯을
+포함할 수 있으며, 다음 튜토리얼(Ember)의 마지막 단계에서 메뉴 위젯을 추가하는 방법을
+보여 줍니다.
 
 
-## Making cards move
+<a id="making-cards-move"></a>
 
-In Flame, if we need a component to do something, we use an `Effect` - a special component that can
-attach to another component, such as a card, and modify its properties. That includes any kind of
-motion (or change of `position`). We also need an `EffectController`, which provides timing for an
-effect: when to start, how long to go for and what `Curve` to follow. The latter is not a curve in
-space. It is a time-curve that specifies accelerations and decelerations during the time of the
-effect, such as start moving a card quickly and then slow down as it approaches its destination.
+## 카드 움직이기
 
-To move a card, we will add a `doMove()` method to the `Card` class. It will require a `to` location
-to go to. Optional parameters are `speed:` (default 10.0), `start:` (default zero),
-`curve:` (default `Curves.easeOutQuad`) and `onComplete:` (default `null`, i.e. no callback when
-the move finishes). Speed is in card widths per second. Usually we will provide a callback, because
-a bit of gameplay must be done **after** the animated move. The default `curve:` parameter gives us
-a fast-in/slow-out move, much as a human player would do. So the following code is added to the
-end of the `Card` class:
+Flame에서 컴포넌트가 무언가를 하게 하려면 `Effect`를 사용합니다. `Effect`는 카드 같은 다른 컴포넌트에
+붙어서 그 속성을 수정할 수 있는 특별한 컴포넌트입니다. 여기에는 모든 종류의
+움직임(즉, `position`의 변화)이 포함됩니다. 또한 이펙트의 타이밍을 제공하는 `EffectController`도 필요합니다.
+언제 시작할지, 얼마 동안 진행할지, 어떤 `Curve`를 따를지를 정합니다. 여기서 `Curve`는 공간상의 곡선이
+아닙니다. 이펙트가 진행되는 동안의 가속과 감속을 지정하는 시간 곡선으로, 예를 들어
+카드를 빠르게 움직이기 시작해 목적지에 가까워질수록 느려지게 할 수 있습니다.
+
+카드를 움직이기 위해 `Card` 클래스에 `doMove()` 메서드를 추가하겠습니다. 이 메서드에는 이동할
+목적지 `to`가 필요합니다. 선택적 파라미터로는 `speed:`(기본값 10.0), `start:`(기본값 0),
+`curve:`(기본값 `Curves.easeOutQuad`), `onComplete:`(기본값 `null`, 즉 이동이 끝났을 때
+콜백 없음)가 있습니다. 속도의 단위는 초당 카드 너비입니다. 대개는 콜백을 제공하게 되는데,
+애니메이션 이동이 끝난 **뒤에** 처리해야 할 게임플레이가 조금 있기 때문입니다. 기본 `curve:` 파라미터는
+사람 플레이어가 하는 것처럼 빠르게 들어가 천천히 끝나는 움직임을 만들어 줍니다. 그래서 다음 코드를
+`Card` 클래스의 끝에 추가합니다.
 
 ```dart
   void doMove(
@@ -146,11 +152,11 @@ end of the `Card` class:
   }
 ```
 
-To make this code compile we need to import `'package:flame/effects.dart'` and
-`'package:flutter/animation.dart'` at the top of the `components/card.dart` file. That done, we can
-start using the new method to return the card(s) gracefully to where they came from, after being
-dropped in an invalid position. First, we need a private data item to store a card's position when
-a drag-and-drop started. So let us insert new lines in two places as shown below:
+이 코드가 컴파일되려면 `components/card.dart` 파일 맨 위에서 `'package:flame/effects.dart'`와
+`'package:flutter/animation.dart'`를 import해야 합니다. 그러고 나면
+잘못된 위치에 놓인 카드를 원래 있던 곳으로 부드럽게 되돌리는 데 새 메서드를
+사용할 수 있습니다. 먼저 드래그 앤 드롭이 시작될 때 카드의 위치를 저장할 private 데이터 항목이 필요합니다.
+그러니 아래와 같이 두 곳에 새 줄을 넣읍시다.
 
 ```dart
   bool _isDragging = false;
@@ -162,21 +168,21 @@ a drag-and-drop started. So let us insert new lines in two places as shown below
 ```dart
       _isDragging = true;
       priority = 100;
-      // Copy each co-ord, else _whereCardStarted changes as the position does.
+      // 각 좌표를 복사합니다. 그렇지 않으면 position이 바뀔 때 _whereCardStarted도 함께 바뀝니다.
       _whereCardStarted = Vector2(position.x, position.y);
       if (pile is TableauPile) {
 ```
 
-It would be a mistake to write `_whereCardStarted = position;` here. In Dart, that would just
-copy a reference: so `_whereCardStarted` would point to the same data as `position` while the
-drag occurred and the card's `position` data changed. We can get around this by copying the card's
-**current** X and Y co-ordinates into a **new** `Vector2` object.
+여기에 `_whereCardStarted = position;`이라고 쓰면 실수입니다. Dart에서 이는 참조만
+복사하므로, 드래그가 일어나 카드의 `position` 데이터가 바뀌는 동안 `_whereCardStarted`는
+`position`과 같은 데이터를 가리키게 됩니다. 카드의 **현재** X, Y 좌표를
+**새** `Vector2` 객체에 복사하면 이 문제를 피할 수 있습니다.
 
-To animate cards being returned to their original piles after an invalid drag-and-drop, we replace
-five lines at the end of the `onDragEnd()` method with:
+잘못된 드래그 앤 드롭 후 카드가 원래 파일로 돌아가는 모습을 애니메이션하기 위해,
+`onDragEnd()` 메서드 끝의 다섯 줄을 다음으로 바꿉니다.
 
 ```dart
-    // Invalid drop (middle of nowhere, invalid pile or invalid card for pile).
+    // 잘못된 드롭(아무 곳도 아닌 곳, 잘못된 파일, 또는 파일에 맞지 않는 카드).
     doMove(
       _whereCardStarted,
       onComplete: () {
@@ -197,27 +203,29 @@ five lines at the end of the `onDragEnd()` method with:
     }
 ```
 
-In each case, we use the default speed of 10 card-widths per second.
-Notice how the `onComplete:` parameters are used to return each card to the pile where it started.
-It will then be added back to that pile's list of contents. Notice also that the list of attached
-cards (if any) is cleared immediately, as the animated cards start to move. This does not matter,
-because each moving card has a `MoveToEffect` and an `EffectController` added to it and these
-contain all the data needed to get the right card to the right place at the right time. Thus
-no important information is lost by clearing the attached cards early. Also, by default, the
-`MoveToEffect` and `EffectController` in each moving card automatically get detached and deleted
-by Flame when the show is over.
+두 경우 모두 기본 속도인 초당 카드 너비 10배를 사용합니다.
+`onComplete:` 파라미터를 사용해 각 카드를 출발한 파일로 되돌린다는 점에 주목하세요.
+그러면 카드는 그 파일의 내용 목록에 다시 추가됩니다. 또한 붙어 있는 카드 목록(있다면)은
+애니메이션되는 카드가 움직이기 시작하자마자 즉시 비워진다는 점에도 주목하세요. 이는 문제가 되지 않습니다.
+움직이는 각 카드에는 `MoveToEffect`와 `EffectController`가 추가되어 있고, 여기에
+올바른 카드를 올바른 시간에 올바른 위치로 옮기는 데 필요한 모든 데이터가 들어 있기 때문입니다. 따라서
+붙어 있는 카드 목록을 일찍 비워도 중요한 정보는 사라지지 않습니다. 또한 기본적으로
+움직이는 각 카드의 `MoveToEffect`와 `EffectController`는 동작이 끝나면 Flame이 자동으로
+떼어 내고 삭제합니다.
 
-Some other automatic and animated moves we can try are dealing the cards, flipping cards from Stock
-to Waste pile, turning cards over automatically on the tableau piles, and settling cards into place
-after a valid drag-and-drop. We will have a look at animating a flip first.
+그 밖에 시도해 볼 만한 자동 이동과 애니메이션 이동으로는 카드 나눠 주기, 스톡에서
+웨이스트 파일로 카드 뒤집기, 태블로 파일에서 카드를 자동으로 뒤집기, 그리고 유효한 드래그 앤 드롭 후
+카드를 제자리에 안착시키기가 있습니다. 먼저 카드 뒤집기 애니메이션을 살펴보겠습니다.
 
 
-## Animating a card-flip
+<a id="animating-a-card-flip"></a>
 
-Flutter and Flame do not yet support 3-D effects (as at October 2023), but we can emulate them.
-To make a card look as if it is turning over, we will shrink the width of the back-view, switch
-to the front view and expand back to full width. The code uses quite a few features of Effects
-and EffectControllers:
+## 카드 뒤집기 애니메이션
+
+Flutter와 Flame은 (2023년 10월 기준) 아직 3D 이펙트를 지원하지 않지만, 흉내 낼 수는 있습니다.
+카드가 뒤집히는 것처럼 보이게 하려면 뒷면 뷰의 너비를 줄이고, 앞면 뷰로
+전환한 다음, 다시 원래 너비로 늘리면 됩니다. 이 코드는 이펙트와 EffectController의
+여러 기능을 활용합니다.
 
 ```dart
   void turnFaceUp({
@@ -257,43 +265,43 @@ and EffectControllers:
   }
 ```
 
-So how does all this work? We have a default time of 0.3 seconds for the flip to occur, a start time
-and an optional callback on completion, as before. Now we add a ScaleEffect to the card,
-which shrinks it almost to zero width, but leaves the height unchanged. However, that must take
-only half the time, then we must switch from the face-down to the face-up view of the card and
-expand it back out, also in half the time.
+그렇다면 이 모든 것이 어떻게 동작할까요? 앞에서처럼 뒤집기에 걸리는 기본 시간 0.3초, 시작 시간,
+그리고 완료 시 호출되는 선택적 콜백이 있습니다. 이제 카드에 ScaleEffect를 추가합니다.
+이 이펙트는 높이는 그대로 두고 너비를 거의 0까지 줄입니다. 하지만 이는
+전체 시간의 절반만 걸려야 하고, 그다음에는 카드를 뒷면 뷰에서 앞면 뷰로 전환해
+다시 늘려야 하며, 이것도 절반의 시간이 걸려야 합니다.
 
-This is where we use some of the fancier parameters of the `EffectController` class. The
-`duration:` is set to `time / 2` and we use an `onMax:` callback, with inline code to change the
-view to face-up. That callback will happen after `time / 2`, when the `Effect` (whatever it is)
-has reached its maximum (i.e. in this case, the view of the card has shrunk to a thin vertical
-line). After the switch to face-up view, the EffectController will take the Effect into reverse
-for `reverseDuration: time / 2`. Everything is reversed: the view of the card expands and the
-`curve:` of time is applied in reverse order. In total, the timing follows a sine curve from
-0 to pi, giving a smooth animation in which the width of the card-view is always the projection
-into 2-D of its 3-D position. Wow! That's a lot of work for a little EffectController!
+바로 여기서 `EffectController` 클래스의 좀 더 고급 파라미터들을 사용합니다.
+`duration:`은 `time / 2`로 설정하고, 뷰를 앞면으로 바꾸는 인라인 코드를 담은
+`onMax:` 콜백을 사용합니다. 이 콜백은 `time / 2`가 지난 뒤, `Effect`(무엇이든)가
+최댓값에 도달했을 때(즉, 이 경우 카드 뷰가 가느다란 세로선으로 줄어들었을 때) 호출됩니다.
+앞면 뷰로 전환한 뒤에는 EffectController가 `reverseDuration: time / 2` 동안 Effect를
+역방향으로 진행합니다. 모든 것이 거꾸로 진행됩니다. 카드 뷰가 늘어나고, 시간의
+`curve:`도 역순으로 적용됩니다. 전체적으로 타이밍은 0부터 pi까지의 사인 곡선을 따르므로,
+카드 뷰의 너비가 항상 3D 위치를 2D로 투영한 값이 되는 부드러운 애니메이션이
+만들어집니다. 와! 작은 EffectController 하나가 하는 일치고는 정말 많네요!
 
-We are not there yet! If you were to run just the `add()` part of the code, you would see some
-ugly things happening. Yeah, yeah, been there, done that... when I was preparing this code!
-First off, the card shrinks to a line at its left. That is because all cards in this game have
-an `Anchor` at `topLeft`, which is the point used to set the card's `position`. We would like
-the card to flip around its vertical center-line. Easy, just set `anchor = Anchor.topCenter`
-first: that makes the card flip realistically, but it jumps by half a card-width to the left
-before flipping.
+아직 끝이 아닙니다! 코드에서 `add()` 부분만 실행해 보면 보기 흉한 일들이 벌어지는 것을
+볼 수 있습니다. 네, 네, 저도 겪어 봤습니다... 이 코드를 준비하면서요!
+우선 카드가 왼쪽 가장자리를 기준으로 선처럼 줄어듭니다. 이 게임의 모든 카드는
+`Anchor`가 `topLeft`에 있고, 이 점이 카드의 `position`을 정하는 데 쓰이기 때문입니다. 우리는
+카드가 세로 중심선을 기준으로 뒤집히기를 원합니다. 간단합니다. 먼저 `anchor = Anchor.topCenter`를
+설정하면 됩니다. 그러면 카드가 실감 나게 뒤집히지만, 뒤집히기 전에 카드 너비의 절반만큼
+왼쪽으로 튀어 버립니다.
 
-Long story short, see the lines between `assert(` and `add(` and their reversal in the `onMin:`
-callback, which occurs when the Effect is finished, but before the final `onComplete:` callback.
-At the beginning, the card's rendering `priority` is set to 100, so that it will ride above all
-other cards in the neighborhood. That value cannot always be saved and restored because we may
-not know what the card's priority should be in whatever `Pile` is receiving it. So we have made
-sure that the receiver is always called in the `onComplete:` option, using a method that will
-adjust the positions and priorities of the cards in the pile.
+간단히 말하면, `assert(`와 `add(` 사이의 줄들과, 그것들을 되돌리는 `onMin:` 콜백을
+보세요. `onMin:` 콜백은 Effect가 끝났지만 마지막 `onComplete:` 콜백이 호출되기 전에 실행됩니다.
+처음에 카드의 렌더링 `priority`를 100으로 설정해서 주변의 다른 모든 카드보다 위에
+표시되도록 합니다. 이 값을 항상 저장했다가 복원할 수는 없습니다. 카드를 받는 `Pile`에서
+그 카드의 우선순위가 얼마여야 하는지 모를 수 있기 때문입니다. 그래서 파일 안 카드들의
+위치와 우선순위를 조정하는 메서드를 사용해, 받는 쪽이 항상 `onComplete:` 옵션에서
+호출되도록 했습니다.
 
-Last but not least, in the preceding code, notice the use of the variable `_isAnimatedFlip`.
-This is a `bool` variable defined and initialized near the start of class `Card` in file
-`components/card.dart`, along with another new `bool` called `_isFaceUpView`. Initially these
-are set `false`, along with the existing `bool _faceUp = false` variable. What is the significance
-of these variables? It is **huge**. A few lines further down, we see:
+마지막으로 중요한 점은, 앞의 코드에서 `_isAnimatedFlip` 변수를 사용한다는 것입니다.
+이는 `components/card.dart` 파일의 `Card` 클래스 시작 부분 근처에서 정의하고 초기화하는
+`bool` 변수로, 또 다른 새 `bool`인 `_isFaceUpView`와 함께 정의됩니다. 처음에는 기존의
+`bool _faceUp = false` 변수와 함께 둘 다 `false`로 설정됩니다. 이 변수들은 어떤 의미가 있을까요?
+그 의미는 **엄청납니다**. 몇 줄 아래를 보면 다음과 같은 코드가 있습니다.
 
 ```dart
   @override
@@ -306,12 +314,12 @@ of these variables? It is **huge**. A few lines further down, we see:
   }
 ```
 
-This is the code that makes every card visible on the screen, in either face-up or face-down state.
-At the end of Klondike Tutorial Step 4, the `if` statement was `if (_faceUp) {`. This was OK
-because all moves of cards were instantaneous (leaving aside drags and drops): any change in the
-card's face-up or face-down state could be rendered at the Flame Engine's next `tick` or soon after.
-This posed no problem when we started to animate card moves, provided there were no flips involved.
-However, when we tapped a non-empty Stock Pile, the executed code was:
+이 코드가 모든 카드를 앞면 또는 뒷면 상태로 화면에 보이게 합니다.
+클론다이크 튜토리얼 4단계를 마쳤을 때 `if` 문은 `if (_faceUp) {`였습니다. 이는
+(드래그 앤 드롭을 제외하면) 모든 카드 이동이 즉각적이었기 때문에 괜찮았습니다. 카드의
+앞면/뒷면 상태가 바뀌면 Flame 엔진의 다음 `tick`이나 그 직후에 렌더링하면 됐습니다.
+카드 이동을 애니메이션하기 시작했을 때도, 뒤집기가 포함되지 않는 한 문제가 없었습니다.
+하지만 비어 있지 않은 스톡 파일을 탭하면 실행되는 코드는 다음과 같았습니다.
 
 ```dart
   final card = _cards.removeLast();
@@ -319,103 +327,112 @@ However, when we tapped a non-empty Stock Pile, the executed code was:
   wastePile.acquireCard(card);
 ```
 
-And the first thing `wastePile.acquireCard(` does is `assert(card.isFaceUp);`, which fails if an
-animated flip is keeping the card face-down while the first half of the flip is occurring.
+그리고 `wastePile.acquireCard(`가 가장 먼저 하는 일은 `assert(card.isFaceUp);`인데,
+뒤집기 애니메이션의 전반부가 진행되는 동안 카드가 뒷면 상태로 유지되고 있다면 이 assert는 실패합니다.
 
 
-## Model and View
+<a id="model-and-view"></a>
 
-Clearly the card cannot be in two states at once: it is not Schrödinger's cat! We can resolve the
-dilemma by using two definitions of "face-up": a Model type and a View type. The View version is
-used in rendering and animation (i.e. what appears on the screen) and the Model version in the logic
-of the game, the gameplay and its error-checks. That way, we do not have to revise all the logic
-of the Piles in this game in order to animate some of it. A more complex game might benefit from
-separating the Model and the View during the design and early coding stages, even into
-separate classes. In this game we are using just a little separation of Model and View. The
-`_isAnimatedFlip` variable is `true` while there is an animated flip going on, otherwise `false`,
-and the `Card` class's `flip()` function is expanded to:
+## 모델과 뷰
+
+분명히 카드는 동시에 두 가지 상태일 수 없습니다. 슈뢰딩거의 고양이가 아니니까요! 이
+딜레마는 "앞면"에 대해 두 가지 정의, 즉 모델 방식과 뷰 방식을 사용해 해결할 수 있습니다. 뷰 버전은
+렌더링과 애니메이션(즉, 화면에 보이는 것)에 쓰이고, 모델 버전은 게임 로직, 게임플레이,
+오류 검사에 쓰입니다. 이렇게 하면 일부를 애니메이션하기 위해 이 게임의 모든 파일(pile) 로직을
+고칠 필요가 없습니다. 더 복잡한 게임이라면 설계와 초기 코딩 단계에서 모델과 뷰를
+분리하는 것이, 심지어 별도의 클래스로 분리하는 것이 도움이 될 수 있습니다. 이 게임에서는 모델과 뷰를
+아주 조금만 분리합니다. `_isAnimatedFlip` 변수는 뒤집기 애니메이션이 진행 중일 때는 `true`,
+그렇지 않으면 `false`이며, `Card` 클래스의 `flip()` 함수는 다음과 같이 확장됩니다.
 
 ```dart
   void flip() {
     if (_isAnimatedFlip) {
-      // Let the animation determine the FaceUp/FaceDown state.
+      // 애니메이션이 FaceUp/FaceDown 상태를 결정하게 합니다.
       _faceUp = _isFaceUpView;
     } else {
-      // No animation: flip and render the card immediately.
+      // 애니메이션 없음: 카드를 즉시 뒤집고 렌더링합니다.
       _faceUp = !_faceUp;
       _isFaceUpView = _faceUp;
     }
   }
 ```
 
-In the Klondike Tutorial game we are still having to trigger a Model update in the `onComplete:`
-callback of the flip animation. It might be nice, for impatient or rapid-fingered players, to
-transfer a card from Stock Pile to Waste Pile instantaneously, in the Model, leaving the animation
-in the View to catch up later, with no `onComplete:` callback. That way, you could flip through
-the Stock Pile very rapidly, by tapping fast. However, that is beyond the scope of this Tutorial.
+클론다이크 튜토리얼 게임에서는 여전히 뒤집기 애니메이션의 `onComplete:` 콜백에서 모델 업데이트를
+트리거해야 합니다. 성급하거나 손이 빠른 플레이어를 위해, 모델에서는 카드를 스톡 파일에서
+웨이스트 파일로 즉시 옮기고, 뷰의 애니메이션은 `onComplete:` 콜백 없이 나중에 따라오게
+하면 좋을 수도 있습니다. 그러면 빠르게 탭해서 스톡 파일을 아주 빨리
+넘길 수 있습니다. 하지만 이는 이 튜토리얼의 범위를 벗어납니다.
 
 
-## Ending and restarting the game
+<a id="ending-and-restarting-the-game"></a>
 
-As it stands, there is no easy way to finish the Klondike Tutorial game and start another, even if
-you have won. We can only close the app and start it again. And there is no "reward" for winning.
+## 게임 종료와 재시작
 
-There are various ways to tackle this, depending on the simplicity or complexity of your game and
-on how long the `onLoad()` method is likely to take. They can range from writing your own
-GameWidget, to doing a few simple re-initializations in your Game class (i.e. KlondikeGame in this
-case).
+현재로서는 이겼더라도 클론다이크 튜토리얼 게임을 끝내고 새 게임을 시작할 쉬운 방법이
+없습니다. 앱을 닫았다가 다시 시작할 수밖에 없습니다. 그리고 이겼을 때 아무런 "보상"도 없습니다.
 
-In the GameWidget case you would supply the Game with a VoidCallback function parameter named
-`reset` or `restart`. When the callback is invoked, it would use the Flutter conventions of a
-`StatefulWidget` (e.g. `setState(() {});)` to force the widget to be rebuilt and replaced, thus
-releasing all references to the current Game instance, its state and all of its memory. There could
-also be Flutter code to run a menu or other startup screen.
+이 문제에 접근하는 방법은 게임이 얼마나 단순하거나 복잡한지, 그리고
+`onLoad()` 메서드가 얼마나 오래 걸릴지에 따라 다양합니다. 자신만의
+GameWidget을 작성하는 방법부터, Game 클래스(여기서는 KlondikeGame)에서 몇 가지 간단한
+재초기화를 하는 방법까지 있습니다.
 
-Re-initialization should be undertaken only if the operations involved are few and simple. Otherwise
-coding errors could lead to subtle problems, memory leaks and crashes in your game. It might be the
-easiest way to go in Klondike (as it is in the Ember Tutorial). Basically, we must clear all the
-card references out of all the `Pile`s and then re-shuffle (or not) and re-deal, possibly changing
-from Klondike Draw 3 to Klondike Draw 1 or vice-versa.
+GameWidget 방식에서는 Game에 `reset`이나 `restart`라는 이름의 VoidCallback 함수 파라미터를
+제공합니다. 이 콜백이 호출되면 Flutter의 `StatefulWidget` 관례(예: `setState(() {});)`)를
+사용해 위젯을 강제로 다시 빌드하고 교체하며, 그 결과 현재 Game 인스턴스, 그 상태, 그리고 그 모든 메모리에 대한
+참조가 해제됩니다. 메뉴나 다른 시작 화면을 실행하는 Flutter 코드가
+있을 수도 있습니다.
 
-Well, that was not as easy as it looked! Re-initializing the `Pile`s and each `Card` was easy
-enough, but the difficult bit came next... Whether the player wins or restarts without winning, we
-have 52 cards spread around various piles on the screen, some face-up and maybe some face-down. We
-would like to animate the deal later, so it would be nice to collect the cards into a neat face-down
-pile at top left, in the Stock Pile area: not the actual Stock Pile yet, because that gets created
-during the deal.
+재초기화는 관련된 작업이 적고 단순할 때에만 해야 합니다. 그렇지 않으면
+코딩 오류로 인해 게임에 미묘한 문제, 메모리 누수, 크래시가 생길 수 있습니다. 클론다이크에서는
+(Ember 튜토리얼에서처럼) 이것이 가장 쉬운 방법일 수 있습니다. 기본적으로 모든 `Pile`에서
+카드 참조를 모두 비운 다음 다시 섞고(또는 섞지 않고) 다시 나눠 주면 되며, 이때
+클론다이크 Draw 3에서 Draw 1로 또는 그 반대로 바꿀 수도 있습니다.
 
-Writing a simple little loop to set each `Card` face-down and use its `doMove` method to make it
-move independently to the top left fails. It causes one of those "subtle problems" referred to
-earlier. The cards all travel at the same speed but arrive at different times. The deal then
-produces messy Tableau Piles with several cards out of position. Also the animated move of all
-the cards to the Stock Pile area was a bit ugly.
+그런데 보기만큼 쉽지 않았습니다! `Pile`들과 각 `Card`를 재초기화하는 것은
+충분히 쉬웠지만, 어려운 부분은 그다음이었습니다... 플레이어가 이기든 이기지 못하고 재시작하든,
+화면의 여러 파일에 52장의 카드가 흩어져 있고, 일부는 앞면이, 어쩌면 일부는 뒷면이 위로 향해 있습니다.
+나중에 카드 나눠 주기를 애니메이션하고 싶으므로, 카드들을 왼쪽 위의 스톡 파일 영역에
+뒷면이 위로 향한 가지런한 더미로 모으면 좋을 것입니다. 실제 스톡 파일은 아직 아닙니다. 스톡 파일은
+카드를 나눠 주는 동안 만들어지기 때문입니다.
 
-The problem of the messy Tableau Piles was fixable, but at this point the reviewer of the code
-and documentation proposed a completely new approach which avoids re-initializing anything and
-creates all the Components from scratch, which is the preferred Flutter/Flame way of doing things.
+각 `Card`를 뒷면으로 설정하고 `doMove` 메서드로 각자 왼쪽 위로 움직이게 하는
+간단한 작은 루프를 작성하면 실패합니다. 앞에서 말한 "미묘한 문제" 중 하나가 생깁니다.
+카드들은 모두 같은 속도로 이동하지만 도착하는 시간이 다릅니다. 그러면 카드를 나눠 줄 때
+여러 카드가 제자리를 벗어난 엉망인 태블로 파일이 만들어집니다. 또한 모든 카드가 스톡 파일 영역으로
+애니메이션되며 이동하는 모습도 조금 보기 흉했습니다.
 
-
-## A New World
-
-
-### Start and restart actions
-
-We wish to provide the following actions in the Klondike game:
-
-- A first start,
-- Any number of restarts with a new deal,
-- Any number of restarts with the same deal as before,
-- A switch between Klondike Draw 1 and Draw 3 and restart with a new deal, and
-- Have fun before restarting with a new deal (we'll keep that as a surprise for later).
-
-The proposal is to have a new KlondikeWorld class, which replaces the default `world` provided by
-FlameGame. The new world contains (almost) everything we need to play the game and is created or
-re-created during each of the above actions.
+엉망인 태블로 파일 문제는 고칠 수 있었지만, 이 시점에서 코드와
+문서의 리뷰어가 완전히 새로운 접근 방식을 제안했습니다. 아무것도 재초기화하지 않고
+모든 컴포넌트를 처음부터 새로 만드는 방식으로, 이것이 Flutter/Flame에서 선호하는 방식입니다.
 
 
-### A stripped-down KlondikeGame class
+<a id="a-new-world"></a>
 
-Here is the new code for the KlondikeGame class (what is left of it).
+## 새로운 월드
+
+
+<a id="start-and-restart-actions"></a>
+
+### 시작과 재시작 액션
+
+클론다이크 게임에서 다음 액션을 제공하려고 합니다.
+
+- 첫 시작,
+- 새로 나눠 주기로 원하는 만큼 재시작,
+- 이전과 같은 배치로 원하는 만큼 재시작,
+- 클론다이크 Draw 1과 Draw 3 사이를 전환하고 새로 나눠 주기로 재시작,
+- 새로 나눠 주기로 재시작하기 전에 즐기기(이건 나중을 위한 깜짝 선물로 남겨 두겠습니다).
+
+제안은 FlameGame이 제공하는 기본 `world`를 대체하는 새 KlondikeWorld 클래스를 두는 것입니다.
+새 월드에는 게임을 플레이하는 데 필요한 (거의) 모든 것이 들어 있으며, 위의 각 액션이 일어날 때마다
+생성되거나 다시 생성됩니다.
+
+
+<a id="a-stripped-down-klondikegame-class"></a>
+
+### 간소화된 KlondikeGame 클래스
+
+다음은 KlondikeGame 클래스의 새 코드(남은 부분)입니다.
 
 ```dart
 enum Action { newDeal, sameDeal, changeDraw, haveFun }
@@ -434,77 +451,83 @@ class KlondikeGame extends FlameGame<KlondikeWorld> {
     const Radius.circular(cardRadius),
   );
 
-  // Constant used when creating Random seed.
-  static const int maxInt = 0xFFFFFFFE; // = (2 to the power 32) - 1
+  // Random 시드를 만들 때 사용하는 상수입니다.
+  static const int maxInt = 0xFFFFFFFE; // = (2의 32제곱) - 1
 
-  // This KlondikeGame constructor also initiates the first KlondikeWorld.
+  // 이 KlondikeGame 생성자는 첫 번째 KlondikeWorld도 시작합니다.
   KlondikeGame() : super(world: KlondikeWorld());
 
-  // These three values persist between games and are starting conditions
-  // for the next game to be played in KlondikeWorld. The actual seed is
-  // computed in KlondikeWorld but is held here in case the player chooses
-  // to replay a game by selecting Action.sameDeal.
+  // 이 세 값은 게임과 게임 사이에 유지되며, KlondikeWorld에서 플레이할
+  // 다음 게임의 시작 조건입니다. 실제 시드는 KlondikeWorld에서
+  // 계산하지만, 플레이어가 Action.sameDeal을 선택해 게임을 다시
+  // 플레이하는 경우를 위해 여기에 보관합니다.
   int klondikeDraw = 1;
   int seed = 1;
   Action action = Action.newDeal;
 }
 ```
 
-Huh! What happened to the `onLoad()` method? And what's this `seed` thing? And how does
-KlondikeWorld get into the act? Well, everything that used to be in the `onLoad()` method is now
-in the `onLoad()` method of KlondikeWorld, which is an extension of the `World` class and is a type
-of `Component`, so it can have an `onLoad()` method, as can any `Component` type. The content of
-the method is much the same as before, except that `world.add(` becomes just `add(`. It also brings
-in some `addButton()` references, but more on these later.
+어라! `onLoad()` 메서드는 어떻게 된 걸까요? 그리고 이 `seed`라는 건 뭘까요? KlondikeWorld는
+어떻게 끼어드는 걸까요? 예전에 `onLoad()` 메서드에 있던 모든 것은 이제
+KlondikeWorld의 `onLoad()` 메서드에 있습니다. KlondikeWorld는 `World` 클래스를 확장한 것이고 `Component`의
+한 종류이므로, 다른 모든 `Component` 타입처럼 `onLoad()` 메서드를 가질 수 있습니다.
+메서드 내용은 이전과 거의 같지만, `world.add(`가 그냥 `add(`가 되었습니다. 또한
+`addButton()` 호출도 몇 개 들어오는데, 이에 대해서는 나중에 더 설명합니다.
 
 
-### Using a Random Number Generator seed
+<a id="using-a-random-number-generator-seed"></a>
 
-The `seed` is a common games-programming technique in any programming environment. Usually it allows
-you to start a Random Number Generator from a known point (called the seed) and give your game
-reproducible behavior when you are in the development and testing stage. Here it is used to
-provide exactly the same deal of the Klondike cards when the player requests `Same deal`.
+### 난수 생성기 시드 사용하기
+
+`seed`는 어떤 프로그래밍 환경에서든 흔히 쓰이는 게임 프로그래밍 기법입니다. 보통
+난수 생성기를 알려진 지점(시드라고 부름)에서 시작하게 해서, 개발 및 테스트 단계에서
+게임이 재현 가능하게 동작하도록 해 줍니다. 여기서는 플레이어가 `Same deal`을 요청했을 때
+클론다이크 카드를 정확히 같은 배치로 나눠 주는 데 사용합니다.
 
 
-### Introducing the new KlondikeWorld class
+<a id="introducing-the-new-klondikeworld-class"></a>
 
-The `class KlondikeGame` declaration specifies that this extension of the FlameGame class must
-have a world of type KlondikeWorld (i.e. `FlameGame<KlondikeWorld>`). Didn't know we could do
-that for a game, did we? So how does the first instance of KlondikeWorld get created? It's all in
-the KlondikeGame constructor code:
+### 새 KlondikeWorld 클래스 소개
+
+`class KlondikeGame` 선언은 FlameGame 클래스를 확장한 이 클래스가 반드시
+KlondikeWorld 타입의 월드를 가져야 한다고 지정합니다(즉, `FlameGame<KlondikeWorld>`). 게임에 이런 것을
+할 수 있는지 몰랐죠? 그렇다면 KlondikeWorld의 첫 번째 인스턴스는 어떻게 만들어질까요? 모든 것은
+KlondikeGame 생성자 코드에 있습니다.
 
 ```dart
   KlondikeGame() : super(world: KlondikeWorld());
 ```
 
-The constructor itself is a default constructor, but the colon `:` begins a constructor
-initialization sequence which creates our world for the first time.
+생성자 자체는 기본 생성자이지만, 콜론 `:`이 생성자 초기화 시퀀스를 시작하며
+이 시퀀스가 처음으로 우리 월드를 만듭니다.
 
 
-### Buttons
+<a id="buttons"></a>
 
-We are going to use some buttons to activate the various ways of restarting the Klondike Game. First
-we extend Flame's `ButtonComponent` to create class `FlatButton`, adapted from a Flat Button which
-used to be in Flame's Examples pages. `ButtonComponent` uses two `PositionComponent`s, one for when
-the button is in its normal state (up) and one for when it is pressed. The two components are
-`mounted` and `rendered` alternately as the user presses the button and releases it. To press the
-button, tap and hold it down.
+### 버튼
 
-In our button, the two components are the button's outlines - the `buttonDown:` one makes
-the outline of the button turn red when it is pressed, as a warning, because the four button-actions
-all end the current game and start another. That is also why they are positioned at the top of the
-canvas, above all the cards, where you are less likely to press them accidentally. If you do press
-one and have second thoughts, keep pressing and slide away, then the button will have no effect.
+클론다이크 게임을 재시작하는 여러 방법을 실행하기 위해 버튼 몇 개를 사용하겠습니다. 먼저
+Flame의 `ButtonComponent`를 확장해 `FlatButton` 클래스를 만듭니다. 이는 예전에
+Flame 예제 페이지에 있던 Flat Button을 바탕으로 만든 것입니다. `ButtonComponent`는 두 개의 `PositionComponent`를 사용합니다.
+하나는 버튼이 평상시 상태(올라와 있음)일 때, 다른 하나는 눌렸을 때 사용됩니다. 사용자가 버튼을 누르고
+뗄 때마다 두 컴포넌트가 번갈아 `mounted`되고 `rendered`됩니다. 버튼을 누르려면
+탭한 상태로 누르고 있으세요.
 
-The four buttons trigger the restart actions described above and are labelled `New deal`,
-`Same deal`, `Draw 1 ⇌ 3` and `Have fun`. Flame also has a `SpriteButtonComponent`, based on two
-alternating `Sprite`s, a `HudButtonComponent` and an `AdvancedButtonComponent`. For further types
-of buttons and controllers, it would be best to use a Flutter overlay, menu or settings widget and
-have access to Flutter's widgets for radio buttons, dropdown lists, sliders, etc. For the purposes
-of this Tutorial our FlatButton will do fine.
+우리 버튼에서 두 컴포넌트는 버튼의 외곽선입니다. `buttonDown:` 쪽은 버튼이 눌렸을 때
+외곽선을 빨간색으로 바꿔 경고를 표시합니다. 네 가지 버튼 액션이 모두
+현재 게임을 끝내고 새 게임을 시작하기 때문입니다. 같은 이유로 버튼들은 캔버스 맨 위,
+모든 카드보다 위쪽에 배치되어 실수로 누를 가능성이 적습니다. 버튼을 눌렀다가
+마음이 바뀌면, 계속 누른 채로 손가락을 밀어 벗어나면 버튼은 아무 효과도 내지 않습니다.
 
-We use the `addButton()` method, during our world's `onLoad()`, to set up our four buttons and
-add them to our `world`.
+네 개의 버튼은 위에서 설명한 재시작 액션을 트리거하며, 라벨은 `New deal`,
+`Same deal`, `Draw 1 ⇌ 3`, `Have fun`입니다. Flame에는 번갈아 나타나는 두 개의 `Sprite`를
+기반으로 하는 `SpriteButtonComponent`, 그리고 `HudButtonComponent`와 `AdvancedButtonComponent`도 있습니다.
+이 밖의 버튼과 컨트롤러가 필요하다면 Flutter 오버레이, 메뉴 또는 설정 위젯을 사용해
+라디오 버튼, 드롭다운 목록, 슬라이더 등 Flutter의 위젯을 활용하는 것이 가장 좋습니다.
+이 튜토리얼의 목적에는 우리의 FlatButton으로 충분합니다.
+
+월드의 `onLoad()` 중에 `addButton()` 메서드를 사용해 네 개의 버튼을 설정하고
+`world`에 추가합니다.
 
 ```dart
     playAreaSize =
@@ -517,39 +540,43 @@ add them to our `world`.
     addButton('Have fun', gameMidX + 3 * cardSpaceWidth, Action.haveFun);
 ```
 
-That places them above our four Foundation piles and centrally aligned with them. The first
-Foundation pile happens to be aligned around the top-center of the screen, so the first button
-is centred above it.
+이렇게 하면 버튼들이 네 개의 파운데이션 파일 위에, 각 파일과 가운데 정렬되어 배치됩니다. 첫 번째
+파운데이션 파일은 마침 화면의 위쪽 가운데를 기준으로 정렬되어 있으므로, 첫 번째 버튼은
+그 위 가운데에 놓입니다.
 
 
-### Anchors and co-ordinates
+<a id="anchors-and-co-ordinates"></a>
 
-The expressions here and in the `addButton()` method may seem odd because the cards and piles all
-have `Anchor.topLeft` but the buttons have `Anchor.center`. The `position` co-ordinates of a `Card`
-are where its top-left corner goes, but the `position` co-ordinates of a `FlatButton` are where its
-*center* goes and the various parts of a `FlatButton` are arranged (internally) around its center.
-These examples can give us some insight into how co-ordinate systems work in Flame.
+### 앵커와 좌표
+
+여기와 `addButton()` 메서드의 식이 이상해 보일 수 있습니다. 카드와 파일은 모두
+`Anchor.topLeft`인데 버튼은 `Anchor.center`이기 때문입니다. `Card`의 `position` 좌표는
+카드의 왼쪽 위 모서리가 놓이는 곳이지만, `FlatButton`의 `position` 좌표는 버튼의
+*중심*이 놓이는 곳이며, `FlatButton`의 여러 부분은 (내부적으로) 그 중심을 기준으로 배치됩니다.
+이 예시들을 통해 Flame에서 좌표계가 어떻게 동작하는지 어느 정도 이해할 수 있습니다.
 
 
-### The `deal()` method
+<a id="the-deal-method"></a>
 
-The last thing the KlondikeWorld's `onLoad()` method does is call the `deal()` method to shuffle
-and deal the cards. This method is now in the KlondikeWorld class and so are the `checkWin()` and
-`letsCelebrate()` methods, but more about those later. The deal process is the same as before but
-now includes some animation:
+### `deal()` 메서드
+
+KlondikeWorld의 `onLoad()` 메서드가 마지막으로 하는 일은 `deal()` 메서드를 호출해 카드를 섞고
+나눠 주는 것입니다. 이 메서드는 이제 KlondikeWorld 클래스에 있으며, `checkWin()`과
+`letsCelebrate()` 메서드도 마찬가지인데, 이에 대해서는 나중에 더 설명합니다. 나눠 주는 과정은 이전과 같지만
+이제 애니메이션이 포함됩니다.
 
 ```dart
   void deal() {
     assert(cards.length == 52, 'There are ${cards.length} cards: should be 52');
 
     if (gameRef.action != Action.sameDeal) {
-      // New deal: change the Random Number Generator's seed.
+      // 새로 나눠 주기: 난수 생성기의 시드를 바꿉니다.
       gameRef.seed = Random().nextInt(KlondikeGame.maxInt);
       if (gameRef.action == Action.changeDraw) {
         gameRef.klondikeDraw = (gameRef.klondikeDraw == 3) ? 1 : 3;
       }
     }
-    // For the "Same deal" option, re-use the previous seed, else use a new one.
+    // "Same deal" 옵션이면 이전 시드를 재사용하고, 그렇지 않으면 새 시드를 사용합니다.
     cards.shuffle(Random(gameRef.seed));
 
     var cardToDeal = cards.length - 1;
@@ -581,26 +608,26 @@ now includes some animation:
   }
 ```
 
-First we implement the `Action` value for this game. In the very first game, the KlondikeGame class
-sets defaults of `Action.newDeal` and `klondikeDraw = 1`, but after that the player can select an
-action by pressing and releasing a button and KlondikeWorld saves it in KlondikeGame, or the player
-wins the game, in which case `Action.newDeal` is selected and saved automatically. The action
-usually generates and saves a new seed, but that is skipped if we have `Action.sameDeal`. Then we
-shuffle the cards, using whatever `seed` applies.
+먼저 이 게임의 `Action` 값을 처리합니다. 맨 처음 게임에서는 KlondikeGame 클래스가
+`Action.newDeal`과 `klondikeDraw = 1`을 기본값으로 설정합니다. 하지만 그 뒤로는 플레이어가 버튼을 눌렀다 떼어
+액션을 선택하면 KlondikeWorld가 그 값을 KlondikeGame에 저장하고, 플레이어가 게임에서
+이기면 `Action.newDeal`이 자동으로 선택되어 저장됩니다. 액션은
+보통 새 시드를 생성해 저장하지만, `Action.sameDeal`이면 이 과정을 건너뜁니다. 그런 다음
+적용되는 `seed`로 카드를 섞습니다.
 
-The deal logic is the same as we used in Klondike Tutorial Step 4 and the animation is fairly easy.
-We just use `card.doMove(` for each card, with a changing destination and an increasing `start:`
-value, counting each moving card as it departs. For a few milliseconds after the loops terminate
-`nMovingCards` will be at a maximum of 28 (i.e. 1 + 2 + 3 + 4 + 5 + 6 + 7) and the remaining 24
-cards will go into a properly constructed Stock Pile.
+나눠 주는 로직은 클론다이크 튜토리얼 4단계에서 사용한 것과 같고, 애니메이션도 꽤 쉽습니다.
+각 카드에 `card.doMove(`를 사용하되, 목적지를 바꾸고 `start:` 값을 늘려 가며,
+출발하는 카드를 하나씩 셉니다. 루프가 끝난 뒤 몇 밀리초 동안
+`nMovingCards`는 최댓값인 28(즉, 1 + 2 + 3 + 4 + 5 + 6 + 7)이 되고, 남은 24장의
+카드는 제대로 구성된 스톡 파일로 들어갑니다.
 
-Then cards will be arriving over the next second or so and a problem arises. The cards do not
-necessarily arrive in the order they are sent from the Stock Pile area. If we start turning over
-the last cards in the columns too soon, we might turn over the wrong card and mess up the deal. The
-following printout of the deal shows how arrivals can get out of order. The `j` variable is the
-Tableau Pile number and `i` is the card's position in the pile. The King of Hearts for Pile 6 is
-arriving before the Queen of Clubs that is the last card in Pile 5. And there are two more cards
-to go in Pile 6.
+그다음 1초 남짓한 동안 카드들이 도착하는데, 여기서 문제가 생깁니다. 카드는
+스톡 파일 영역에서 보낸 순서대로 도착한다는 보장이 없습니다. 각 열의 마지막 카드를
+너무 일찍 뒤집기 시작하면 엉뚱한 카드를 뒤집어 배치를 망칠 수 있습니다.
+다음은 카드를 나눠 줄 때의 출력으로, 도착 순서가 어떻게 뒤섞일 수 있는지 보여 줍니다. `j` 변수는
+태블로 파일 번호이고, `i`는 파일 안에서 카드의 위치입니다. 6번 파일로 갈 하트 킹이
+5번 파일의 마지막 카드인 클럽 퀸보다 먼저 도착하고 있습니다. 그리고 6번 파일에는
+아직 두 장이 더 가야 합니다.
 
 ```console
 flutter: Move done, i 3, j 6, 6♠ 5 moving cards.
@@ -618,18 +645,20 @@ flutter: Pile 5 [4♠, 8♣, 5♣, 2♥, 9♥, Q♣]
 flutter: Pile 6 [4♣, 3♦, K♦, 6♠, K♥, 2♠, 10♠]
 ```
 
-So we count off the cards in the `onComplete()` callback code as they arrive. Only when all 28 cards
-have arrived do we start turning over the last card of each Tableau Pile. When the deal has been
-completed our KlondikeWorld is also complete and ready for play.
+그래서 카드가 도착할 때마다 `onComplete()` 콜백 코드에서 카드를 셉니다. 28장이 모두
+도착한 뒤에야 각 태블로 파일의 마지막 카드를 뒤집기 시작합니다. 카드 나눠 주기가
+끝나면 KlondikeWorld도 완성되어 플레이할 준비가 됩니다.
 
 
-## More animations of moves
+<a id="more-animations-of-moves"></a>
 
-The `Card` class's `doMove()` and `turnFaceUp()` methods have been combined into a doMoveAndFlip()
-method, which is used to draw cards from the Stock Pile. The dropping of a card or cards onto a pile
-after drag-and-drop also uses `doMove()` to settle the drop more gracefully. Finally, there is a
-shortcut to auto-move a card onto its Foundation Pile if it is ready to go out. This adds
-`TapCallbacks` to the `Card` class and an `onTapUp()` callback as follows:
+## 이동 애니메이션 더 알아보기
+
+`Card` 클래스의 `doMove()`와 `turnFaceUp()` 메서드는 doMoveAndFlip()
+메서드로 합쳐졌으며, 이 메서드는 스톡 파일에서 카드를 뽑을 때 사용합니다. 드래그 앤 드롭 후
+카드 한 장 또는 여러 장을 파일에 놓을 때도 `doMove()`를 사용해 더 부드럽게 안착시킵니다. 마지막으로,
+카드가 올라갈 준비가 되었다면 파운데이션 파일로 자동으로 옮기는 단축 기능이 있습니다. 이를 위해
+`Card` 클래스에 `TapCallbacks`와 다음과 같은 `onTapUp()` 콜백을 추가합니다.
 
 ```dart
   onTapUp(TapUpEvent event) {
@@ -650,36 +679,40 @@ shortcut to auto-move a card onto its Foundation Pile if it is ready to go out. 
   }
 ```
 
-If a card is ready to go out, just tap on it and it will move automatically to the correct
-Foundation Pile for its suit. This saves a load of dragging-and-dropping when you are close to
-winning the game! There is nothing new in the above code, except that if you tap the top card of
-the Stock Pile, the `Card` object receives the tap first and forwards it on to the `stock` object.
+카드가 올라갈 준비가 되었다면 그냥 탭하기만 하면 그 무늬에 맞는 파운데이션 파일로
+자동으로 이동합니다. 게임에서 이기기 직전이라면 드래그 앤 드롭을 한참 덜 해도 됩니다!
+위 코드에 새로운 것은 없지만, 스톡 파일의 맨 위 카드를 탭하면
+`Card` 객체가 먼저 탭을 받아 `stock` 객체로 전달한다는 점은 다릅니다.
 
 
-## A graphics glitch
+<a id="a-graphics-glitch"></a>
 
-If you moved multiple cards from one Tableau Pile to another, the internal code of the `TableauPile`
-class would formerly (in Tutorial Step 4) move the cards into place abruptly, as soon as the
-drag-and-drop ended. In the new code (Step 5), drags and drops use essentially the same code as
-before, so it is tempting to get that code to do a multi-card move as a series of animated moves
-each completing with an `acquireCard` call. But this caused some ugly graphics glitches. It
-appears they were due to `acquireCard` also calling the `layoutCards()` method of `TableauPile` and
-instantly re-arranging all the cards in the pile, every time a card was acquired. The problem has
-been solved (with some difficulty as it turned out), by adding a `dropCards` method to
-`TableauPile`, which mimics some of the existing actions while dovetailing some card animations
-in as well.
+## 그래픽 글리치
 
-The lesson to be learned is that it is worth giving some attention to animation and time-dependent
-concerns at Game Design time. When was that? Back in Klondike Tutorial Step 1 Preparation and
-Step 2 Scaffolding.
+여러 장의 카드를 한 태블로 파일에서 다른 태블로 파일로 옮기면, 예전(튜토리얼 4단계)에는
+`TableauPile` 클래스의 내부 코드가 드래그 앤 드롭이 끝나자마자 카드를 제자리로 갑자기
+옮겼습니다. 새 코드(5단계)에서 드래그 앤 드롭은 본질적으로 이전과 같은 코드를 사용하므로,
+그 코드가 여러 장의 이동을 각각 `acquireCard` 호출로 끝나는 일련의 애니메이션 이동으로
+처리하게 하고 싶은 유혹이 생깁니다. 하지만 이렇게 하니 보기 흉한 그래픽 글리치가 생겼습니다.
+원인은 `acquireCard`가 `TableauPile`의 `layoutCards()` 메서드도 호출해서, 카드를 받을 때마다
+파일 안의 모든 카드를 즉시 재배치했기 때문인 것으로 보입니다. 이 문제는
+(결과적으로 꽤 어렵게) `TableauPile`에 `dropCards` 메서드를 추가해 해결했습니다.
+이 메서드는 기존 동작 일부를 흉내 내면서 카드 애니메이션도
+맞물리게 넣습니다.
+
+여기서 얻을 수 있는 교훈은 게임 설계 단계에서 애니메이션과 시간에 따른
+문제에 어느 정도 신경 쓸 가치가 있다는 것입니다. 그게 언제였냐고요? 바로 클론다이크 튜토리얼 1단계 준비와
+2단계 뼈대 잡기 때입니다.
 
 
-## Winning the game
+<a id="winning-the-game"></a>
 
-You win the game when all cards in all suits, Ace to King, have been moved to the Foundation Piles,
-13 cards in each pile. The game now has code to recognize that event: an `isFull` test added to
-the `FoundationPile`'s `acquireCard()` method, a callback to `KlondikeWorld` and a test as
-to whether all four Foundations are full. Here is the code:
+## 게임에서 이기기
+
+모든 무늬의 카드가 에이스부터 킹까지 모두 파운데이션 파일로 옮겨져 각 파일에 13장씩 쌓이면
+게임에서 이깁니다. 이제 게임에는 이를 인식하는 코드가 있습니다. `FoundationPile`의
+`acquireCard()` 메서드에 추가한 `isFull` 검사, `KlondikeWorld`로의 콜백, 그리고
+네 개의 파운데이션이 모두 가득 찼는지 확인하는 검사입니다. 코드는 다음과 같습니다.
 
 ```dart
 class FoundationPile extends PositionComponent implements Pile {
@@ -705,7 +738,7 @@ class FoundationPile extends PositionComponent implements Pile {
     card.pile = this;
     _cards.add(card);
     if (isFull) {
-      checkWin(); // Get KlondikeWorld to check all FoundationPiles.
+      checkWin(); // KlondikeWorld가 모든 FoundationPile을 확인하게 합니다.
     }
   }
 ```
@@ -725,40 +758,42 @@ class FoundationPile extends PositionComponent implements Pile {
   }
 ```
 
-It is often possible to calculate whether you can win from a given position of the cards in a
-Klondike game, or could have won but missed a vital move. It is frequently possible to calculate
-whether the initial deal is winnable: a percentage of Klondike deals are not. But all that is far
-beyond the scope of this Tutorial, so for now it is up to the player to work out whether to keep
-playing and try to win, or give up and press one of the buttons.
+클론다이크 게임에서는 주어진 카드 배치에서 이길 수 있는지, 혹은 이길 수 있었는데 결정적인 수를
+놓쳤는지 계산할 수 있는 경우가 많습니다. 처음 나눠 준 배치가 이길 수 있는 배치인지 계산할 수 있는 경우도
+많습니다. 클론다이크 배치 중 일정 비율은 이길 수 없습니다. 하지만 이 모든 것은 이 튜토리얼의 범위를
+훨씬 벗어나므로, 지금은 계속 플레이해서 이기려고 할지, 아니면 포기하고 버튼 중 하나를 누를지
+플레이어가 판단해야 합니다.
 
 
-## Ending a game and re-starting it
+<a id="ending-a-game-and-re-starting-it"></a>
 
-A game ends either after the player wins or they press and release one of the buttons. At that
-point the KlondikeGame class must hold all the data needed to start a new game, namely an `Action`
-value, a `klondikeDraw` value (1 or 3) and a `seed` from the previous game. Each button has an
-`onReleased:` callback provided by the `addButton()` method in KlondikeWorld, with code as follows:
+## 게임을 끝내고 다시 시작하기
+
+게임은 플레이어가 이기거나 버튼 중 하나를 눌렀다 떼면 끝납니다. 그
+시점에 KlondikeGame 클래스는 새 게임을 시작하는 데 필요한 모든 데이터, 즉 `Action`
+값, `klondikeDraw` 값(1 또는 3), 이전 게임의 `seed`를 가지고 있어야 합니다. 각 버튼에는
+KlondikeWorld의 `addButton()` 메서드가 제공하는 `onReleased:` 콜백이 있으며, 코드는 다음과 같습니다.
 
 ```dart
       onReleased: () {
         if (action == Action.haveFun) {
-          // Shortcut to the "win" sequence, for Tutorial purposes only.
+          // "승리" 시퀀스로 가는 지름길로, 튜토리얼 목적으로만 사용합니다.
           letsCelebrate();
         } else {
-          // Restart with a new deal or the same deal as before.
+          // 새로 나눠 주거나 이전과 같은 배치로 재시작합니다.
           gameRef.action = action;
           gameRef.world = KlondikeWorld();
         }
       },
 ```
 
-The `letsCelebrate()` method is normally invoked only when the player wins. The functions of the
-other three buttons are to set the `Action` value in KlondikeGame and to set `world` in `FlameGame`
-to refer to a new KlondikeWorld, thus replacing the current one and leaving the former
-KlondikeWorld's storage to be disposed of by Garbage Collect. `FlameGame` will continue on to
-trigger KlondikeWorld's `onLoad()` method.
+`letsCelebrate()` 메서드는 보통 플레이어가 이겼을 때만 호출됩니다. 나머지
+세 버튼의 기능은 KlondikeGame의 `Action` 값을 설정하고, `FlameGame`의 `world`가
+새 KlondikeWorld를 가리키도록 설정하는 것입니다. 그러면 현재 월드가 교체되고, 이전
+KlondikeWorld의 저장 공간은 가비지 컬렉션이 정리하게 됩니다. 이어서 `FlameGame`이
+KlondikeWorld의 `onLoad()` 메서드를 트리거합니다.
 
-The `letsCelebrate()` method ends with similar code, but forces a new deal:
+`letsCelebrate()` 메서드도 비슷한 코드로 끝나지만, 새로 나눠 주기를 강제합니다.
 
 ```dart
               gameRef.action = Action.newDeal;
@@ -766,18 +801,20 @@ The `letsCelebrate()` method ends with similar code, but forces a new deal:
 ```
 
 
-## The `Have fun` button
+<a id="the-have-fun-button"></a>
 
-When you win the Klondike Game, the `letsCelebrate()` method puts on a little display. To save you
-having to play and win a whole game before you see it (**and** to test the method), we have
-provided the `Have fun` button. Of course a real game could not have such a button...
+## `Have fun` 버튼
 
-Well, this is it! The game is now more playable.
+클론다이크 게임에서 이기면 `letsCelebrate()` 메서드가 작은 쇼를 보여 줍니다. 이를 보기 위해
+게임 한 판을 끝까지 플레이해서 이길 필요가 없도록(**그리고** 이 메서드를 테스트하기 위해)
+`Have fun` 버튼을 마련했습니다. 물론 실제 게임에는 이런 버튼이 있을 수 없겠죠...
 
-We could do more, but this game **is** a Tutorial above all else. Press the buttons below to see
-what the final code looks like, or to play it live.
+자, 이것으로 끝입니다! 이제 게임을 더 즐겁게 플레이할 수 있습니다.
 
-But it is also time to have a look at the Ember Tutorial!
+더 많은 것을 할 수도 있지만, 이 게임은 무엇보다도 튜토리얼**입니다**. 아래 버튼을 눌러
+최종 코드를 보거나 직접 플레이해 보세요.
+
+이제 Ember 튜토리얼도 살펴볼 차례입니다!
 
 ```{flutter-app}
 :sources: ../tutorials/klondike/app

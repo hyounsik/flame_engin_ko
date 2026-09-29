@@ -1,53 +1,52 @@
-# Widgets
+<a id="widgets"></a>
 
-One advantage when developing games with Flutter is the ability to use Flutter's extensive toolset
-for building UIs, Flame tries to expand on that by introducing widgets that are made with games in
-mind.
+# 위젯
 
-Here you can find all the available widgets provided by Flame.
+Flutter로 게임을 개발할 때의 장점 중 하나는 UI를 만들기 위한 Flutter의 방대한 도구를 활용할 수
+있다는 점입니다. Flame은 여기에 더해 게임을 염두에 두고 만든 위젯을 제공합니다.
 
-You can also see all the widgets showcased inside a
-[Dashbook](https://github.com/bluefireteam/dashbook) sandbox in the
-[widgets examples directory](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/widgets).
+여기에서 Flame이 제공하는 모든 위젯을 확인할 수 있습니다.
+
+[위젯 예제 디렉터리](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/widgets)의
+[Dashbook](https://github.com/bluefireteam/dashbook) 샌드박스에서 모든 위젯의 시연을 볼 수도
+있습니다.
 
 
 ## NineTileBoxWidget
 
-A Nine Tile Box is a rectangle drawn using a grid sprite.
+Nine Tile Box는 그리드 스프라이트를 사용해 그리는 사각형입니다.
 
-The grid sprite is a 3x3 grid and with 9 blocks, representing the 4 corners, the 4 sides and the
-middle.
+그리드 스프라이트는 9개의 블록으로 이루어진 3x3 그리드로, 4개의 모서리, 4개의 변, 그리고 가운데를
+나타냅니다.
 
-The corners are drawn at the same size, the sides are stretched on the side direction and the middle
-is expanded both ways.
+모서리는 같은 크기로 그려지고, 변은 변의 방향으로 늘어나며, 가운데는 양방향으로 확장됩니다.
 
-The `NineTileBoxWidget` implements a `Container` using that standard. This pattern is also
-implemented as a component in the `NineTileBoxComponent` so that you can add this feature directly
-to your `FlameGame`. To learn more, check the
-[NineTileBoxComponent docs](../components/utility_components.md#ninetileboxcomponent).
+`NineTileBoxWidget`은 이 방식을 사용하는 `Container`를 구현합니다. 이 패턴은
+`NineTileBoxComponent`라는 컴포넌트로도 구현되어 있어서 이 기능을 `FlameGame`에 직접 추가할 수
+있습니다. 자세한 내용은
+[NineTileBoxComponent 문서](../components/utility_components.md#ninetileboxcomponent)를 확인하세요.
 
-Here you can find an example of how to use it (without using the `NineTileBoxComponent`):
+다음은 (`NineTileBoxComponent`를 사용하지 않고) 사용하는 예시입니다.
 
 ```dart
 import 'package:flame/widgets';
 
 NineTileBoxWidget(
-    image: image, // dart:ui image instance
-    tileSize: 16, // The width/height of the tile on your grid image
-    destTileSize: 50, // The dimensions for the tile on canvas
-    child: SomeWidget(), // Any Flutter widget
+    image: image, // dart:ui 이미지 인스턴스
+    tileSize: 16, // 그리드 이미지에서 타일 하나의 너비/높이
+    destTileSize: 50, // 캔버스에 그려질 타일의 크기
+    child: SomeWidget(), // 아무 Flutter 위젯
 )
 ```
 
 
 ## SpriteButton
 
-`SpriteButton` is a simple widget that creates a button based on Flame sprites. This can be very
-useful when trying to create non-default looking buttons. For example when it is easier for you to
-achieve your wanted look by drawing the button in a graphics editor, instead of making it directly
-in Flutter.
+`SpriteButton`은 Flame 스프라이트를 기반으로 버튼을 만드는 간단한 위젯입니다. 기본 모양이 아닌
+버튼을 만들 때 아주 유용합니다. 예를 들어 Flutter에서 직접 만드는 것보다 그래픽 편집기에서 버튼을
+그리는 편이 원하는 모양을 내기 더 쉬운 경우에 좋습니다.
 
-How to use it:
+사용 방법:
 
 ```dart
 SpriteButton(
@@ -57,7 +56,7 @@ SpriteButton(
     label: const Text('Sprite Button', style: const TextStyle(color: const Color(0xFF5D275D))),
     sprite: _spriteButton,
     pressedSprite: _pressedSprite,
-    // Optional, will be shown when onPressed in null.
+    // 선택 사항이며, onPressed가 null일 때 표시됩니다.
     disabledSprite: _disabledSprite,
     height: _height,
     width: _width,
@@ -67,10 +66,10 @@ SpriteButton(
 
 ## SpriteWidget
 
-`SpriteWidget` is a widget used to display a [Sprite](../rendering/images.md#sprite) inside a widget
-tree.
+`SpriteWidget`은 위젯 트리 안에 [Sprite](../rendering/images.md#sprite)를 표시하는 데 사용하는
+위젯입니다.
 
-This is how to use it:
+사용 방법은 다음과 같습니다.
 
 ```dart
 SpriteWidget(
@@ -82,10 +81,10 @@ SpriteWidget(
 
 ## SpriteAnimationWidget
 
-`SpriteAnimationWidget` is a widget used to display
-[SpriteAnimations](../rendering/images.md#animation) inside a widget tree.
+`SpriteAnimationWidget`은 위젯 트리 안에
+[SpriteAnimation](../rendering/images.md#animation)을 표시하는 데 사용하는 위젯입니다.
 
-This is how to use it:
+사용 방법은 다음과 같습니다.
 
 ```dart
 SpriteAnimationWidget(

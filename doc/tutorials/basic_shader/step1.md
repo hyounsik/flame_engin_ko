@@ -1,25 +1,31 @@
-# 1. Sprite Component
+<a id="1-sprite-component"></a>
+
+# 1. 스프라이트 컴포넌트
 
 
-## Architecture and Responsibilities
+<a id="architecture-and-responsibilities"></a>
 
-Let's create the component where we render our sprite and apply the shader. We will split this
-into two classes:
+## 구조와 역할
 
-- a `SpriteComponent` subclass that loads the image and handles input events
-- a `PostProcessComponent` subclass that wraps the sprite and applies the shader
+스프라이트를 렌더링하고 셰이더를 적용할 컴포넌트를 만들어 봅시다. 이를 두 개의 클래스로
+나눕니다.
 
-This separation means that shader changes only require editing the wrapper class, while sprite
-changes like adding input event mixins or additional children only require editing the sprite
-class.
+- 이미지를 로드하고 입력 이벤트를 처리하는 `SpriteComponent` 하위 클래스
+- 스프라이트를 감싸고 셰이더를 적용하는 `PostProcessComponent` 하위 클래스
+
+이렇게 분리하면 셰이더를 변경할 때는 래퍼 클래스만 수정하면 되고, 입력 이벤트 믹스인이나 추가 자식을
+넣는 것 같은 스프라이트 변경은 스프라이트 클래스만
+수정하면 됩니다.
 
 
-## Image resource
+<a id="image-resource"></a>
 
-For this tutorial we need an image with a transparent background to apply the outline shader to.
-Create an `assets/images/` directory in your project and add your `.png` image there.
+## 이미지 리소스
 
-Don't forget to register the assets folder in `pubspec.yaml`:
+이 튜토리얼에서는 외곽선 셰이더를 적용할, 배경이 투명한 이미지가 필요합니다.
+프로젝트에 `assets/images/` 디렉터리를 만들고 그 안에 `.png` 이미지를 넣습니다.
+
+`pubspec.yaml`에 에셋 폴더를 등록하는 것을 잊지 마세요.
 
 ```yaml
 flutter:
@@ -28,9 +34,11 @@ flutter:
 ```
 
 
-## Sprite
+<a id="sprite"></a>
 
-Create a new file named `sword_component.dart` (replace "sword" with your own image name):
+## 스프라이트
+
+`sword_component.dart`라는 새 파일을 만듭니다("sword"는 여러분의 이미지 이름으로 바꾸세요).
 
 ```dart
 import 'package:flame/components.dart';
@@ -45,9 +53,11 @@ class SwordSprite extends SpriteComponent {
 ```
 
 
-## Wrapper
+<a id="wrapper"></a>
 
-Next, add the wrapper class that applies the post process. In the same file, create:
+## 래퍼
+
+다음으로 포스트 프로세스를 적용하는 래퍼 클래스를 추가합니다. 같은 파일에 다음을 작성합니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -65,9 +75,11 @@ class OutlinedSwordSprite extends PostProcessComponent {
 ```
 
 
-## Result
+<a id="result"></a>
 
-The final `sword_component.dart` file looks like this:
+## 결과
+
+최종 `sword_component.dart` 파일은 다음과 같습니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -92,5 +104,4 @@ class SwordSprite extends SpriteComponent {
 }
 ```
 
-This won't compile yet because `OutlinePostProcess` doesn't exist. Let's create it in the next
-step!
+아직 `OutlinePostProcess`가 없으므로 컴파일되지 않습니다. 다음 단계에서 만들어 봅시다!

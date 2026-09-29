@@ -1,43 +1,49 @@
-# Writing tests
+<a id="writing-tests"></a>
 
-- All new functionality must be tested, if at all possible. When fixing a bug, tests must be added
-  to ensure that this bug would not reappear in the future.
+# 테스트 작성하기
 
-- Run `melos run coverage` to execute all tests in the "coverage" mode. The results will be saved
-  in the `coverage/index.html` file, which can be opened in a browser. Try to achieve 100% coverage
-  for any new functionality added.
+- 가능한 한 모든 새 기능은 테스트되어야 합니다. 버그를 수정할 때는 그 버그가 앞으로 다시
+  나타나지 않도록 테스트를 추가해야 합니다.
 
-- Every source file should have a corresponding test file, with the `_test` suffix. For example,
-  if you're making a `SpookyEffect` and the source file is `src/effects/spooky_effect.dart`, then
-  the test file should be `test/effects/spooky_effect_test.dart` mirroring the source directory.
+- `melos run coverage`를 실행하면 모든 테스트를 "coverage" 모드로 실행합니다. 결과는
+  `coverage/index.html` 파일에 저장되며, 브라우저에서 열어 볼 수 있습니다. 새로 추가하는 기능은
+  100% 커버리지를 달성하도록 노력하세요.
 
-- The test file should contain a `main()` function with a single `group()` whose name matches the
-  name of the class being tested. If the source file contains multiple public classes, then each of
-  them should have its own group. For example:
+- 모든 소스 파일에는 `_test` 접미사가 붙은 대응하는 테스트 파일이 있어야 합니다. 예를 들어
+  `SpookyEffect`를 만들고 있고 소스 파일이 `src/effects/spooky_effect.dart`라면, 테스트 파일은
+  소스 디렉터리 구조를 그대로 따라 `test/effects/spooky_effect_test.dart`가 되어야 합니다.
+
+- 테스트 파일에는 `main()` 함수가 있어야 하며, 그 안에 테스트 대상 클래스의 이름과 같은 이름을 가진
+  `group()`이 하나 있어야 합니다. 소스 파일에 public 클래스가 여러 개 있다면 각 클래스마다
+  고유한 그룹이 있어야 합니다. 예를 들면 다음과 같습니다.
 
   ```dart
   void main() {
     group('SpookyEffect', () {
-      // tests here
+      // 여기에 테스트 작성
     });
   }
   ```
 
-- For a larger class, multiple groups can be created inside the top-level group, allowing to
-  navigate the test suite easier. The names of the nested groups should be capitalized.
+- 규모가 큰 클래스라면 최상위 그룹 안에 여러 그룹을 만들어 테스트 모음을 더 쉽게 탐색할 수 있게
+  할 수 있습니다. 중첩된 그룹의 이름은 대문자로 시작해야 합니다.
 
-- The names of the individual tests should normally start with a lowercase.
+- 개별 테스트의 이름은 보통 소문자로 시작해야 합니다.
 
-- Often, you would need to define multiple helper classes to run the tests. Such classes should be
-  private (start with an underscore), and placed at the end of the file. The reason for this is that
-  whenever some test breaks, the first thing one needs to do is to go into the test file and run all
-  the tests. Having the `main()` function at the top of the file makes this process much easier.
-
-
-## Types of tests
+- 테스트를 실행하기 위해 여러 헬퍼 클래스를 정의해야 하는 경우가 많습니다. 이런 클래스는
+  private(밑줄로 시작)이어야 하며, 파일의 끝에 두어야 합니다. 그 이유는 어떤 테스트가 깨졌을 때
+  가장 먼저 해야 할 일이 테스트 파일로 가서 모든 테스트를 실행하는 것이기 때문입니다.
+  `main()` 함수가 파일의 맨 위에 있으면 이 과정이 훨씬 쉬워집니다.
 
 
-### Simple tests
+<a id="types-of-tests"></a>
+
+## 테스트의 종류
+
+
+<a id="simple-tests"></a>
+
+### 단순 테스트
 
 ```dart
 test('the name of the test', () {
@@ -45,14 +51,16 @@ test('the name of the test', () {
 });
 ```
 
-This is the simplest kind of test available, and also the fastest. Use these tests for checking
-some classes/methods that can function in isolation from the rest of the Flame framework.
+사용할 수 있는 가장 단순한 종류의 테스트이며, 가장 빠르기도 합니다. Flame 프레임워크의 나머지 부분과
+독립적으로 동작할 수 있는 클래스/메서드를 검사할 때 이 테스트를 사용하세요.
 
 
-### FlameGame tests
+<a id="flamegame-tests"></a>
 
-It is very common to want to have a `FlameGame` instance inside a test, so that you can add some
-components to it and verify various behaviors. The following approach is recommended:
+### FlameGame 테스트
+
+테스트 안에 `FlameGame` 인스턴스를 두고 컴포넌트를 추가하여 다양한 동작을 검증하고 싶은 경우가
+매우 흔합니다. 다음 방식을 권장합니다.
 
 ```dart
 testWithFlameGame('the name of the test', (game) async {
@@ -63,30 +71,32 @@ testWithFlameGame('the name of the test', (game) async {
 });
 ```
 
-Here the `game` instance that is passed to the test body is a fully initialized game that behaves
-as if it was mounted to a `GameWidget`. The `game.ready()` method waits until all the scheduled
-components are loaded and mounted to the component tree.
+여기서 테스트 본문에 전달되는 `game` 인스턴스는 완전히 초기화된 게임으로, `GameWidget`에 마운트된
+것처럼 동작합니다. `game.ready()` 메서드는 예약된 모든 컴포넌트가 로드되고 컴포넌트 트리에
+마운트될 때까지 기다립니다.
 
-The time within the `game` can be advanced with `game.update(dt)`.
+`game` 안의 시간은 `game.update(dt)`로 진행시킬 수 있습니다.
 
-If you need to have a custom game inside this test (say, a game with some mixin), then use
+이 테스트 안에서 커스텀 게임(예를 들어 어떤 믹스인이 적용된 게임)이 필요하다면 다음을 사용합니다.
 
 ```dart
 testWithGame<_MyGame>(
   'the name of the test',
   _MyGame.new,
   (game) async {
-    // test body...
+    // 테스트 본문...
   },
 );
 ```
 
 
-### Widget tests
+<a id="widget-tests"></a>
 
-Sometimes having a "naked" `FlameGame` is insufficient, and you want to have access to the Flutter
-infrastructure as well. That is, to have a game mounted into a real `GameWidget` embedded into an
-actual Flutter framework. In such cases, use
+### 위젯 테스트
+
+때로는 "맨" `FlameGame`만으로는 부족하고 Flutter 인프라에도 접근하고 싶을 수 있습니다.
+즉, 실제 Flutter 프레임워크에 포함된 진짜 `GameWidget`에 게임을 마운트하고 싶은 경우입니다.
+이런 경우에는 다음을 사용합니다.
 
 ```dart
 testWidgets('test name', (tester) async {
@@ -95,93 +105,94 @@ testWidgets('test name', (tester) async {
   await tester.pump();
   await tester.pump();
 
-  // At this point the game is fully initialized, and you can run your checks
-  // against it.
+  // 이 시점에서 게임은 완전히 초기화되었으며, 게임에 대해 검사를
+  // 실행할 수 있습니다.
   expect(...);
 
-  // Equivalent to game.update(0)
+  // game.update(0)과 동일
   await tester.pump();
 
-  // Advances in-game time by 20 milliseconds
+  // 게임 내 시간을 20밀리초만큼 진행
   await tester.pump(const Duration(milliseconds: 20));
 });
 ```
 
-There are some additional methods available on the `tester` controller, for example in order to
-simulate taps, or drags, or key presses.
+`tester` 컨트롤러에는 탭, 드래그, 키 입력 등을 시뮬레이션하기 위한 추가 메서드도 있습니다.
 
 
-### Golden tests
+<a id="golden-tests"></a>
 
-These tests verify that things render as intended. The process of creating a golden test is
-simple:
+### 골든 테스트
 
-1. Write the test, using the following template:
+이 테스트는 무언가가 의도한 대로 렌더링되는지 검증합니다. 골든 테스트를 만드는 과정은
+간단합니다.
+
+1. 다음 템플릿을 사용하여 테스트를 작성합니다.
 
    ```dart
    testGolden(
      'the name of the test',
      (game) async {
-        // Set up the game by adding the necessary components
-        // You can add `expect()` checks here too, if you want to
+        // 필요한 컴포넌트를 추가하여 게임을 설정합니다
+        // 원한다면 여기에 `expect()` 검사도 추가할 수 있습니다
      },
      size: Vector2(300, 200),
      goldenFile: '.../_goldens/my_test_file.png',
    );
    ```
 
-   Here the `size` parameter determines the size of the game canvas and of the output image. The
-   `goldenFile` parameter is the name of the file where you want to store the "golden" results. This
-   should be a relative path to the `test/_goldens` directory, starting from your test file.
+   여기서 `size` 파라미터는 게임 캔버스와 출력 이미지의 크기를 결정합니다. `goldenFile` 파라미터는
+   "골든" 결과를 저장할 파일의 이름입니다. 이 값은 테스트 파일을 기준으로 한 `test/_goldens`
+   디렉터리의 상대 경로여야 합니다.
 
-2. Run
+2. 다음을 실행합니다.
 
    ```shell
    flutter test --update-goldens
    ```
 
-   this would create the golden file for the first time. Open the file to verify that it renders
-   exactly as you intended. If not, then delete the file and go back to step 1.
+   그러면 골든 파일이 처음으로 생성됩니다. 파일을 열어 의도한 대로 정확히 렌더링되는지 확인하세요.
+   그렇지 않다면 파일을 삭제하고 1단계로 돌아갑니다.
 
-3. Subsequent runs of `flutter test` will check whether the output of the golden test matches the
-   saved golden file. If not, Flutter will save the image-diff files into the `failures/` directory
-   where your test is located.
+3. 이후 `flutter test`를 실행하면 골든 테스트의 출력이 저장된 골든 파일과 일치하는지 검사합니다.
+   일치하지 않으면 Flutter는 테스트가 있는 위치의 `failures/` 디렉터리에 이미지 차이(image-diff)
+   파일을 저장합니다.
 
 ```{note}
-Avoid using text in your golden tests -- it does not render reliably across
-different platforms, due to font discrepancies and differences in
-anti-aliasing algorithms.
+골든 테스트에서는 텍스트 사용을 피하세요. 폰트 차이와 안티앨리어싱 알고리즘의 차이 때문에
+플랫폼마다 안정적으로 렌더링되지 않습니다.
 ```
 
 
-### Random tests
+<a id="random-tests"></a>
 
-These are the tests that use a random number generator in order to construct a randomized input and
-then check its correctness. Use as follows:
+### 랜덤 테스트
+
+난수 생성기를 사용해 무작위 입력을 만든 다음 그 정확성을 검사하는 테스트입니다.
+다음과 같이 사용합니다.
 
 ```dart
 testRandom('test name', (Random random) {
-  // Use [random] to generate random input
+  // [random]을 사용해 무작위 입력을 생성합니다
 });
 ```
 
-You can add `repeatCount: 1000` parameter to run this test the specified number of times, each one
-with a different seed. It is useful to run a high `repeatCount` when developing the test, to ensure
-that it doesn't break. However, when submitting the test to the main repository, avoid repeatCounts
-higher than 10.
+`repeatCount: 1000` 파라미터를 추가하면 지정한 횟수만큼 매번 다른 시드로 이 테스트를 실행합니다.
+테스트를 개발하는 동안에는 테스트가 깨지지 않는지 확인하기 위해 `repeatCount`를 높게 설정해
+실행하는 것이 유용합니다. 하지만 메인 저장소에 테스트를 제출할 때는 repeatCount를 10보다
+높게 설정하지 마세요.
 
-If the test breaks at some particular seed, then that seed will be shown in the test output. Add it
-as the `seed: NNN` parameter to your test, and you'll be able to run it for the same seed as long
-as you need until the test is fixed. Do not leave the `seed:` parameter when submitting your code,
-as it defeats the purpose of having the test randomized.
+테스트가 특정 시드에서 깨지면 그 시드가 테스트 출력에 표시됩니다. 그 값을 테스트에
+`seed: NNN` 파라미터로 추가하면, 테스트가 고쳐질 때까지 필요한 만큼 같은 시드로 실행할 수 있습니다.
+코드를 제출할 때는 `seed:` 파라미터를 남겨 두지 마세요. 테스트를 무작위화하는 의미가 없어지기 때문입니다.
 
-You can also fix the seed for a whole test run without touching the code, by passing it as a
-compile-time define:
+코드를 건드리지 않고도 컴파일 타임 define으로 시드를 전달하여 전체 테스트 실행의 시드를
+고정할 수도 있습니다.
 
 ```bash
 flutter test --dart-define=RANDOM_SEED=1234
 ```
 
-Every randomized test then starts from that seed, and each repeat of a test offsets it by the
-repeat index so that the repeats stay distinct. This is what the flutter/tests customer testing run
-uses to stay deterministic.
+그러면 모든 무작위 테스트가 그 시드에서 시작하며, 테스트의 각 반복은 반복 인덱스만큼 시드를
+오프셋하여 반복마다 서로 다른 값을 유지합니다. flutter/tests 고객 테스트 실행은 이 방식을 사용해
+결정론적으로 동작합니다.

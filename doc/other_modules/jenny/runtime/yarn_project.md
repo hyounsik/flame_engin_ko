@@ -1,19 +1,20 @@
-# Yarn Project
+<a id="yarn-project"></a>
 
-A **YarnProject** is the central hub for all yarn scripts and the accompanying information.
-Generally, there would be a single `YarnProject` in a game, though it is also possible to make
-several yarn projects if their content is completely independent.
+# Yarn 프로젝트
 
-The standard sequence of initializing a `YarnProject` is the following:
+**YarnProject**는 모든 yarn 스크립트와 그에 딸린 정보의 중앙 허브입니다. 일반적으로 게임에는
+`YarnProject`가 하나 있지만, 내용이 완전히 독립적이라면 yarn 프로젝트를 여러 개 만들 수도 있습니다.
 
-- link user-defined functions;
-- link user-defined commands;
-- set the locale (if different from `en`);
-- parse a `.yarn` script containing declarations of global variables and characters;
-- parse all other `.yarn` scripts;
-- restore the variables from a save-game storage.
+`YarnProject`를 초기화하는 표준 순서는 다음과 같습니다.
 
-For example:
+- 사용자 정의 함수 연결하기
+- 사용자 정의 명령 연결하기
+- 로케일 설정하기(`en`과 다른 경우)
+- 전역 변수와 캐릭터 선언이 담긴 `.yarn` 스크립트 파싱하기
+- 나머지 모든 `.yarn` 스크립트 파싱하기
+- 세이브 게임 저장소에서 변수 복원하기
+
+예를 들면 다음과 같습니다.
 
 ```dart
 final yarn = YarnProject()
@@ -25,71 +26,69 @@ final yarn = YarnProject()
 ```
 
 
-## Properties
+<a id="properties"></a>
+
+## 속성
 
 **locale** `String`
-: The language used in this `YarnProject` (the default is `'en'`). Selecting a different language
-  changes the builtin `plural()` function.
+: 이 `YarnProject`에서 사용하는 언어입니다(기본값은 `'en'`). 다른 언어를 선택하면 내장 `plural()` 함수가
+  바뀝니다.
 
 **random** `Random`
-: The random number generator. This can be replaced with a different generator, if, for example,
-  you need to control the seed.
+: 난수 생성기입니다. 예를 들어 시드를 제어해야 하는 경우 다른 생성기로 교체할 수 있습니다.
 
 **nodes** `Map<String, Node>`
-: All [Node]s loaded into the project, keyed by their titles.
+: 프로젝트에 로드된 모든 [Node]이며, title을 키로 합니다.
 
 **variables** `VariableStorage`
-: The container for all global variables used in this yarn project. There could be several reasons
-  to access this storage:
+: 이 yarn 프로젝트에서 사용하는 모든 전역 변수의 컨테이너입니다. 이 저장소에 접근해야 하는 이유는 여러
+  가지가 있을 수 있습니다.
 
   <!-- markdownlint-disable MD006 MD007 -->
-  - to change the value of a yarn variable from the game. This enables you to pass the information
-    from the game into the dialogue. For example, your dialogue may have variable `$gold`, which
-    you may want to update whenever the player's amount of money changes within the game.
-  - to store the values of all yarn variables during the save game, and to restore them when
-    loading the game.
+  - 게임에서 yarn 변수의 값을 바꾸기 위해. 이를 통해 게임의 정보를 대화로 전달할 수 있습니다. 예를 들어
+    대화에 `$gold` 변수가 있고, 게임에서 플레이어의 돈이 바뀔 때마다 이 변수를 갱신하고 싶을 수 있습니다.
+  - 게임을 저장할 때 모든 yarn 변수의 값을 저장하고, 게임을 불러올 때 복원하기 위해.
   <!-- markdownlint-enable MD006 MD007 -->
 
 **functions** `FunctionStorage`
-: The [container][FunctionStorage] for all user-defined functions linked into the project. The main
-  reason to access this property is to register new custom function to be available at runtime.
+: 프로젝트에 연결된 모든 사용자 정의 함수의 [컨테이너][FunctionStorage]입니다. 이 속성에 접근하는 주된
+  이유는 런타임에 사용할 수 있도록 새 커스텀 함수를 등록하기 위해서입니다.
 
-  Note that all custom functions must be added to the `YarnProject` before they can be used in a
-  dialogue script -- otherwise a compile error will occur when encountering an unknown function.
+  모든 커스텀 함수는 대화 스크립트에서 사용하기 전에 `YarnProject`에 추가되어야 합니다. 그렇지 않으면
+  알 수 없는 함수를 만났을 때 컴파일 오류가 발생합니다.
 
 **commands** `CommandStorage`
-: The [container][CommandStorage] for all user-defined commands linked into the project. The main
-  reason to access this container is to register new custom commands.
+: 프로젝트에 연결된 모든 사용자 정의 명령의 [컨테이너][CommandStorage]입니다. 이 컨테이너에 접근하는
+  주된 이유는 새 커스텀 명령을 등록하기 위해서입니다.
 
-  All custom commands must be added before they can be used in the dialogue script.
+  모든 커스텀 명령은 대화 스크립트에서 사용하기 전에 추가되어야 합니다.
 
 **characters** `CharacterStorage`
-: The [container][CharacterStorage] for all [Character] objects declared in your yarn scripts.
+: yarn 스크립트에서 선언된 모든 [Character] 객체의 [컨테이너][CharacterStorage]입니다.
 
 **strictCharacterNames** `bool`
-: If `true` (default), the validity of character names will be strictly enforced. That is, all
-  characters must be declared before they can be used, using the [\<\<character\>\>] commands. If
-  this property is set to false, then new [Character] objects will be created automatically as
-  they are encountered in scripts.
+: `true`(기본값)이면 캐릭터 이름의 유효성이 엄격하게 강제됩니다. 즉, 모든 캐릭터는 사용하기 전에
+  [\<\<character\>\>] 명령으로 선언되어야 합니다. 이 속성을 false로 설정하면 스크립트에서 새 캐릭터를
+  만날 때마다 [Character] 객체가 자동으로 만들어집니다.
 
 **trueValues**, **falseValues** `Set<String>`
-: The strings that can be recognized as `true`/`false` values respectively.
+: 각각 `true`/`false` 값으로 인식될 수 있는 문자열입니다.
 
 **variables** `VariableStorage`
-: The [container][VariableStorage] for all variables declared and manipulated in your yarn scripts.
-  This is also used for maintaining the visit counts for nodes that the user has visited. To
-  implement a 'save game' feature it is possible to save the variables from
-  `VariableStorage.variables` and later restore them again.
+: yarn 스크립트에서 선언되고 조작되는 모든 변수의 [컨테이너][VariableStorage]입니다. 사용자가 방문한
+  노드의 방문 횟수를 관리하는 데에도 사용됩니다. '게임 저장' 기능을 구현하려면
+  `VariableStorage.variables`의 변수를 저장해 두었다가 나중에 다시 복원하면 됩니다.
 
 
-## Methods
+<a id="methods"></a>
+
+## 메서드
 
 **parse**(`String text`)
-: Parses and compiles the `text` of a yarn script. After this command, the nodes contained within
-  the script will be runnable.
+: yarn 스크립트의 `text`를 파싱하고 컴파일합니다. 이 명령 이후에는 스크립트에 포함된 노드를 실행할 수
+  있습니다.
 
-  This method can be executed multiple times, and each time the new nodes will be added to the
-  existing ones.
+  이 메서드는 여러 번 실행할 수 있으며, 실행할 때마다 새 노드가 기존 노드에 추가됩니다.
 
 
 [\<\<character\>\>]: ../language/commands/character.md

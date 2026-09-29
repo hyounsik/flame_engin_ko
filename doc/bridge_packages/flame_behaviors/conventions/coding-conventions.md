@@ -1,71 +1,80 @@
-# Coding Conventions
+<a id="coding-conventions"></a>
+
+# 코딩 규칙
 
 > [!Note]
-> The following coding conventions are simply recommendations and are completely
-> optional. Feel free to use whatever coding conventions you prefer.
+> 다음 코딩 규칙은 단지 권장 사항일 뿐이며 전적으로
+> 선택 사항입니다. 원하는 코딩 규칙을 자유롭게 사용하세요.
 
 
-## Entities
+<a id="entities"></a>
 
-Entities should not contain any behavioral logic, instead they should be composed of behaviors. This
-allows for more flexible and reusable code. Entities should not do any direct rendering, instead they
-should add child components to handle the visualization of the entity.
+## 엔티티
+
+엔티티는 어떤 동작 로직도 포함해서는 안 되며, 대신 비헤이비어로 구성되어야 합니다. 이렇게 하면
+더 유연하고 재사용 가능한 코드를 만들 수 있습니다. 엔티티는 직접 렌더링을 해서는 안 되며, 대신
+엔티티의 시각적 표현을 처리할 자식 컴포넌트를 추가해야 합니다.
 
 
-### Example of entities
+<a id="example-of-entities"></a>
 
-✅ **Good**
+### 엔티티 예시
+
+✅ **좋은 예**
 
 ```dart
 class Player extends Entity {
   Player() {
-    // Behaviors
+    // 비헤이비어
     add(JumpingBehavior());
     add(AttackingBehavior());
 
-    // Components
+    // 컴포넌트
     add(SpriteComponent(...));
   }
 }
 ```
 
-❌ **Bad**
+❌ **나쁜 예**
 
 ```dart
 class Player extends Entity {
   void update(double dt) {
     if (isJumping) {
-      // Jump logic
+      // 점프 로직
     }
     
     if (isAttacking) {
-      // Attack logic
+      // 공격 로직
     }
   }
 
   void render(Canvas canvas) {
-    // Render player
+    // 플레이어 렌더링
     canvas.drawImage(...);
   }
 }
 ```
 
 
-## Behaviors
+<a id="behaviors"></a>
 
-Behaviors should only contain code related to the behavioral logic it describes. Behaviors should
-never do any direct rendering.
+## 비헤이비어
 
-A behavior is allowed to have its own components for adding extra functionality related to the
-behavior. For example, a behavior that makes an entity jump could have a `TimerComponent` to ensure
-that the entity can only jump once every 0.5 seconds. And that behavior can also use a
-`KeyboardHandler` mixin to listen for the jump key to trigger the jump. Any logic that is not
-related to the behavior should not be in the behavior.
+비헤이비어는 자신이 기술하는 동작 로직과 관련된 코드만 포함해야 합니다. 비헤이비어는
+절대 직접 렌더링을 해서는 안 됩니다.
+
+비헤이비어는 해당 비헤이비어와 관련된 추가 기능을 위해 자체 컴포넌트를 가질 수 있습니다. 예를 들어
+엔티티를 점프하게 만드는 비헤이비어는 `TimerComponent`를 가져서 엔티티가 0.5초에 한 번만 점프할 수 있도록
+보장할 수 있습니다. 또한 그 비헤이비어는 `KeyboardHandler` 믹스인을 사용해 점프 키 입력을 수신하고
+점프를 트리거할 수도 있습니다. 해당 비헤이비어와 관련 없는 로직은 그 비헤이비어에 있어서는 안 됩니다.
 
 
-### Example of behaviors
+<a id="example-of-behaviors"></a>
 
-✅ **Good**
+### 비헤이비어 예시
+
+✅ **좋은 예**
 
 ```dart
 class JumpingBehavior extends Behavior<Entity> with KeyboardHandler {
@@ -80,13 +89,13 @@ class JumpingBehavior extends Behavior<Entity> with KeyboardHandler {
   @override
   void update(double dt) {
     if (isJumping) {
-      // Jump logic
+      // 점프 로직
     }
   }
 }
 ```
 
-❌ **Bad**
+❌ **나쁜 예**
 
 ```dart
 class JumpBehavior extends Behavior<Entity> with KeyboardHandler {
@@ -103,15 +112,15 @@ class JumpBehavior extends Behavior<Entity> with KeyboardHandler {
     
   void update(double dt) {
     if (isJumping) {
-      // Jump logic
+      // 점프 로직
     }
     if (isAttacking) {
-      // Attack logic
+      // 공격 로직
     }
   }
     
   void render(Canvas canvas) {
-    // Render something
+    // 무언가를 렌더링합니다
     canvas.drawImage(...);
   }
 }

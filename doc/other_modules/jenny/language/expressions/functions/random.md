@@ -1,20 +1,21 @@
-# Random functions
+<a id="random-functions"></a>
 
-These functions produce random results each time they run.
+# 난수 함수
 
-Internally, each function uses `YarnSpinner.random` random generator, which can be replaced with a
-custom generator if you need reproducible draws for debug purposes, or to prevent the player from
-getting different results upon reload.
+이 함수들은 실행할 때마다 무작위 결과를 만듭니다.
+
+내부적으로 각 함수는 `YarnSpinner.random` 난수 생성기를 사용합니다. 디버그 목적으로 재현 가능한 추첨이
+필요하거나, 플레이어가 다시 불러올 때 다른 결과를 얻지 못하게 하려면 이 생성기를 커스텀 생성기로
+교체할 수 있습니다.
 
 
 ## `dice(n)`
 
-Returns a random integer between `1` and `n`, inclusive. For example, `dice(6)` will return a
-random integer from 1 to 6, as if throwing a regular six-sided die.
+`1`과 `n` 사이(양 끝 포함)의 무작위 정수를 반환합니다. 예를 들어 `dice(6)`은 일반적인 6면체 주사위를
+던지는 것처럼 1부터 6까지의 무작위 정수를 반환합니다.
 
-The argument `n` must be numeric, and greater or equal than 1. If `n` is a non-integer, then it
-will be truncated to an integer value at runtime. Thus, `dice(3.5)` is equivalent to `dice(3)`.
-
+인자 `n`은 숫자여야 하며 1보다 크거나 같아야 합니다. `n`이 정수가 아니면 런타임에 정수 값으로
+잘립니다. 따라서 `dice(3.5)`는 `dice(3)`과 같습니다.
 ```yarn
 <<set $roll = dice(6)>>
 <<set $coin_flip = if(dice(2) == 1, "H", "T")>>
@@ -23,10 +24,9 @@ will be truncated to an integer value at runtime. Thus, `dice(3.5)` is equivalen
 
 ## `random()`
 
-Returns a random floating-point between `0` and `1`.
+`0`과 `1` 사이의 무작위 부동소수점 수를 반환합니다.
 
-This function can be used to implement events with a prescribed probability. For example:
-
+이 함수는 정해진 확률로 발생하는 이벤트를 구현하는 데 사용할 수 있습니다. 예를 들면 다음과 같습니다.
 ```yarn
 <<if random() < 0.001>>
   // This happens only with 0.1% probability
@@ -37,14 +37,12 @@ This function can be used to implement events with a prescribed probability. For
 
 ## `random_range(a, b)`
 
-Returns a random integer between `a` and `b` inclusive.
+`a`와 `b` 사이(양 끝 포함)의 무작위 정수를 반환합니다.
 
-Both arguments `a` and `b` must be numeric, and they will be truncated to integers upon evaluation.
-The value of `a` must be less than or equal to `b`, or otherwise a runtime exception will be thrown.
+두 인자 `a`와 `b`는 모두 숫자여야 하며, 평가될 때 정수로 잘립니다. `a`의 값은 `b`보다 작거나 같아야
+하며, 그렇지 않으면 런타임 예외가 발생합니다.
 
-The purpose of this function is similar to `dice()`, but it can be used in situations where a
-custom range is desired.
-
+이 함수의 목적은 `dice()`와 비슷하지만, 커스텀 범위가 필요한 상황에서 사용할 수 있습니다.
 ```yarn
 <<set $coin_flip = bool(random_range(0, 1))>>
 ```

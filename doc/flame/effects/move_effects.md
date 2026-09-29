@@ -1,14 +1,16 @@
-# Move Effects
+<a id="move-effects"></a>
 
-Move Effects are a special type of effects that modify the position of a component over time, if
-you want to for example move your character from one point to another, make it jump, or follow a
-path, then you can use one of the predefined move effects.
+# 이동 이펙트
+
+이동 이펙트는 시간에 따라 컴포넌트의 위치를 변경하는 특별한 종류의 이펙트입니다. 예를 들어
+캐릭터를 한 지점에서 다른 지점으로 옮기거나, 점프하게 하거나, 경로를 따라가게 하고 싶다면 미리
+정의된 이동 이펙트 중 하나를 사용할 수 있습니다.
 
 
 ## `MoveByEffect`
 
-This effect applies to a `PositionComponent` and shifts it by a prescribed `offset` amount. This
-offset is relative to the current position of the target:
+이 이펙트는 `PositionComponent`에 적용되며, 지정된 `offset`만큼 컴포넌트를 이동시킵니다. 이
+오프셋은 대상의 현재 위치를 기준으로 합니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -25,17 +27,16 @@ final effect = MoveByEffect(
 );
 ```
 
-If the component is currently at `Vector2(250, 200)`, then at the end of the effect its position
-will be `Vector2(250, 190)`.
+컴포넌트가 현재 `Vector2(250, 200)`에 있다면, 이펙트가 끝났을 때 위치는 `Vector2(250, 190)`이
+됩니다.
 
-Multiple move effects can be applied to a component at the same time. The result will be the
-superposition of all the individual effects.
+한 컴포넌트에 여러 이동 이펙트를 동시에 적용할 수 있습니다. 결과는 개별 이펙트들을 모두 중첩한
+것이 됩니다.
 
 
 ## `MoveToEffect`
 
-This effect moves a `PositionComponent` from its current position to the specified destination
-point in a straight line.
+이 이펙트는 `PositionComponent`를 현재 위치에서 지정된 목적지까지 직선으로 이동시킵니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -52,15 +53,14 @@ final effect = MoveToEffect(
 );
 ```
 
-It is possible, but not recommended to attach multiple such effects to the same component.
+같은 컴포넌트에 이런 이펙트를 여러 개 붙이는 것은 가능하지만 권장하지 않습니다.
 
 
 ## `MoveAlongPathEffect`
 
-This effect moves a `PositionComponent` along the specified path relative to the component's
-current position. The path can have non-linear segments, but must be singly connected. It is
-recommended to start a path at `Vector2.zero()` in order to avoid sudden jumps in the component's
-position.
+이 이펙트는 `PositionComponent`를 컴포넌트의 현재 위치를 기준으로 지정된 경로를 따라
+이동시킵니다. 경로에는 비선형 구간이 있어도 되지만, 하나로 이어져 있어야 합니다. 컴포넌트 위치가
+갑자기 튀는 것을 피하려면 경로를 `Vector2.zero()`에서 시작하는 것을 권장합니다.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -77,10 +77,9 @@ final effect = MoveAlongPathEffect(
 );
 ```
 
-An optional flag `absolute: true` will declare the path within the effect as absolute. That is, the
-target will "jump" to the beginning of the path at start, and then follow that path as if it was a
-curve drawn on the canvas.
+선택적인 플래그 `absolute: true`를 지정하면 이펙트 안의 경로를 절대 경로로 선언합니다. 즉, 대상은
+시작 시 경로의 시작점으로 "점프"한 뒤, 캔버스에 그려진 곡선인 것처럼 그 경로를 따라갑니다.
 
-Another flag `oriented: true` instructs the target not only move along the curve, but also rotate
-itself in the direction the curve is facing at each point. With this flag the effect becomes both
-the move- and the rotate- effect at the same time.
+또 다른 플래그 `oriented: true`는 대상이 곡선을 따라 이동할 뿐만 아니라, 각 지점에서 곡선이 향하는
+방향으로 스스로 회전하도록 합니다. 이 플래그를 사용하면 이펙트는 이동 이펙트이자 회전 이펙트가
+됩니다.

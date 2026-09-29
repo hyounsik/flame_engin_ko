@@ -1,20 +1,22 @@
-# Event Behaviors ⌨
+<a id="event-behaviors-"></a>
 
-The `flame_behaviors` package also provides event behaviors. These behaviors are a layer over the
-existing Flame event mixins for components. These behaviors will trigger when the user interacts
-with their parent entity. So these events are always relative to the parent entity.
+# 이벤트 비헤이비어 ⌨
+
+`flame_behaviors` 패키지는 이벤트 비헤이비어도 제공합니다. 이 비헤이비어들은 컴포넌트용으로 기존에 있는
+Flame 이벤트 믹스인 위에 놓인 계층입니다. 이 비헤이비어들은 사용자가 부모 엔티티와 상호작용할 때
+트리거됩니다. 따라서 이 이벤트들은 항상 부모 엔티티를 기준으로 합니다.
 
 
 ## TappableBehavior
 
-The `TappableBehavior` allows developers to use the [tap events][flame_tap_docs] from Flame on
-their entities.
+`TappableBehavior`를 사용하면 개발자가 Flame의 [탭 이벤트][flame_tap_docs]를 자신의 엔티티에서
+사용할 수 있습니다.
 
 ```dart
 class MyTappableBehavior extends TappableBehavior<MyEntity> {
   @override
   void onTapDown(TapDownEvent event) {
-    // Do something on tap down update event.
+    // tap down 업데이트 이벤트가 발생하면 무언가를 수행합니다.
   }
 }
 ```
@@ -22,14 +24,14 @@ class MyTappableBehavior extends TappableBehavior<MyEntity> {
 
 ## DraggableBehavior
 
-The `DraggableBehavior` allows developers to use the [drag events][flame_drag_docs] from Flame on
-their entities.
+`DraggableBehavior`를 사용하면 개발자가 Flame의 [드래그 이벤트][flame_drag_docs]를 자신의 엔티티에서
+사용할 수 있습니다.
 
 ```dart
 class MyDraggableBehavior extends DraggableBehavior<MyEntity> {
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    // Do something on drag update event.
+    // drag update 이벤트가 발생하면 무언가를 수행합니다.
   }
 }
 ```

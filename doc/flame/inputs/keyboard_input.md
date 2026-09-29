@@ -1,44 +1,51 @@
-# Keyboard Input
+<a id="keyboard-input"></a>
 
-This includes documentation for keyboard inputs.
+# 키보드 입력
 
-
-## Intro
-
-The keyboard API on flame relies on the
-[Flutter's Focus widget](https://api.flutter.dev/flutter/widgets/Focus-class.html).
-
-To customize focus behavior, see [Controlling focus](#controlling-focus).
-
-There are two ways a game can react to key strokes; at the game level and at a component level.
-For each we have a mixin that can me added to a `Game` or `Component` class.
+이 문서는 키보드 입력에 대해 설명합니다.
 
 
-### Receive keyboard events in a game level
+<a id="intro"></a>
 
-To make a `Game` sub class sensitive to key stroke, mix it with `KeyboardEvents`.
+## 소개
 
-After that, it will be possible to override an `onKeyEvent` method.
+Flame의 키보드 API는
+[Flutter의 Focus 위젯](https://api.flutter.dev/flutter/widgets/Focus-class.html)을 기반으로 합니다.
 
-This method receives two parameters, first the
-[`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html)
-that triggers the callback in the first place. The second is a set of the currently pressed
-[`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html).
+포커스 동작을 커스터마이즈하려면 [포커스 제어하기](#포커스-제어하기)를 참고하세요.
 
-The return value is a
-[`KeyEventResult`](https://api.flutter.dev/flutter/widgets/KeyEventResult.html).
+게임이 키 입력에 반응하는 방법은 두 가지로, 게임 수준과 컴포넌트 수준이 있습니다.
+각각에 대해 `Game` 또는 `Component` 클래스에 추가할 수 있는 믹스인이 있습니다.
 
-`KeyEventResult.handled` will tell the framework that the key stroke was resolved inside of Flame
-and skip any other keyboard handler widgets apart of `GameWidget`.
 
-`KeyEventResult.ignored` will tell the framework to keep testing this event in any other keyboard
-handler widget apart of `GameWidget`. If the event is not resolved by any handler, the framework
-will trigger `SystemSoundType.alert`.
+<a id="receive-keyboard-events-in-a-game-level"></a>
 
-`KeyEventResult.skipRemainingHandlers` is very similar to `.ignored`, apart from the fact that will
-skip any other handler widget and will straight up play the alert sound.
+### 게임 수준에서 키보드 이벤트 받기
 
-Minimal example:
+`Game` 서브클래스가 키 입력에 반응하게 하려면 `KeyboardEvents`를 믹스인하세요.
+
+그러면 `onKeyEvent` 메서드를 오버라이드할 수 있게 됩니다.
+
+이 메서드는 두 개의 파라미터를 받습니다. 첫 번째는 애초에 콜백을 발생시킨
+[`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html)입니다. 두 번째는 현재
+눌려 있는
+[`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html)의
+집합입니다.
+
+반환값은
+[`KeyEventResult`](https://api.flutter.dev/flutter/widgets/KeyEventResult.html)입니다.
+
+`KeyEventResult.handled`는 프레임워크에 키 입력이 Flame 안에서 처리되었음을 알리고,
+`GameWidget` 외의 다른 키보드 핸들러 위젯을 모두 건너뛰게 합니다.
+
+`KeyEventResult.ignored`는 프레임워크에 `GameWidget` 외의 다른 키보드 핸들러 위젯에서 이 이벤트를
+계속 검사하도록 알립니다. 어떤 핸들러도 이벤트를 처리하지 않으면 프레임워크는
+`SystemSoundType.alert`를 발생시킵니다.
+
+`KeyEventResult.skipRemainingHandlers`는 `.ignored`와 매우 비슷하지만, 다른 핸들러 위젯을 모두
+건너뛰고 곧바로 알림음을 재생한다는 점이 다릅니다.
+
+최소 예제:
 
 ```dart
 class MyGame extends FlameGame with KeyboardEvents {
@@ -67,34 +74,37 @@ class MyGame extends FlameGame with KeyboardEvents {
 ```
 
 
-### Receive keyboard events in a component level
+<a id="receive-keyboard-events-in-a-component-level"></a>
 
-To receive keyboard events directly in components, there is the mixin `KeyboardHandler`.
+### 컴포넌트 수준에서 키보드 이벤트 받기
 
-Similarly to `TapCallbacks` and `DragCallbacks`, `KeyboardHandler` can be mixed into any subclass of
-`Component`.
+컴포넌트에서 직접 키보드 이벤트를 받으려면 `KeyboardHandler` 믹스인을 사용합니다.
 
-KeyboardHandlers must only be added to games that are mixed with `HasKeyboardHandlerComponents`.
+`TapCallbacks`나 `DragCallbacks`와 마찬가지로, `KeyboardHandler`는 `Component`의 어떤 서브클래스에든
+믹스인할 수 있습니다.
 
-> ⚠️ Note: If `HasKeyboardHandlerComponents` is used, you must remove `KeyboardEvents`
-> from the game mixin list to avoid conflicts.
+KeyboardHandler는 `HasKeyboardHandlerComponents`가 믹스인된 게임에만 추가해야 합니다.
 
-After applying `KeyboardHandler`, it will be possible to override an `onKeyEvent` method.
+> ⚠️ 참고: `HasKeyboardHandlerComponents`를 사용한다면, 충돌을 피하기 위해 게임의 믹스인 목록에서
+> `KeyboardEvents`를 제거해야 합니다.
 
-This method receives two parameters. First the
-[`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html)
-that triggered the callback in the first place. The second is a set of the currently pressed
-[`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html)s.
+`KeyboardHandler`를 적용하면 `onKeyEvent` 메서드를 오버라이드할 수 있게 됩니다.
 
-The returned value should be `true` to allow the continuous propagation of the key event among other
-components. To not allow any other component to receive the event, return `false`.
+이 메서드는 두 개의 파라미터를 받습니다. 첫 번째는 애초에 콜백을 발생시킨
+[`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html)입니다. 두 번째는 현재
+눌려 있는
+[`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html)들의
+집합입니다.
 
-Flame also provides a default implementation called `KeyboardListenerComponent` which can be used
-to handle keyboard events. Like any other component, it can be added as a child to a `FlameGame`
-or another `Component`:
+키 이벤트가 다른 컴포넌트들 사이에서 계속 전파되도록 하려면 `true`를 반환해야 합니다. 다른
+컴포넌트가 이벤트를 받지 못하게 하려면 `false`를 반환하세요.
 
-For example, imagine a `PositionComponent` which has methods to move on the X and Y axis,
-then the following code could be used to bind those methods to key events:
+Flame은 키보드 이벤트를 처리하는 데 사용할 수 있는 `KeyboardListenerComponent`라는 기본 구현도
+제공합니다. 다른 컴포넌트와 마찬가지로 `FlameGame`이나 다른 `Component`에 자식으로 추가할 수
+있습니다.
+
+예를 들어 X축과 Y축으로 이동하는 메서드를 가진 `PositionComponent`가 있다고 해 봅시다. 다음
+코드를 사용하면 그 메서드들을 키 이벤트에 연결할 수 있습니다.
 
 ```dart
 add(
@@ -116,16 +126,19 @@ add(
 ```
 
 
-### Controlling focus
+<a id="controlling-focus"></a>
 
-On the widget level, it is possible to use the
-[`FocusNode`](https://api.flutter.dev/flutter/widgets/FocusNode-class.html) API to control whether
-the game is focused or not.
+### 포커스 제어하기
 
-`GameWidget` has an optional `focusNode` parameter that allow its focus to be controlled externally.
+위젯 수준에서는
+[`FocusNode`](https://api.flutter.dev/flutter/widgets/FocusNode-class.html) API를 사용해 게임에
+포커스가 있는지 여부를 제어할 수 있습니다.
 
-By default `GameWidget` has its `autofocus` set to true, which means it will get focused once it is
-mounted. To override that behavior, set `autofocus` to false.
+`GameWidget`에는 선택적인 `focusNode` 파라미터가 있어 외부에서 포커스를 제어할 수 있습니다.
 
-For a more complete example, see the
-[keyboard input example](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/input/keyboard_example.dart).
+기본적으로 `GameWidget`의 `autofocus`는 true로 설정되어 있어, 마운트되면 포커스를 받습니다. 이
+동작을 바꾸려면 `autofocus`를 false로 설정하세요.
+
+더 완전한 예제는
+[키보드 입력 예제](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/input/keyboard_example.dart)를
+참고하세요.

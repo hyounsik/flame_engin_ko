@@ -1,60 +1,66 @@
-# 4. Gameplay
+<a id="4-gameplay"></a>
 
-In this chapter we will be implementing the core of Klondike's gameplay: how the cards move between
-the stock and the waste, the piles and the foundations.
+# 4. 게임플레이
 
-Before we begin though, let's clean up all those cards that we left scattered across the table in
-the previous chapter. Open the `KlondikeGame` class and erase the loop at the bottom of `onLoad()`
-that was adding 28 cards onto the table.
+이번 장에서는 클론다이크 게임플레이의 핵심을 구현합니다. 즉, 카드가 스톡과 웨이스트, 파일(pile)과
+파운데이션 사이를 어떻게 이동하는지를 다룹니다.
+
+하지만 시작하기 전에, 앞 장에서 테이블 위에 흩어 놓은 카드들을 모두 정리합시다.
+`KlondikeGame` 클래스를 열고, `onLoad()` 맨 아래에서 테이블에 카드 28장을 추가하던 루프를
+지우세요.
 
 
-## The piles
+<a id="the-piles"></a>
 
-Another small refactoring that we need to do is to rename our components: `Stock` ⇒ `StockPile`,
-`Waste` ⇒ `WastePile`, `Foundation` ⇒ `FoundationPile`, and `Pile` ⇒ `TableauPile`. This is
-because these components have some common features in how they handle interactions with the cards,
-and it would be convenient to have all of them implement a common API. We will call the interface
-that they will all be implementing the `Pile` class.
+## 파일(pile)
+
+또 하나 필요한 작은 리팩터링은 컴포넌트 이름을 바꾸는 것입니다. `Stock` ⇒ `StockPile`,
+`Waste` ⇒ `WastePile`, `Foundation` ⇒ `FoundationPile`, `Pile` ⇒ `TableauPile`로 바꿉니다. 이는
+이 컴포넌트들이 카드와의 상호작용을 처리하는 방식에 몇 가지 공통점이 있어서,
+모두 공통 API를 구현하도록 하면 편리하기 때문입니다. 이들이 모두 구현할 인터페이스를
+`Pile` 클래스라고 부르겠습니다.
 
 ```{note}
-Refactors and changes in architecture happen during development all the time:
-it's almost impossible to get the structure right on the first try. Do not be
-anxious about changing code that you have written in the past: it is a good
-habit to have.
+리팩터링과 아키텍처 변경은 개발 중에 늘 일어납니다.
+처음부터 구조를 제대로 잡는 것은 거의 불가능합니다. 예전에 작성한 코드를
+바꾸는 것을 두려워하지 마세요. 오히려 좋은
+습관입니다.
 ```
 
-After such a rename, we can begin implementing each of these components.
+이렇게 이름을 바꾼 뒤에는 각 컴포넌트를 구현하기 시작할 수 있습니다.
 
 
-### Stock pile
+<a id="stock-pile"></a>
 
-The **stock** is a place in the top-left corner of the playing field which holds the cards that are
-not currently in play. We will need to build the following functionality for this component:
+### 스톡 파일
 
-1. Ability to hold cards that are not currently in play, face down;
-2. Tapping the stock should reveal top 3 cards and move them to the **waste** pile;
-3. When the cards run out, there should be a visual indicating that this is the stock pile;
-4. When the cards run out, tapping the empty stock should move all the cards from the waste pile
-    into the stock, turning them face down.
+**스톡**은 게임 화면의 왼쪽 위 모서리에 있는 자리로, 현재 게임에 사용되지 않는 카드를
+담고 있습니다. 이 컴포넌트에는 다음 기능을 만들어야 합니다.
 
-The first question that needs to be decided here is this: who is going to own the `Card` components?
-Previously we have been adding them directly to the game field, but now wouldn't it be better to
-say that the cards belong to the `Stock` component, or to the waste, or piles, or foundations? While
-this approach is tempting, I believe it would make our life more complicated as we need to move a
-card from one place to another.
+1. 현재 게임에 사용되지 않는 카드를 뒷면이 위로 향하게 담아 둘 수 있어야 합니다.
+2. 스톡을 탭하면 맨 위의 카드 3장을 뒤집어 **웨이스트** 파일로 옮겨야 합니다.
+3. 카드가 다 떨어지면, 이곳이 스톡 파일임을 나타내는 시각적 표시가 있어야 합니다.
+4. 카드가 다 떨어졌을 때 빈 스톡을 탭하면 웨이스트 파일의 모든 카드를
+    뒷면이 위로 가도록 뒤집어 스톡으로 옮겨야 합니다.
 
-So, I decided to stick with my first approach: the `Card` components are owned directly by the
-`KlondikeGame` itself, whereas the `StockPile` and other piles are merely aware of which cards are
-currently placed there.
+여기서 먼저 결정해야 할 질문은 이것입니다. 누가 `Card` 컴포넌트를 소유할 것인가?
+이전에는 카드를 게임 화면에 직접 추가했지만, 이제는 카드가 `Stock` 컴포넌트나
+웨이스트, 파일, 파운데이션에 속한다고 하는 편이 더 낫지 않을까요? 이
+접근 방식은 솔깃하지만, 카드를 한 곳에서 다른 곳으로 옮겨야 할 때 오히려
+일이 더 복잡해질 것이라고 생각합니다.
 
-Having this in mind, let's start implementing the `StockPile` component:
+그래서 처음 방식을 유지하기로 했습니다. `Card` 컴포넌트는
+`KlondikeGame` 자체가 직접 소유하고, `StockPile`과 다른 파일들은 단지 현재 어떤 카드가
+자신에게 놓여 있는지만 알고 있습니다.
+
+이를 염두에 두고 `StockPile` 컴포넌트를 구현해 봅시다.
 
 ```dart
 class StockPile extends PositionComponent {
   StockPile({super.position}) : super(size: KlondikeGame.cardSize);
 
-  /// Which cards are currently placed onto this pile. The first card in the
-  /// list is at the bottom, the last card is on top.
+  /// 현재 이 파일에 놓여 있는 카드들입니다. 리스트의 첫 번째 카드가
+  /// 맨 아래에 있고, 마지막 카드가 맨 위에 있습니다.
   final List<Card> _cards = [];
 
   void acquireCard(Card card) {
@@ -66,14 +72,14 @@ class StockPile extends PositionComponent {
 }
 ```
 
-Here the `acquireCard()` method stores the provided card into the internal list `_cards`; it also
-moves that card to the `StockPile`'s position and adjusts the cards priority so that they are
-displayed in the right order. However, this method does not mount the card as a child of the
-`StockPile` component -- it remains belonging to the top-level game.
+여기서 `acquireCard()` 메서드는 전달받은 카드를 내부 리스트 `_cards`에 저장합니다. 또한
+그 카드를 `StockPile`의 위치로 옮기고, 카드들이 올바른 순서로 표시되도록 우선순위를
+조정합니다. 하지만 이 메서드는 카드를 `StockPile` 컴포넌트의 자식으로 마운트하지는
+않습니다. 카드는 여전히 최상위 게임에 속합니다.
 
-Speaking of the game class, let's open the `KlondikeGame` and add the following lines to create a
-full deck of 52 cards and put them onto the stock pile (this should be added at the end of the
-`onLoad` method):
+게임 클래스 얘기가 나왔으니, `KlondikeGame`을 열고 52장짜리 카드 한 벌을 만들어
+스톡 파일에 올려놓는 다음 줄을 추가합시다(`onLoad` 메서드의 끝에
+추가해야 합니다).
 
 ```dart
 final cards = [
@@ -85,19 +91,21 @@ world.addAll(cards);
 cards.forEach(stock.acquireCard);
 ```
 
-This concludes the first step of our short plan at the beginning of this section. For the second
-step, though, we need to have a waste pile -- so let's make a quick detour and implement the
-`WastePile` class.
+이것으로 이 섹션 처음에 세운 짧은 계획의 첫 단계가 끝났습니다. 하지만 두 번째
+단계를 위해서는 웨이스트 파일이 있어야 하므로, 잠시 옆길로 새서
+`WastePile` 클래스를 구현해 봅시다.
 
 
-### Waste pile
+<a id="waste-pile"></a>
 
-The **waste** is a pile next to the stock. During the course of the game we will be taking the cards
-from the top of the stock pile and putting them into the waste. The functionality of this class is
-quite simple: it holds a certain number of cards face up, fanning out the top 3.
+### 웨이스트 파일
 
-Let's start implementing the `WastePile` class same way as we did with the `StockPile` class, only
-now the cards are expected to be face up:
+**웨이스트**는 스톡 옆에 있는 파일입니다. 게임을 진행하는 동안 스톡 파일의 맨 위에서
+카드를 가져와 웨이스트에 놓게 됩니다. 이 클래스의 기능은
+아주 단순합니다. 일정 수의 카드를 앞면이 위로 향하게 담아 두고, 맨 위 3장을 부채꼴로 펼칩니다.
+
+`StockPile` 클래스를 구현할 때와 같은 방식으로 `WastePile` 클래스를 구현해 봅시다. 다만
+이번에는 카드가 앞면이 위로 향해 있어야 합니다.
 
 ```dart
 class WastePile extends PositionComponent {
@@ -114,9 +122,9 @@ class WastePile extends PositionComponent {
 }
 ```
 
-So far, this puts all cards into a single neat pile, whereas we wanted a fan-out of top three. So,
-let's add a dedicated method `_fanOutTopCards()` for this, which we will call at the end of each
-`acquireCard()`:
+지금까지는 모든 카드를 하나의 가지런한 더미로 쌓지만, 우리가 원한 것은 맨 위 3장을 부채꼴로 펼치는 것이었습니다. 그러니
+이를 위한 전용 메서드 `_fanOutTopCards()`를 추가하고, 매번 `acquireCard()`의 끝에서
+호출하겠습니다.
 
 ```dart
   void _fanOutTopCards() {
@@ -133,31 +141,33 @@ let's add a dedicated method `_fanOutTopCards()` for this, which we will call at
   }
 ```
 
-The `_fanOffset` variable here helps determine the shift between cards in the fan, which I decided
-to be about 20% of the card's width:
+여기서 `_fanOffset` 변수는 부채꼴 안에서 카드 사이의 간격을 정하는 데 쓰이며,
+카드 너비의 약 20%로 정했습니다.
 
 ```dart
   final Vector2 _fanOffset = Vector2(KlondikeGame.cardWidth * 0.2, 0);
 ```
 
-Now that the waste pile is ready, let's get back to the `StockPile`.
+이제 웨이스트 파일이 준비되었으니 `StockPile`로 돌아갑시다.
 
 
-### Stock pile -- tap to deal cards
+<a id="stock-pile----tap-to-deal-cards"></a>
 
-The second item on our todo list is the first interactive functionality in the game: tap the stock
-pile to deal 3 cards onto the waste.
+### 스톡 파일 -- 탭해서 카드 나눠 주기
 
-Adding tap functionality to the components in Flame is quite simple: we just add the mixin
-`TapCallbacks` to the component that we want to be tappable:
+할 일 목록의 두 번째 항목은 게임의 첫 번째 상호작용 기능입니다. 스톡 파일을
+탭하면 카드 3장을 웨이스트에 나눠 줍니다.
+
+Flame에서 컴포넌트에 탭 기능을 추가하는 것은 아주 간단합니다. 탭할 수 있게 만들고 싶은
+컴포넌트에 `TapCallbacks` 믹스인을 추가하기만 하면 됩니다.
 
 ```dart
 class StockPile extends PositionComponent with TapCallbacks { ... }
 ```
 
-Oh, and we also need to say what we want to happen when the tap occurs. Here we want the top 3 cards
-to be turned face up and moved to the waste pile. So, add the following method to the `StockPile`
-class:
+아, 그리고 탭이 일어났을 때 어떤 일이 일어나야 하는지도 알려 주어야 합니다. 여기서는 맨 위의 카드 3장을
+앞면이 위로 가게 뒤집어 웨이스트 파일로 옮기려고 합니다. 그러니 `StockPile`
+클래스에 다음 메서드를 추가하세요.
 
 ```dart
   @override
@@ -173,33 +183,35 @@ class:
   }
 ```
 
-You have probably noticed that the cards move from one pile to another immediately, which looks very
-unnatural. However, this is how it is going to be for now -- we will defer making the game more
-smooth till the next chapter of the tutorial.
+카드가 한 파일에서 다른 파일로 즉시 이동해서 매우 부자연스러워 보인다는 것을 아마
+눈치챘을 것입니다. 하지만 지금은 이대로 두겠습니다. 게임을 더 부드럽게 만드는 일은
+튜토리얼의 다음 장으로 미룹니다.
 
-Also, the cards are organized in a well-defined order right now, starting from Kings and ending with
-Aces. This doesn't make a very exciting gameplay though, so add line
+또한 지금은 카드가 킹부터 시작해 에이스로 끝나는, 잘 정해진 순서로 정렬되어 있습니다.
+하지만 이러면 게임플레이가 그다지 재미있지 않으니, 다음 줄을
 
 ```dart
     cards.shuffle();
 ```
 
-in the `KlondikeGame` class right after the list of cards is created.
+`KlondikeGame` 클래스에서 카드 리스트를 만든 직후에 추가하세요.
 
 
 :::{seealso}
-For more information about tap functionality, see [](../../flame/inputs/tap_events.md).
+탭 기능에 대한 자세한 내용은 [](../../flame/inputs/tap_events.md)를 참고하세요.
 :::
 
 
-### Stock pile -- visual representation
+<a id="stock-pile----visual-representation"></a>
 
-Currently, when the stock pile has no cards, it simply shows an empty space -- there is no visual
-cue that this is where the stock is. Such cue is needed, though, because we want the user to be
-able to click the stock pile when it is empty in order to move all the cards from the waste back to
-the stock so that they can be dealt again.
+### 스톡 파일 -- 시각적 표현
 
-In our case, the empty stock pile will have a card-like border, and a circle in the middle:
+현재 스톡 파일에 카드가 없으면 그냥 빈 공간만 보입니다. 이곳이 스톡이라는
+시각적 단서가 없습니다. 하지만 이런 단서가 필요합니다. 스톡 파일이 비었을 때 사용자가
+그것을 클릭해 웨이스트의 모든 카드를 스톡으로 되돌리고,
+다시 나눠 줄 수 있게 하고 싶기 때문입니다.
+
+여기서는 빈 스톡 파일에 카드 모양의 테두리와 가운데의 원을 표시하겠습니다.
 
 ```dart
   @override
@@ -213,7 +225,7 @@ In our case, the empty stock pile will have a card-like border, and a circle in 
   }
 ```
 
-where the paints are defined as
+여기서 paint는 다음과 같이 정의하고,
 
 ```dart
   final _borderPaint = Paint()
@@ -226,7 +238,7 @@ where the paints are defined as
     ..color = const Color(0x883F5B5D);
 ```
 
-and the `cardRRect` in the `KlondikeGame` class as
+`KlondikeGame` 클래스의 `cardRRect`는 다음과 같이 정의합니다.
 
 ```dart
   static final cardRRect = RRect.fromRectAndRadius(
@@ -235,15 +247,17 @@ and the `cardRRect` in the `KlondikeGame` class as
   );
 ```
 
-Now when you click through the stock pile till the end, you should be able to see the placeholder
-for the stock cards.
+이제 스톡 파일을 끝까지 클릭해 넘기면 스톡 카드 자리를 나타내는 플레이스홀더를
+볼 수 있습니다.
 
 
-### Stock pile -- refill from the waste
+<a id="stock-pile----refill-from-the-waste"></a>
 
-The last piece of functionality to add, is to move the cards back from the waste pile into the stock
-pile when the user taps on an empty stock. To implement this, we will modify the `onTapUp()` method
-like so:
+### 스톡 파일 -- 웨이스트에서 다시 채우기
+
+추가할 마지막 기능은 사용자가 빈 스톡을 탭했을 때 웨이스트 파일의 카드를 스톡
+파일로 되돌리는 것입니다. 이를 구현하기 위해 `onTapUp()` 메서드를
+다음과 같이 수정합니다.
 
 ```dart
   @override
@@ -266,13 +280,13 @@ like so:
   }
 ```
 
-If you're curious why we needed to reverse the list of cards removed from the waste pile, then it is
-because we want to simulate the entire waste pile being turned over at once, and not each card being
-flipped one by one in their places. You can check that this is working as intended by verifying that
-on each subsequent run through the stock pile, the cards are dealt in the same order as they were
-dealt in the first run.
+웨이스트 파일에서 꺼낸 카드 리스트를 왜 뒤집어야 했는지 궁금하다면, 그 이유는
+각 카드를 제자리에서 하나씩 뒤집는 것이 아니라 웨이스트 파일 전체를 한 번에 뒤집는 것을
+흉내 내고 싶기 때문입니다. 스톡 파일을 다시 넘길 때마다 카드가 처음과 같은 순서로
+나눠지는지 확인하면 의도한 대로 동작하는지
+검증할 수 있습니다.
 
-The method `WastePile.removeAllCards()` still needs to be implemented though:
+하지만 `WastePile.removeAllCards()` 메서드는 아직 구현해야 합니다.
 
 ```dart
   List<Card> removeAllCards() {
@@ -282,19 +296,21 @@ The method `WastePile.removeAllCards()` still needs to be implemented though:
   }
 ```
 
-This pretty much concludes the `StockPile` functionality, and we already implemented the `WastePile`
--- so the only two components remaining are the `FoundationPile` and the `TableauPile`. We'll start
-with the first one because it looks simpler.
+이것으로 `StockPile` 기능은 거의 마무리되었고, `WastePile`도 이미 구현했습니다.
+따라서 남은 컴포넌트는 `FoundationPile`과 `TableauPile` 두 개뿐입니다. 더 간단해 보이는
+첫 번째 것부터 시작하겠습니다.
 
 
-### Foundation piles
+<a id="foundation-piles"></a>
 
-The **foundation** piles are the four piles in the top right corner of the game. This is where we
-will be building the ordered runs of cards from Ace to King. The functionality of this class is
-similar to the `StockPile` and the `WastePile`: it has to be able to hold cards face up, and there
-has to be some visual to show where the foundation is when there are no cards there.
+### 파운데이션 파일
 
-First, let's implement the card-holding logic:
+**파운데이션** 파일은 게임 오른쪽 위 모서리에 있는 네 개의 파일입니다. 이곳에서
+에이스부터 킹까지 순서대로 카드를 쌓아 나갑니다. 이 클래스의 기능은
+`StockPile`, `WastePile`과 비슷합니다. 카드를 앞면이 위로 향하게 담아 둘 수 있어야 하고,
+카드가 없을 때 파운데이션이 어디인지 보여 주는 시각적 표시가 있어야 합니다.
+
+먼저 카드를 담는 로직을 구현해 봅시다.
 
 ```dart
 class FoundationPile extends PositionComponent {
@@ -311,9 +327,9 @@ class FoundationPile extends PositionComponent {
 }
 ```
 
-For visual representation of a foundation, I've decided to make a large icon of that foundation's
-suit, in grey color. Which means we'd need to update the definition of the class to include the
-suit information:
+파운데이션의 시각적 표현으로는 그 파운데이션의 무늬를 회색의 큰 아이콘으로
+표시하기로 했습니다. 따라서 클래스 정의에 무늬 정보를 포함하도록
+수정해야 합니다.
 
 ```dart
 class FoundationPile extends PositionComponent {
@@ -326,10 +342,10 @@ class FoundationPile extends PositionComponent {
 }
 ```
 
-The code in the `KlondikeGame` class that generates the foundations will have to be adjusted
-accordingly in order to pass the suit index to each foundation.
+`KlondikeGame` 클래스에서 파운데이션을 생성하는 코드도 각 파운데이션에 무늬 인덱스를
+전달하도록 그에 맞게 수정해야 합니다.
 
-Now, the rendering code for the foundation pile will look like this:
+이제 파운데이션 파일의 렌더링 코드는 다음과 같습니다.
 
 ```dart
   @override
@@ -345,7 +361,7 @@ Now, the rendering code for the foundation pile will look like this:
   }
 ```
 
-Here we need to have two paint objects, one for the border and one for the suits:
+여기서는 paint 객체가 두 개 필요합니다. 하나는 테두리용이고, 하나는 무늬용입니다.
 
 ```dart
   final _borderPaint = Paint()
@@ -357,20 +373,22 @@ Here we need to have two paint objects, one for the border and one for the suits
     ..blendMode = BlendMode.luminosity;
 ```
 
-The suit paint uses `BlendMode.luminosity` in order to convert the regular yellow/blue colors of
-the suit sprites into grayscale. The "color" of the paint is different depending whether the suit
-is red or black because the original luminosity of those sprites is different. Therefore, I had to
-pick two different colors in order to make them look the same in grayscale.
+무늬 paint는 `BlendMode.luminosity`를 사용해 무늬 스프라이트의 원래 노랑/파랑 색을
+회색조로 변환합니다. paint의 "색"이 무늬가 빨간색인지 검은색인지에 따라 다른 이유는
+그 스프라이트들의 원래 휘도가 다르기 때문입니다. 그래서 회색조에서 같아 보이도록
+서로 다른 두 가지 색을 골라야 했습니다.
 
 
-### Tableau Piles
+<a id="tableau-piles"></a>
 
-The last piece of the game to be implemented is the `TableauPile` component. There are seven of
-these piles in total, and they are where the majority of the game play is happening.
+### 태블로 파일
 
-The `TableauPile` also needs a visual representation, in order to indicate that it's a place where
-a King can be placed when it is empty. I believe it could be just an empty frame, and that should
-be sufficient:
+구현해야 할 게임의 마지막 부분은 `TableauPile` 컴포넌트입니다. 이 파일은
+모두 일곱 개이며, 게임플레이의 대부분이 이곳에서 일어납니다.
+
+`TableauPile`에도 시각적 표현이 필요합니다. 비어 있을 때 킹을 놓을 수 있는
+자리라는 것을 나타내기 위해서입니다. 빈 테두리 하나면 충분할 것
+같습니다.
 
 ```dart
 class TableauPile extends PositionComponent {
@@ -388,12 +406,12 @@ class TableauPile extends PositionComponent {
 }
 ```
 
-Oh, and the class will need to be able hold the cards too, obviously. Here, some of the cards will
-be face down, while others will be face up. Also we will need a small amount of vertical fanning,
-similar to how we did it for the `WastePile` component:
+아, 그리고 당연히 이 클래스도 카드를 담을 수 있어야 합니다. 여기서는 일부 카드는
+뒷면이 위로, 나머지는 앞면이 위로 향해 있습니다. 또한 `WastePile` 컴포넌트에서 했던 것과
+비슷하게, 세로 방향으로 약간 펼쳐 놓아야 합니다.
 
 ```dart
-  /// Which cards are currently placed onto this pile.
+  /// 현재 이 파일에 놓여 있는 카드들입니다.
   final List<Card> _cards = [];
   final Vector2 _fanOffset = Vector2(0, KlondikeGame.cardHeight * 0.05);
 
@@ -408,9 +426,9 @@ similar to how we did it for the `WastePile` component:
   }
 ```
 
-All that remains now is to head over to the `KlondikeGame` and make sure that the cards are dealt
-into the `TableauPile`s at the beginning of the game. Modify the code at the end of the `onLoad()`
-method so that it looks like this:
+이제 남은 일은 `KlondikeGame`으로 가서 게임이 시작될 때 카드가 `TableauPile`들에
+나눠지도록 하는 것뿐입니다. `onLoad()` 메서드 끝부분의 코드를
+다음과 같이 수정하세요.
 
 ```dart
   @override
@@ -438,19 +456,19 @@ method so that it looks like this:
   }
 ```
 
-Note how we deal the cards from the deck and place them into `TableauPile`s one by one, and only
-after that we put the remaining cards into the stock.
+덱에서 카드를 한 장씩 나눠 `TableauPile`들에 놓고, 그런 다음에야
+남은 카드를 스톡에 넣는다는 점에 주목하세요.
 
-Recall that we decided earlier that all the cards would be owned by the `KlondikeGame` itself. So
-they are put into a generated List structure called `cards`, shuffled and added to the `world`. This
-List should always have 52 cards in it, so a descending index `cardToDeal` is used to deal 28 cards
-one by one from the top of the deck into piles that acquire references to the cards in the deck. An
-ascending index is used to deal the remaining 24 cards into the stock in correct shuffled order. At
-the end of the deal there are still 52 `Card` objects in the `cards` list. In the card piles we
-used `removeList()` to retrieve a card from a pile, but not here because it would remove cards
-from `KlondikeGame`'s ownership.
+앞에서 모든 카드를 `KlondikeGame` 자체가 소유하기로 했던 것을 떠올려 보세요. 그래서
+카드들은 `cards`라는 생성된 List 구조에 담기고, 섞인 다음 `world`에 추가됩니다. 이
+List에는 항상 52장의 카드가 들어 있어야 하므로, 감소하는 인덱스 `cardToDeal`을 사용해 덱의 맨 위에서
+카드 28장을 한 장씩 파일들에 나눠 주고, 파일들은 덱에 있는 카드의 참조를 얻습니다.
+증가하는 인덱스는 남은 24장을 올바르게 섞인 순서대로 스톡에 나눠 주는 데 사용합니다.
+나눠 주기가 끝난 뒤에도 `cards` 리스트에는 여전히 52개의 `Card` 객체가 있습니다. 카드 파일에서는
+파일에서 카드를 꺼낼 때 `removeList()`를 사용했지만, 여기서는 사용하지 않습니다. 그렇게 하면
+`KlondikeGame`의 소유에서 카드가 제거되기 때문입니다.
 
-The `flipTopCard` method in the `TableauPile` class is as trivial as it sounds:
+`TableauPile` 클래스의 `flipTopCard` 메서드는 이름 그대로 아주 간단합니다.
 
 ```dart
   void flipTopCard() {
@@ -459,38 +477,42 @@ The `flipTopCard` method in the `TableauPile` class is as trivial as it sounds:
   }
 ```
 
-If you run the game at this point, it would be nicely set up and look as if it was ready to play.
-Except that we can't move the cards yet, which is kinda a deal-breaker here. So without further ado,
-presenting you the next section:
+이 시점에서 게임을 실행하면 보기 좋게 배치되어 바로 플레이할 수 있을 것처럼 보입니다.
+다만 아직 카드를 움직일 수 없는데, 이건 꽤 치명적인 문제입니다. 그러니 더 지체하지 않고
+다음 섹션을 소개합니다.
 
 
-## Moving the cards
+<a id="moving-the-cards"></a>
 
-Moving the cards is a somewhat more complicated topic than what we have had so far. We will split
-it into several smaller steps:
+## 카드 옮기기
 
-1. Simple movement: grab a card and move it around.
-2. Ensure that the user can only move the cards that they are allowed to.
-3. Check that the cards are dropped at proper destinations.
-4. Drag a run of cards.
+카드를 옮기는 것은 지금까지 다룬 것보다 조금 더 복잡한 주제입니다. 이를
+몇 개의 작은 단계로 나누겠습니다.
+
+1. 간단한 이동: 카드를 잡고 이리저리 움직입니다.
+2. 사용자가 옮기도록 허용된 카드만 옮길 수 있게 합니다.
+3. 카드가 올바른 목적지에 놓이는지 확인합니다.
+4. 연속된 카드 묶음을 드래그합니다.
 
 
-### 1. Simple movement
+<a id="1-simple-movement"></a>
 
-So, we want to be able to drag the cards on the screen. This is even simpler than making the
-`StockPile` tappable: just head over into the `Card` class and add the `DragCallbacks` mixin:
+### 1. 간단한 이동
+
+화면에서 카드를 드래그할 수 있게 하려고 합니다. 이는 `StockPile`을 탭할 수 있게
+만드는 것보다도 간단합니다. `Card` 클래스로 가서 `DragCallbacks` 믹스인을 추가하기만 하면 됩니다.
 
 ```dart
 class Card extends PositionComponent with DragCallbacks {
 }
 ```
 
-The next step is to implement the actual drag event callbacks: `onDragStart`, `onDragUpdate`, and
-`onDragEnd`.
+다음 단계는 실제 드래그 이벤트 콜백인 `onDragStart`, `onDragUpdate`,
+`onDragEnd`를 구현하는 것입니다.
 
-When the drag gesture is initiated, the first thing that we need to do is to raise the priority of
-the card, so that it is rendered above all others. Without this, the card would be occasionally
-"sliding beneath" other cards, which would look most unnatural:
+드래그 제스처가 시작되면 가장 먼저 카드의 우선순위를 높여서
+다른 모든 카드보다 위에 렌더링되도록 해야 합니다. 그렇지 않으면 카드가 가끔
+다른 카드 "아래로 미끄러져 들어가" 매우 부자연스러워 보입니다.
 
 ```dart
   @override
@@ -499,11 +521,11 @@ the card, so that it is rendered above all others. Without this, the card would 
   }
 ```
 
-During the drag, the `onDragUpdate` event will be called continuously. Using this callback we will
-be updating the position of the card so that it follows the movement of the finger (or the mouse).
-The `event` object passed to this callback contains the most recent coordinate of the point of
-touch, and also the `localDelta` property -- which is the displacement vector since the previous
-call of `onDragUpdate`, considering the camera zoom.
+드래그하는 동안 `onDragUpdate` 이벤트가 계속 호출됩니다. 이 콜백을 사용해
+카드가 손가락(또는 마우스)의 움직임을 따라가도록 카드 위치를 업데이트합니다.
+이 콜백에 전달되는 `event` 객체에는 가장 최근의 터치 지점 좌표와
+`localDelta` 속성이 들어 있습니다. `localDelta`는 카메라 줌을 고려한,
+이전 `onDragUpdate` 호출 이후의 변위 벡터입니다.
 
 ```dart
   @override
@@ -512,23 +534,25 @@ call of `onDragUpdate`, considering the camera zoom.
   }
 ```
 
-So far this allows you to grab any card and drag it anywhere around the table. What we want,
-however, is to be able to restrict where the card is allowed or not allowed to go. This is where
-the core of the logic of the game begins.
+지금까지는 아무 카드나 잡아서 테이블 어디로든 드래그할 수 있습니다. 하지만 우리가
+원하는 것은 카드가 갈 수 있는 곳과 갈 수 없는 곳을 제한하는 것입니다. 바로 여기서
+게임 로직의 핵심이 시작됩니다.
 
 
-### 2. Move only allowed cards
+<a id="2-move-only-allowed-cards"></a>
 
-The first restriction that we impose is that the user should only be able to drag the cards that we
-allow, which include: (1) the top card of a waste pile, (2) the top card of a foundation pile, and
-(3) any face-up card in a tableau pile.
+### 2. 허용된 카드만 옮기기
 
-Thus, in order to determine whether a card can be moved or not, we need to know which pile it
-currently belongs to. There could be several ways that we go about it, but seemingly the most
-straightforward is to let every card keep a reference to the pile in which it currently resides.
+첫 번째 제약은 사용자가 우리가 허용한 카드만 드래그할 수 있어야 한다는 것입니다.
+허용되는 카드는 (1) 웨이스트 파일의 맨 위 카드, (2) 파운데이션 파일의 맨 위 카드,
+(3) 태블로 파일에서 앞면이 위로 향한 모든 카드입니다.
 
-So, let's start by defining the abstract interface `Pile` that all our existing piles will be
-implementing:
+따라서 카드를 옮길 수 있는지 판단하려면 카드가 현재 어느 파일에 속해 있는지
+알아야 합니다. 여러 방법이 있겠지만, 가장
+간단해 보이는 방법은 모든 카드가 자신이 현재 놓인 파일에 대한 참조를 갖게 하는 것입니다.
+
+그럼 기존의 모든 파일이 구현할 추상 인터페이스 `Pile`을
+정의하는 것부터 시작합시다.
 
 ```dart
 abstract class Pile {
@@ -536,9 +560,9 @@ abstract class Pile {
 }
 ```
 
-We will expand this class further later, but for now let's make sure that each of the classes
-`StockPile`, `WastePile`, `FoundationPile`, and `TableauPile` are marked as implementing this
-interface:
+이 클래스는 나중에 더 확장하겠지만, 지금은 `StockPile`, `WastePile`,
+`FoundationPile`, `TableauPile` 각 클래스가 이 인터페이스를 구현한다고
+표시해 둡시다.
 
 ```dart
 class StockPile extends PositionComponent with TapCallbacks implements Pile {
@@ -566,9 +590,9 @@ class TableauPile extends PositionComponent implements Pile {
 }
 ```
 
-We also wanted to let every `Card` know which pile it is currently in. For this, add the field
-`Pile? pile` into the `Card` class, and make sure to set it in each pile's `acquireCard()` method,
-like so:
+또한 모든 `Card`가 현재 어느 파일에 있는지 알게 하고 싶었습니다. 이를 위해
+`Card` 클래스에 `Pile? pile` 필드를 추가하고, 각 파일의 `acquireCard()` 메서드에서
+다음과 같이 이 필드를 설정하세요.
 
 ```dart
   void acquireCard(Card card) {
@@ -577,8 +601,8 @@ like so:
   }
 ```
 
-Now we can put this new functionality to use: go into the `Card.onDragStart()` method and modify
-it so that it would check whether the card is allowed to be moved before starting the drag:
+이제 이 새 기능을 활용할 수 있습니다. `Card.onDragStart()` 메서드로 가서
+드래그를 시작하기 전에 카드를 옮길 수 있는지 확인하도록 수정하세요.
 
 ```dart
   void onDragStart(DragStartEvent event) {
@@ -589,10 +613,10 @@ it so that it would check whether the card is allowed to be moved before startin
   }
 ```
 
-We have also added a call to `super.onDragStart()` which sets an `_isDragged` variable to `true`
-in the `DragCallbacks` mixin, we need to check this flag via the public `isDragged` getter in
-the `onDragUpdate()` method and use `super.onDragEnd()` in `onDragEnd()` so the flag is set back
-to `false`:
+`super.onDragStart()` 호출도 추가했는데, 이는 `DragCallbacks` 믹스인의 `_isDragged` 변수를
+`true`로 설정합니다. `onDragUpdate()` 메서드에서는 public `isDragged` getter로 이 플래그를
+확인해야 하고, `onDragEnd()`에서는 `super.onDragEnd()`를 사용해 플래그가 다시
+`false`로 설정되게 해야 합니다.
 
 ```dart
   @override
@@ -609,18 +633,20 @@ to `false`:
   }
 ```
 
-Now only the proper cards can be dragged, but they still drop at random positions on the table,
-so let's work on that.
+이제 올바른 카드만 드래그할 수 있지만, 여전히 테이블의 아무 위치에나 놓이므로
+이 부분을 작업해 봅시다.
 
 
-### 3. Dropping the cards at proper locations
+<a id="3-dropping-the-cards-at-proper-locations"></a>
 
-At this point what we want to do is to figure out where the dragged card is being dropped. More
-specifically, we want to know into which *pile* it is being dropped. This can be achieved by using
-the `componentsAtPoint()` API, which allows you to query which components are located at a given
-position on the screen.
+### 3. 카드를 올바른 위치에 놓기
 
-Thus, my first attempt at revising the `onDragEnd` callback looks like this:
+이 시점에서 하고 싶은 것은 드래그한 카드가 어디에 놓이는지 알아내는 것입니다. 더
+구체적으로는 어느 *파일*에 놓이는지 알고 싶습니다. 이는
+`componentsAtPoint()` API를 사용하면 됩니다. 이 API로 화면의 특정 위치에
+어떤 컴포넌트가 있는지 조회할 수 있습니다.
+
+그래서 `onDragEnd` 콜백을 수정한 첫 번째 시도는 다음과 같습니다.
 
 ```dart
   @override
@@ -634,20 +660,20 @@ Thus, my first attempt at revising the `onDragEnd` callback looks like this:
         .whereType<Pile>()
         .toList();
     if (dropPiles.isNotEmpty) {
-      // if (card is allowed to be dropped into this pile) {
-      //   remove the card from the current pile
-      //   add the card into the new pile
+      // if (카드를 이 파일에 놓을 수 있다면) {
+      //   현재 파일에서 카드를 제거합니다
+      //   새 파일에 카드를 추가합니다
       // }
     }
-    // return the card to where it was originally
+    // 카드를 원래 있던 자리로 되돌립니다
   }
 ```
 
-This still contains several placeholders for the functionality that still needs to be implemented,
-so let's get to it.
+여기에는 아직 구현해야 할 기능에 대한 플레이스홀더가 몇 개 남아 있으니,
+하나씩 구현해 봅시다.
 
-First piece of the puzzle is the "is card allowed to be dropped here?" check. To implement this,
-first head over into the `Pile` class and add the `canAcceptCard()` abstract method:
+퍼즐의 첫 번째 조각은 "카드를 여기에 놓을 수 있는가?" 검사입니다. 이를 구현하려면
+먼저 `Pile` 클래스로 가서 `canAcceptCard()` 추상 메서드를 추가하세요.
 
 ```dart
 abstract class Pile {
@@ -656,7 +682,7 @@ abstract class Pile {
 }
 ```
 
-Obviously this now needs to be implemented for every `Pile` subclass, so let's get to it:
+당연히 이제 모든 `Pile` 하위 클래스에서 이를 구현해야 하니, 구현해 봅시다.
 
 ```dart
 class FoundationPile ... implements Pile {
@@ -683,11 +709,11 @@ class TableauPile ... implements Pile {
 }
 ```
 
-(for the `StockPile` and the `WastePile` the method should just return false, since no cards should
-be dropped there).
+(`StockPile`과 `WastePile`에서는 이 메서드가 그냥 false를 반환해야 합니다. 그곳에는 어떤 카드도
+놓여서는 안 되기 때문입니다.)
 
-Alright, next part is the "remove the card from its current pile". Once again, let's head over to
-the `Pile` class and add the `removeCard()` abstract method:
+좋습니다, 다음 부분은 "현재 파일에서 카드를 제거"하는 것입니다. 다시 한번
+`Pile` 클래스로 가서 `removeCard()` 추상 메서드를 추가합시다.
 
 ```dart
 abstract class Pile {
@@ -696,7 +722,7 @@ abstract class Pile {
 }
 ```
 
-Then we need to re-visit all four pile subclasses and implement this method:
+그런 다음 네 개의 파일 하위 클래스를 모두 다시 찾아가 이 메서드를 구현해야 합니다.
 
 ```dart
 class StockPile ... implements Pile {
@@ -738,9 +764,9 @@ class TableauPile ... implements Pile {
 }
 ```
 
-The next action in our pseudo-code is to "add the card to the new pile". But this one we have
-already implemented: it's the `acquireCard()` method. So all we need is to declare it in the `Pile`
-interface:
+의사 코드의 다음 동작은 "새 파일에 카드를 추가"하는 것입니다. 하지만 이것은 이미
+구현했습니다. 바로 `acquireCard()` 메서드입니다. 그러니 `Pile`
+인터페이스에 선언하기만 하면 됩니다.
 
 ```dart
 abstract class Pile {
@@ -749,9 +775,9 @@ abstract class Pile {
 }
 ```
 
-The last piece that's missing is "return the card to where it was". You can probably guess how we
-are going to go about this one: add the `returnCard()` method into the `Pile` interface, and then
-implement this method in all four pile subclasses:
+마지막으로 빠진 조각은 "카드를 원래 자리로 되돌리기"입니다. 이것을 어떻게 할지는
+아마 짐작할 수 있을 것입니다. `Pile` 인터페이스에 `returnCard()` 메서드를 추가하고,
+네 개의 파일 하위 클래스 모두에서 이 메서드를 구현합니다.
 
 ```dart
 class StockPile ... implements Pile {
@@ -790,7 +816,7 @@ class TableauPile ... implements Pile {
 }
 ```
 
-Now, putting this all together, the `Card`'s `onDragEnd` method will look like this:
+이제 이 모든 것을 합치면 `Card`의 `onDragEnd` 메서드는 다음과 같습니다.
 
 ```dart
   @override
@@ -814,24 +840,26 @@ Now, putting this all together, the `Card`'s `onDragEnd` method will look like t
   }
 ```
 
-Ok, that was quite a lot of work -- but if you run the game now, you'd be able to move the cards
-properly from one pile to another, and they will never go where they are not supposed to go. The
-only thing that remains is to be able to move multiple cards at once between tableau piles. So take
-a short break, and then on to the next section!
+자, 꽤 많은 작업이었습니다. 하지만 지금 게임을 실행하면 카드를 한 파일에서 다른 파일로
+제대로 옮길 수 있고, 카드가 가서는 안 되는 곳으로 가는 일은 절대 없을 것입니다.
+남은 것은 태블로 파일 사이에서 여러 장의 카드를 한 번에 옮길 수 있게 하는 것뿐입니다. 그러니
+잠깐 쉬었다가 다음 섹션으로 넘어갑시다!
 
 
-### 4. Moving a run of cards
+<a id="4-moving-a-run-of-cards"></a>
 
-In this section we will be implementing the necessary changes to allow us to move small stacks of
-cards between the tableau piles. Before we begin, though, we need to make a small fix first.
+### 4. 연속된 카드 묶음 옮기기
 
-You have probably noticed when running the game in the previous section that the cards in the
-tableau piles clamp too closely together. That is, they are at the correct distance when they face
-down, but they should be at a larger distance when they face up, which is not currently the case.
-This makes it really difficult to see which cards are available for dragging.
+이 섹션에서는 태블로 파일 사이에서 작은 카드 더미를 옮길 수 있도록 필요한 변경을
+구현합니다. 하지만 시작하기 전에 작은 수정부터 해야 합니다.
 
-So, let's head over into the `TableauPile` class and create a new method `layOutCards()`, whose job
-would be to ensure that all cards currently in the pile have the right positions:
+앞 섹션에서 게임을 실행하면서, 태블로 파일의 카드들이 너무 촘촘하게 붙어 있다는 것을
+아마 눈치챘을 것입니다. 즉, 뒷면이 위로 향한 카드는 적절한 간격에 있지만,
+앞면이 위로 향한 카드는 더 넓은 간격을 두어야 하는데 현재는 그렇지 않습니다.
+이 때문에 어떤 카드를 드래그할 수 있는지 알아보기가 정말 어렵습니다.
+
+그러니 `TableauPile` 클래스로 가서 새 메서드 `layOutCards()`를 만듭시다. 이 메서드의 역할은
+현재 파일에 있는 모든 카드가 올바른 위치에 있도록 하는 것입니다.
 
 ```dart
   final Vector2 _fanOffset1 = Vector2(0, KlondikeGame.cardHeight * 0.05);
@@ -850,39 +878,39 @@ would be to ensure that all cards currently in the pile have the right positions
   }
 ```
 
-Make sure to call this method at the end of `removeCard()`, `returnCard()`, and `acquireCard()` --
-replacing any current logic that handles card positioning.
+`removeCard()`, `returnCard()`, `acquireCard()`의 끝에서 이 메서드를 호출하고,
+카드 위치를 처리하던 기존 로직은 모두 이것으로 대체하세요.
 
-Another problem that you may have noticed is that for taller card stacks it becomes hard to place a
-card there. This is because our logic for determining in which pile the card is being dropped checks
-whether the center of the card is inside any of the `TableauPile` components -- but those components
-have only the size of a single card! To fix this inconsistency, all we need is to declare that the
-height of the tableau pile is at least as tall as all the cards in it, or even higher. Add this line
-at the end of the `layOutCards()` method:
+눈치챘을 수 있는 또 다른 문제는 카드 더미가 높아질수록 그곳에 카드를 놓기가
+어려워진다는 것입니다. 카드가 어느 파일에 놓이는지 판단하는 로직이 카드의 중심이
+`TableauPile` 컴포넌트 중 하나의 안에 있는지를 검사하는데, 그 컴포넌트들의
+크기가 카드 한 장 크기뿐이기 때문입니다! 이 불일치를 고치려면 태블로 파일의 높이가
+그 안의 모든 카드를 합친 높이 이상, 또는 그보다 더 높다고 선언하기만 하면 됩니다.
+`layOutCards()` 메서드 끝에 다음 줄을 추가하세요.
 
 ```dart
     height = KlondikeGame.cardHeight * 1.5 + _cards.last.y - _cards.first.y;
 ```
 
-The factor `1.5` here adds a little bit extra space at the bottom of each pile. The card to be
-dropped should be overlapping the hitbox by a little over half its width and height. If you are
-approaching from below, it would be just overlapping the nearest card (i.e. the one that is fully
-visible). You can temporarily turn the debug mode on to see the hitboxes.
+여기서 `1.5`라는 계수는 각 파일의 아래쪽에 약간의 여유 공간을 더해 줍니다. 놓으려는 카드는
+너비와 높이의 절반을 조금 넘게 히트박스와 겹쳐야 합니다. 아래쪽에서
+다가간다면 가장 가까운 카드(즉, 완전히 보이는 카드)와만 겹치게 됩니다.
+히트박스를 보려면 잠시 디버그 모드를 켜 보세요.
 
 ![Illustration of Tableau Pile Hitboxes](../../images/tutorials/klondike-tableau-hitboxes.png)
 
-Ok, let's get to our main topic: how to move a stack of cards at once.
+좋습니다, 이제 본론으로 들어갑시다. 카드 더미를 한 번에 옮기는 방법입니다.
 
-First thing that we're going to add is the list of `attachedCards` for every card. This list will
-be non-empty only when the card is being dragged while having other cards on top. Add the following
-declaration to the `Card` class:
+가장 먼저 추가할 것은 모든 카드의 `attachedCards` 리스트입니다. 이 리스트는
+카드 위에 다른 카드가 있는 상태로 드래그될 때에만 비어 있지 않습니다. `Card` 클래스에 다음
+선언을 추가하세요.
 
 ```dart
   final List<Card> attachedCards = [];
 ```
 
-Now, in order to create this list in `onDragStart`, we need to query the `TableauPile` for the list
-of cards that are on top of the given card. Let's add such a method into the `TableauPile` class:
+이제 `onDragStart`에서 이 리스트를 만들려면, 주어진 카드 위에 있는 카드 목록을
+`TableauPile`에 조회해야 합니다. `TableauPile` 클래스에 그런 메서드를 추가합시다.
 
 ```dart
   List<Card> cardsOnTop(Card card) {
@@ -892,16 +920,16 @@ of cards that are on top of the given card. Let's add such a method into the `Ta
   }
 ```
 
-While we are in the `TableauPile` class, let's also update the `canMoveCard()` method to allow
-dragging cards that are not necessarily on top:
+`TableauPile` 클래스에 있는 김에, 반드시 맨 위에 있지 않은 카드도 드래그할 수 있도록
+`canMoveCard()` 메서드도 업데이트합시다.
 
 ```dart
   @override
   bool canMoveCard(Card card) => card.isFaceUp;
 ```
 
-Heading back into the `Card` class, we can use this method in order to populate the list of
-`attachedCards` when the card starts to move:
+`Card` 클래스로 돌아와서, 카드가 움직이기 시작할 때 이 메서드를 사용해
+`attachedCards` 리스트를 채울 수 있습니다.
 
 ```dart
   @override
@@ -921,8 +949,8 @@ Heading back into the `Card` class, we can use this method in order to populate 
   }
 ```
 
-Now all we need to do is to make sure that the attached cards are also moved with the main card in
-the `onDragUpdate` method:
+이제 `onDragUpdate` 메서드에서 붙어 있는 카드들도 메인 카드와 함께 움직이도록
+하기만 하면 됩니다.
 
 ```dart
   @override
@@ -936,9 +964,9 @@ the `onDragUpdate` method:
   }
 ```
 
-This does the trick, almost. All that remains is to fix any loose ends. For example, we don't want
-to let the user drop a stack of cards onto a foundation pile, so let's head over into the
-`FoundationPile` class and modify the `canAcceptCard()` method accordingly:
+거의 다 됐습니다. 남은 것은 자잘한 마무리뿐입니다. 예를 들어 사용자가
+카드 더미를 파운데이션 파일에 놓지 못하게 하고 싶으니,
+`FoundationPile` 클래스로 가서 `canAcceptCard()` 메서드를 그에 맞게 수정합시다.
 
 ```dart
   @override
@@ -950,9 +978,9 @@ to let the user drop a stack of cards onto a foundation pile, so let's head over
   }
 ```
 
-Secondly, we need to properly take care of the stack of card as it is being dropped into a tableau
-pile. So, go back into the `Card` class and update its `onDragEnd()` method to also move the
-attached cards into the pile, and the same when it comes to returning the cards into the old pile:
+둘째로, 카드 더미가 태블로 파일에 놓일 때 이를 제대로 처리해야 합니다.
+그러니 `Card` 클래스로 돌아가 `onDragEnd()` 메서드가 붙어 있는 카드들도
+파일로 옮기도록 업데이트하고, 카드를 원래 파일로 되돌릴 때도 마찬가지로 처리하세요.
 
 ```dart
   @override
@@ -984,11 +1012,11 @@ attached cards into the pile, and the same when it comes to returning the cards 
   }
 ```
 
-There is one more case to take care of: a drag can be *cancelled* instead of ended, for example when
-the player puts a second finger on the screen and the gesture turns into a pinch. Flame does not
-turn a cancellation into an `onDragEnd` event, so unless we handle it the card would be left
-floating in the middle of the table. Here we simply treat it as if the card had been dropped where
-it currently is:
+처리해야 할 경우가 하나 더 있습니다. 드래그는 끝나는 대신 *취소*될 수도 있습니다. 예를 들어
+플레이어가 화면에 두 번째 손가락을 올려 제스처가 핀치로 바뀌는 경우입니다. Flame은
+취소를 `onDragEnd` 이벤트로 바꿔 주지 않으므로, 이를 처리하지 않으면 카드가
+테이블 한가운데에 떠 있는 채로 남게 됩니다. 여기서는 단순히 카드가 현재 위치에
+놓인 것처럼 처리합니다.
 
 ```dart
   @override
@@ -998,9 +1026,9 @@ it currently is:
   }
 ```
 
-Well, this is it! The game is now fully playable. Press the button below to see what the resulting
-code looks like, or to play it live. In the next section we will discuss how to make it more
-animated with the help of effects.
+자, 이것으로 끝입니다! 이제 게임을 완전히 플레이할 수 있습니다. 아래 버튼을 눌러 완성된
+코드를 보거나 직접 플레이해 보세요. 다음 섹션에서는 이펙트를 활용해 게임에 더 많은
+애니메이션을 넣는 방법을 알아봅니다.
 
 ```{flutter-app}
 :sources: ../tutorials/klondike/app

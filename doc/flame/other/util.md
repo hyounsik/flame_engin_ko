@@ -1,65 +1,70 @@
-# Util
+<a id="util"></a>
 
-On this page you can find documentation for some utility classes and methods.
+# 유틸리티
+
+이 페이지에서는 몇 가지 유틸리티 클래스와 메서드에 대한 문서를 볼 수 있습니다.
 
 
-## Device Class
+<a id="device-class"></a>
+
+## Device 클래스
 
 ```{warning}
-Many methods in this class only work on mobile platforms (Android and iOS).
+이 클래스의 많은 메서드는 모바일 플랫폼(Android와 iOS)에서만 동작합니다.
 
-Using these methods on other platforms will not have any effect and you will
-get a warning printed on your console when running in debug mode.
+다른 플랫폼에서 이 메서드들을 사용하면 아무 효과가 없으며, 디버그 모드로 실행 중이라면
+콘솔에 경고가 출력됩니다.
 ```
 
-This class can be accessed from `Flame.device` and it has some methods that can be used to control
-the state of the device, for instance you can change the screen orientation and set whether the
-application should be fullscreen or not.
+이 클래스는 `Flame.device`로 접근할 수 있으며, 기기의 상태를 제어하는 데 사용할 수 있는 몇 가지
+메서드를 가지고 있습니다. 예를 들어 화면 방향을 바꾸거나 애플리케이션을 전체 화면으로 할지 설정할 수
+있습니다.
 
 
 ### `Flame.device.fullScreen()`
 
-When called, this disables all `SystemUiOverlay` making the app full screen.
-When called in the main method, it makes your app full screen (no top nor bottom bars).
+호출하면 모든 `SystemUiOverlay`를 비활성화하여 앱을 전체 화면으로 만듭니다.
+main 메서드에서 호출하면 앱이 전체 화면(상단 바와 하단 바가 없는 상태)이 됩니다.
 
-**Note:** It has no effect when called on the web.
+**참고:** 웹에서 호출하면 아무 효과가 없습니다.
 
 
 ### `Flame.device.setLandscape()`
 
-This method sets the orientation of the whole application (effectively, also the game) to landscape
-and depending on operating system and device setting, should allow both left and right landscape
-orientations. To set the app orientation to landscape on a specific direction, use either
-`Flame.device.setLandscapeLeftOnly` or `Flame.device.setLandscapeRightOnly`.
+이 메서드는 애플리케이션 전체(결과적으로 게임도 포함)의 방향을 가로로 설정합니다. 운영체제와 기기
+설정에 따라 왼쪽 가로 방향과 오른쪽 가로 방향을 모두 허용해야 합니다. 앱 방향을 특정 방향의 가로로
+설정하려면 `Flame.device.setLandscapeLeftOnly` 또는 `Flame.device.setLandscapeRightOnly`를
+사용하세요.
 
-**Note:** It has no effect when called on the web.
+**참고:** 웹에서 호출하면 아무 효과가 없습니다.
 
 
 ### `Flame.device.setPortrait()`
 
-This method sets the orientation of the whole application (effectively, also the game) to portrait
-and depending on operating system and device setting, it should allow for both up and down portrait
-orientations. To set the app orientation to portrait for a specific direction, use either
-`Flame.device.setPortraitUpOnly` or `Flame.device.setPortraitDownOnly`.
+이 메서드는 애플리케이션 전체(결과적으로 게임도 포함)의 방향을 세로로 설정합니다. 운영체제와 기기
+설정에 따라 정방향과 역방향 세로를 모두 허용해야 합니다. 앱 방향을 특정 방향의 세로로 설정하려면
+`Flame.device.setPortraitUpOnly` 또는 `Flame.device.setPortraitDownOnly`를 사용하세요.
 
-**Note:** It has no effect when called on the web.
+**참고:** 웹에서 호출하면 아무 효과가 없습니다.
 
 
-### `Flame.device.setOrientation()` and `Flame.device.setOrientations()`
+<a id="flamedevicesetorientation-and-flamedevicesetorientations"></a>
 
-If a finer control of the allowed orientations is required (without having to deal with
-`SystemChrome` directly), `setOrientation` (accepts a single `DeviceOrientation` as a parameter) and
-`setOrientations` (accepts a `List<DeviceOrientation>` for possible orientations) can be used.
+### `Flame.device.setOrientation()`과 `Flame.device.setOrientations()`
 
-**Note:** It has no effect when called on the web.
+(`SystemChrome`을 직접 다루지 않고) 허용할 방향을 더 세밀하게 제어해야 한다면
+`setOrientation`(단일 `DeviceOrientation`을 파라미터로 받음)과 `setOrientations`(가능한 방향의
+`List<DeviceOrientation>`을 받음)를 사용할 수 있습니다.
+
+**참고:** 웹에서 호출하면 아무 효과가 없습니다.
 
 
 ## Timer
 
-Flame provides a simple utility class to help you handle countdowns and timer state changes like
-events.
+Flame은 카운트다운과 타이머 상태 변화를 이벤트처럼 다룰 수 있도록 도와주는 간단한 유틸리티 클래스를
+제공합니다.
 
-Countdown example:
+카운트다운 예제:
 
 ```dart
 import 'package:flame/components.dart';
@@ -77,7 +82,7 @@ class MyGame extends Game {
   void update(double dt) {
     countdown.update(dt);
     if (countdown.finished) {
-      // Prefer the timer callback, but this is better in some cases
+      // 타이머 콜백을 사용하는 편이 좋지만, 경우에 따라서는 이 방식이 더 낫습니다
     }
   }
 
@@ -93,7 +98,7 @@ class MyGame extends Game {
 
 ```
 
-Interval example:
+인터벌 예제:
 
 ```dart
 import 'package:flame/components.dart';
@@ -129,9 +134,9 @@ class MyGame extends Game {
 
 ```
 
-`Timer` instances can also be used inside a `FlameGame` game by using the `TimerComponent` class.
+`TimerComponent` 클래스를 사용하면 `FlameGame` 게임 안에서도 `Timer` 인스턴스를 사용할 수 있습니다.
 
-`TimerComponent` example:
+`TimerComponent` 예제:
 
 ```dart
 import 'package:flame/timer.dart';
@@ -152,34 +157,34 @@ class MyFlameGame extends FlameGame {
 ```
 
 ```{note}
-A `Timer` or `TimerComponent` can repeat indefinitely by providing the
-`repeat: true` argument or it can be repeated a certain number of
-times by using the `tickCount` argument together with `repeat: true`.
+`Timer`나 `TimerComponent`는 `repeat: true` 인자를 주면 무한히 반복할 수 있고,
+`repeat: true`와 함께 `tickCount` 인자를 사용하면 정해진 횟수만큼
+반복할 수 있습니다.
 ```
 
 
-## Time Scale
+<a id="time-scale"></a>
 
-In many games it is often desirable to create  slow-motion or fast-forward effects based on some in
-game events. A very common approach to achieve these results is to manipulate the in game time or
-tick rate.
+## 타임 스케일
 
-To make this manipulation easier, Flame provides a `HasTimeScale` mixin. This mixin can be attached
-to any Flame `Component` and exposes a simple get/set API for `timeScale`. The default value of
-`timeScale` is `1`, implying in-game time of the component is running at the same speed as real life
-time. Setting it to `2` will make the component tick twice as fast and setting it to `0.5` will make
-it tick at half the speed as compared to real life time. This mixin also provides `pause` and `resume`
-methods, which can be used instead of manually setting the timeScale to 0 and 1 respectively. A
-`timeScale` of `0` stops the update pass for the component and its whole subtree: `update` is not
-called on any of them until the time scale is changed again. Components added to a paused game are
-still mounted, since lifecycle events are processed independently of the time scale.
+많은 게임에서는 게임 내 이벤트에 따라 슬로 모션이나 빨리 감기 효과를 만들고 싶을 때가 많습니다.
+이런 효과를 내는 매우 일반적인 방법은 게임 내 시간이나 틱 속도를 조작하는 것입니다.
 
-Since `FlameGame` is a `Component` too, this mixin can be attached to the `FlameGame` as well. Doing
-so will allow controlling time scale for all the component of the game from a single place.
+이 조작을 쉽게 할 수 있도록 Flame은 `HasTimeScale` 믹스인을 제공합니다. 이 믹스인은 어떤 Flame
+`Component`에든 붙일 수 있으며, `timeScale`에 대한 간단한 get/set API를 제공합니다. `timeScale`의
+기본값은 `1`로, 컴포넌트의 게임 내 시간이 실제 시간과 같은 속도로 흐른다는 뜻입니다. `2`로 설정하면
+컴포넌트가 실제 시간보다 두 배 빠르게 틱하고, `0.5`로 설정하면 절반의 속도로 틱합니다. 이 믹스인은
+`pause`와 `resume` 메서드도 제공하므로, timeScale을 각각 0과 1로 직접 설정하는 대신 사용할 수
+있습니다. `timeScale`이 `0`이면 해당 컴포넌트와 그 하위 트리 전체의 업데이트 단계가 멈춥니다. 즉, 타임
+스케일이 다시 바뀔 때까지 그중 어느 것에서도 `update`가 호출되지 않습니다. 생명주기 이벤트는 타임
+스케일과 독립적으로 처리되므로, 일시 정지된 게임에 추가된 컴포넌트도 여전히 마운트됩니다.
+
+`FlameGame`도 `Component`이므로 이 믹스인을 `FlameGame`에도 붙일 수 있습니다. 그렇게 하면 게임의
+모든 컴포넌트의 타임 스케일을 한곳에서 제어할 수 있습니다.
 
 ```{note}
-HasTimeScale cannot control the movement of BodyComponent from flame_forge2d individually.
-It is only useful if the whole Game or Forge2DWorld is to be time scaled.
+HasTimeScale은 flame_forge2d의 BodyComponent 움직임을 개별적으로 제어할 수 없습니다.
+Game 전체나 Forge2DWorld 전체의 타임 스케일을 조절할 때만 유용합니다.
 ```
 
 ```{flutter-app}
@@ -206,160 +211,160 @@ class MyFlameGame extends FlameGame with HasTimeScale {
 ```
 
 
-## Extensions
+<a id="extensions"></a>
 
-Flame bundles a collection of utility extensions, these extensions are meant to help the developer
-with shortcuts and conversion methods, here you can find the summary of those extensions.
+## 확장
 
-They can all be imported from `package:flame/extensions.dart`
+Flame에는 유틸리티 확장(extension) 모음이 포함되어 있습니다. 이 확장들은 개발자에게 단축 기능과 변환
+메서드를 제공하기 위한 것이며, 여기에서 그 요약을 볼 수 있습니다.
+
+모두 `package:flame/extensions.dart`에서 import할 수 있습니다.
 
 
 ### Canvas
 
-Methods:
+메서드:
 
-- `scaleVector`: Just like `canvas scale` method, but takes a `Vector2` as an argument.
-- `translateVector`: Just like `canvas translate` method, but takes a `Vector2` as an argument.
-- `renderPoint`: renders a single point on the canvas (mostly for debugging purposes).
-- `renderAt` and `renderRotated`: if you are directly rendering to the `Canvas`, you can use these
-  functions to easily manipulate coordinates to render things on the correct places. They change the
-  `Canvas` transformation matrix but reset afterwards.
+- `scaleVector`: `canvas scale` 메서드와 같지만, `Vector2`를 인자로 받습니다.
+- `translateVector`: `canvas translate` 메서드와 같지만, `Vector2`를 인자로 받습니다.
+- `renderPoint`: 캔버스에 점 하나를 렌더링합니다(주로 디버깅 용도).
+- `renderAt`과 `renderRotated`: `Canvas`에 직접 렌더링하는 경우, 이 함수들을 사용해 좌표를 쉽게
+  조작하여 올바른 위치에 렌더링할 수 있습니다. `Canvas`의 변환 행렬을 변경하지만 이후에 다시
+  되돌립니다.
 
 
 ### Color
 
-Methods:
+메서드:
 
-- `darken`: Darken the shade of the color by an amount between 0 to 1.
-- `brighten`: Brighten the shade of the color by an amount between 0 to 1.
+- `darken`: 0에서 1 사이의 값만큼 색을 어둡게 합니다.
+- `brighten`: 0에서 1 사이의 값만큼 색을 밝게 합니다.
 
-Factories:
+팩토리:
 
-- `ColorExtension.fromRGBHexString`: Parses an RGB color from a valid hex string (e.g. #1C1C1C).
-- `ColorExtension.fromARGBHexString`: Parses an ARGB color from a valid hex string (e.g. #FF1C1C1C).
+- `ColorExtension.fromRGBHexString`: 유효한 16진수 문자열(예: #1C1C1C)에서 RGB 색을 파싱합니다.
+- `ColorExtension.fromARGBHexString`: 유효한 16진수 문자열(예: #FF1C1C1C)에서 ARGB 색을 파싱합니다.
 
 
 ### Image
 
-Methods:
+메서드:
 
-- `pixelsInUint8`: Retrieves the pixel data as a `Uint8List`, in the `ImageByteFormat.rawRgba`
- pixel format, for the image.
-- `getBoundingRect`: Get the bounding rectangle of the `Image` as a `Rect`.
-- `size`: The size of an `Image` as `Vector2`.
-- `darken`: Darken each pixel of the `Image` by an amount between 0 to 1.
-- `brighten`: Brighten each pixel of the `Image` by an amount between 0 to 1.
+- `pixelsInUint8`: 이미지의 픽셀 데이터를 `ImageByteFormat.rawRgba` 픽셀 형식의 `Uint8List`로
+ 가져옵니다.
+- `getBoundingRect`: `Image`의 경계 사각형을 `Rect`로 가져옵니다.
+- `size`: `Image`의 크기를 `Vector2`로 나타냅니다.
+- `darken`: 0에서 1 사이의 값만큼 `Image`의 각 픽셀을 어둡게 합니다.
+- `brighten`: 0에서 1 사이의 값만큼 `Image`의 각 픽셀을 밝게 합니다.
 
 
 ### Offset
 
-Methods;
+메서드:
 
-- `toVector2`; Creates an `Vector2` from the `Offset`.
-- `toSize`: Creates a `Size` from the `Offset`.
-- `toPoint`: Creates a `Point` from the `Offset`.
-- `toRect`: Creates a `Rect` starting in (0,0) and its bottom right corner is the [Offset].
+- `toVector2`: `Offset`에서 `Vector2`를 생성합니다.
+- `toSize`: `Offset`에서 `Size`를 생성합니다.
+- `toPoint`: `Offset`에서 `Point`를 생성합니다.
+- `toRect`: (0,0)에서 시작하고 오른쪽 아래 모서리가 [Offset]인 `Rect`를 생성합니다.
 
 
 ### Rect
 
-Methods:
+메서드:
 
-- `toOffset`: Creates an `Offset` from the `Rect`.
-- `toVector2`: Creates a `Vector2` starting in (0,0) and goes to the size of the `Rect`.
-- `containsPoint` Whether this `Rect` contains a `Vector2` point or not.
-- `intersectsSegment`; Whether the segment formed by two `Vector2`s intersects this `Rect`.
-- `intersectsLineSegment`: Whether the `LineSegment` intersects the `Rect`.
-- `toVertices`: Turns the four corners of the `Rect` into a list of `Vector2`.
-- `toFlameRectangle`: Converts this `Rect` into a Flame `Rectangle`.
-- `toMathRectangle`: Converts this `Rect` into a `math.Rectangle`.
-- `toGeometryRectangle`: Converts this `Rect` into a `Rectangle` from flame-geom.
-- `transform`: Transforms the `Rect` using a `Matrix4`.
+- `toOffset`: `Rect`에서 `Offset`을 생성합니다.
+- `toVector2`: (0,0)에서 시작하여 `Rect`의 크기까지 이어지는 `Vector2`를 생성합니다.
+- `containsPoint`: 이 `Rect`가 `Vector2` 점을 포함하는지 여부를 반환합니다.
+- `intersectsSegment`: 두 `Vector2`로 이루어진 선분이 이 `Rect`와 교차하는지 여부를 반환합니다.
+- `intersectsLineSegment`: `LineSegment`가 `Rect`와 교차하는지 여부를 반환합니다.
+- `toVertices`: `Rect`의 네 모서리를 `Vector2` 리스트로 변환합니다.
+- `toFlameRectangle`: 이 `Rect`를 Flame `Rectangle`로 변환합니다.
+- `toMathRectangle`: 이 `Rect`를 `math.Rectangle`로 변환합니다.
+- `toGeometryRectangle`: 이 `Rect`를 flame-geom의 `Rectangle`로 변환합니다.
+- `transform`: `Matrix4`를 사용해 `Rect`를 변환합니다.
 
-Factories:
+팩토리:
 
-- `RectExtension.getBounds`: Construct a `Rect` that represents the bounds of a list of `Vector2`s.
-- `RectExtension.fromCenter`: Construct a `Rect` from a center point (using `Vector2`).
+- `RectExtension.getBounds`: `Vector2` 리스트의 경계를 나타내는 `Rect`를 생성합니다.
+- `RectExtension.fromCenter`: 중심점(`Vector2` 사용)으로부터 `Rect`를 생성합니다.
 
 
 ### math.Rectangle
 
-Methods:
+메서드:
 
-- `toRect`: Converts this math `Rectangle` into an ui `Rect`.
+- `toRect`: 이 math `Rectangle`을 ui `Rect`로 변환합니다.
 
 
 ### Size
 
-Methods:
+메서드:
 
-- `toVector2`; Creates an `Vector2` from the `Size`.
-- `toOffset`: Creates a `Offset` from the `Size`.
-- `toPoint`: Creates a `Point` from the `Size`.
-- `toRect`: Creates a `Rect` starting in (0,0) with the size of `Size`.
+- `toVector2`: `Size`에서 `Vector2`를 생성합니다.
+- `toOffset`: `Size`에서 `Offset`을 생성합니다.
+- `toPoint`: `Size`에서 `Point`를 생성합니다.
+- `toRect`: (0,0)에서 시작하고 크기가 `Size`인 `Rect`를 생성합니다.
 
 
 ### Vector2
 
-This class comes from the `vector_math` package and we have some useful extension methods on top of
-what is offered by that package.
+이 클래스는 `vector_math` 패키지에서 제공되며, Flame은 그 패키지가 제공하는 기능 위에 몇 가지 유용한
+확장 메서드를 추가했습니다.
 
-Methods:
+메서드:
 
-- `toOffset`: Creates a `Offset` from the `Vector2`.
-- `toPoint`: Creates a `Point` from the `Vector2`.
-- `toRect`: Creates a `Rect` starting in (0,0) with the size of `Vector2`.
-- `toPositionedRect`: Creates a `Rect` starting from [x, y] in the `Vector2` and has the size of
-  the `Vector2` argument.
-- `lerp`: Linearly interpolates the `Vector2` towards another Vector2.
-- `rotate`: Rotates the `Vector2` with an angle specified in radians, it rotates around the
-  optionally defined `Vector2`, otherwise around the center.
-- `scaleTo`: Changes the length of the `Vector2` to the length provided, without changing
-  direction.
-- `moveToTarget`: Smoothly moves a Vector2 in the target direction by a given distance.
+- `toOffset`: `Vector2`에서 `Offset`을 생성합니다.
+- `toPoint`: `Vector2`에서 `Point`를 생성합니다.
+- `toRect`: (0,0)에서 시작하고 크기가 `Vector2`인 `Rect`를 생성합니다.
+- `toPositionedRect`: `Vector2`의 [x, y]에서 시작하고 크기가 `Vector2` 인자인 `Rect`를
+  생성합니다.
+- `lerp`: `Vector2`를 다른 Vector2 쪽으로 선형 보간합니다.
+- `rotate`: `Vector2`를 라디안으로 지정한 각도만큼 회전합니다. 선택적으로 지정한 `Vector2`를
+  중심으로 회전하며, 지정하지 않으면 원점을 중심으로 회전합니다.
+- `scaleTo`: 방향은 바꾸지 않고 `Vector2`의 길이를 주어진 길이로 변경합니다.
+- `moveToTarget`: Vector2를 목표 방향으로 주어진 거리만큼 부드럽게 이동합니다.
 
-Factories:
+팩토리:
 
-- `Vector2Extension.fromInts`: Create a `Vector2` with ints as input.
+- `Vector2Extension.fromInts`: int 값을 입력으로 받아 `Vector2`를 생성합니다.
 
-Operators:
+연산자:
 
-- `&`: Combines two `Vector2`s to form a Rect, the origin should be on the left and the size on the
-  right.
-- `%`: Modulo/Remainder of x and y separately of two `Vector2`s.
+- `&`: 두 `Vector2`를 결합하여 Rect를 만듭니다. 원점은 왼쪽에, 크기는 오른쪽에 두어야 합니다.
+- `%`: 두 `Vector2`의 x와 y 각각에 대한 모듈로/나머지를 구합니다.
 
 
 ### Matrix4
 
-This class comes from the `vector_math` package. We have created a few extension methods on top
-of what is already offered by `vector_math`.
+이 클래스는 `vector_math` 패키지에서 제공됩니다. Flame은 `vector_math`가 이미 제공하는 기능 위에 몇
+가지 확장 메서드를 추가했습니다.
 
-Methods:
+메서드:
 
-- `translate2`: Translate the `Matrix4` by the given `Vector2`.
-- `transform2`: Create a new `Vector2` by transforming the given `Vector2` using the `Matrix4`.
-- `transformed2`: Transform the input `Vector2` into the output `Vector2`.
+- `translate2`: 주어진 `Vector2`만큼 `Matrix4`를 평행 이동합니다.
+- `transform2`: `Matrix4`를 사용해 주어진 `Vector2`를 변환한 새 `Vector2`를 생성합니다.
+- `transformed2`: 입력 `Vector2`를 변환하여 출력 `Vector2`에 담습니다.
 
-Getters:
+게터:
 
-- `m11`: The first row and first column.
-- `m12`: The first row and second column.
-- `m13`: The first row and third column.
-- `m14`: The first row and fourth column.
-- `m21`: The second row and first column.
-- `m22`: The second row and second column.
-- `m23`: The second row and third column.
-- `m24`: The second row and fourth column.
-- `m31`: The third row and first column.
-- `m32`: The third row and second column.
-- `m33`: The third row and third column.
-- `m34`: The third row and fourth column.
-- `m41`: The fourth row and first column.
-- `m42`: The fourth row and second column.
-- `m43`: The fourth row and third column.
-- `m44`: The fourth row and fourth column.
+- `m11`: 첫 번째 행, 첫 번째 열.
+- `m12`: 첫 번째 행, 두 번째 열.
+- `m13`: 첫 번째 행, 세 번째 열.
+- `m14`: 첫 번째 행, 네 번째 열.
+- `m21`: 두 번째 행, 첫 번째 열.
+- `m22`: 두 번째 행, 두 번째 열.
+- `m23`: 두 번째 행, 세 번째 열.
+- `m24`: 두 번째 행, 네 번째 열.
+- `m31`: 세 번째 행, 첫 번째 열.
+- `m32`: 세 번째 행, 두 번째 열.
+- `m33`: 세 번째 행, 세 번째 열.
+- `m34`: 세 번째 행, 네 번째 열.
+- `m41`: 네 번째 행, 첫 번째 열.
+- `m42`: 네 번째 행, 두 번째 열.
+- `m43`: 네 번째 행, 세 번째 열.
+- `m44`: 네 번째 행, 네 번째 열.
 
-Factories:
+팩토리:
 
-- `Matrix4Extension.scale`: Create a scaled `Matrix4`. Either by passing a `Vector4` or `Vector2`
-   as it's first argument, or by passing x y z doubles.
+- `Matrix4Extension.scale`: 스케일된 `Matrix4`를 생성합니다. 첫 번째 인자로 `Vector4` 또는
+   `Vector2`를 넘기거나, x y z double 값을 넘겨서 생성할 수 있습니다.

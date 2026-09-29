@@ -1,20 +1,24 @@
-# Joints
+<a id="joints"></a>
 
-Joints are used to connect two different bodies together in various ways.
-They help to simulate interactions between objects to create hinges, wheels, ropes, chains etc.
+# 조인트
 
-One `Body` in a joint may be of type `BodyType.static`. Joints between `BodyType.static` and/or
-`BodyType.kinematic` are allowed, but have no effect and use some processing time.
+조인트는 서로 다른 두 바디를 다양한 방식으로 연결하는 데 사용합니다.
+조인트는 객체 간의 상호작용을 시뮬레이션해 경첩, 바퀴, 로프, 체인 등을 만드는 데 도움이 됩니다.
 
-To construct a `Joint`, you create the corresponding subclass of `JointDef` with its parameters,
-and pass it to the typed creator method on the physics world, for example
-`world.physicsWorld.createRevoluteJoint(revoluteJointDef)`. The creator returns the typed joint,
-and when you want to remove a joint you call `joint.destroy()`.
+조인트의 `Body` 중 하나는 `BodyType.static` 타입일 수 있습니다. `BodyType.static` 및/또는
+`BodyType.kinematic` 사이의 조인트도 허용되지만, 아무 효과가 없으면서 처리 시간을 소모합니다.
+
+`Joint`를 생성하려면 해당하는 `JointDef` 하위 클래스를 파라미터와 함께 만들고,
+물리 월드의 타입별 생성 메서드에 전달합니다. 예를 들면
+`world.physicsWorld.createRevoluteJoint(revoluteJointDef)`와 같습니다. 생성 메서드는 해당 타입의 조인트를 반환하며,
+조인트를 제거하려면 `joint.destroy()`를 호출합니다.
 
 
-## Built-in joints
+<a id="built-in-joints"></a>
 
-Currently, Forge2D supports the following joints:
+## 기본 제공 조인트
+
+현재 Forge2D는 다음 조인트를 지원합니다.
 
 - [`DistanceJoint`](#distancejoint)
 - [`FilterJoint`](#filterjoint)
@@ -25,17 +29,17 @@ Currently, Forge2D supports the following joints:
 - [`WeldJoint`](#weldjoint)
 - [`WheelJoint`](#wheeljoint)
 
-The gear, pulley, rope, friction, and constant-volume joints from older Forge2D versions do not
-exist in Box2D v3, and therefore no longer exist in Forge2D.
+이전 Forge2D 버전에 있던 gear, pulley, rope, friction, constant-volume 조인트는 Box2D v3에
+존재하지 않으므로 Forge2D에서도 더 이상 존재하지 않습니다.
 
 
 ### `DistanceJoint`
 
-A `DistanceJoint` constrains two points on two bodies to remain at a fixed distance from each
-other.
+`DistanceJoint`는 두 바디 위의 두 점이 서로 고정된 거리를 유지하도록
+제약합니다.
 
-You can view this as a massless, rigid rod, and by enabling its spring it can also act as a
-spring/damper.
+질량이 없는 단단한 막대라고 생각할 수 있으며, 스프링을 활성화하면
+스프링/댐퍼 역할도 할 수 있습니다.
 
 ```dart
 world.physicsWorld.createDistanceJoint(
@@ -57,31 +61,31 @@ world.physicsWorld.createDistanceJoint(
 :show: code popup
 ```
 
-The most commonly used `DistanceJointDef` parameters:
+가장 많이 사용되는 `DistanceJointDef` 파라미터는 다음과 같습니다.
 
-- `localAnchorA`, `localAnchorB`: The anchor points relative to each body's origin.
+- `localAnchorA`, `localAnchorB`: 각 바디의 원점을 기준으로 한 앵커 점입니다.
 
-- `length`: This parameter determines the distance between the two anchor points and must be
-greater than 0. The default value is 1.
+- `length`: 두 앵커 점 사이의 거리를 결정하며 0보다
+커야 합니다. 기본값은 1입니다.
 
-- `enableSpring`, `hertz`, `dampingRatio`: When the spring is enabled the rod becomes soft; the
-higher the `hertz` value the stiffer the spring, and the `dampingRatio` defines how quickly the
-oscillation comes to rest, where 0 means no damping and 1 indicates critical damping.
+- `enableSpring`, `hertz`, `dampingRatio`: 스프링을 활성화하면 막대가 부드러워집니다.
+`hertz` 값이 높을수록 스프링이 단단해지며, `dampingRatio`는 진동이 얼마나 빨리 멈추는지를 정의합니다.
+0은 감쇠 없음, 1은 임계 감쇠를 의미합니다.
 
-- `enableLimit`, `minLength`, `maxLength`: Restricts the distance between the bodies to a range
-when the spring is enabled.
+- `enableLimit`, `minLength`, `maxLength`: 스프링이 활성화되어 있을 때 바디 사이의 거리를 일정 범위로
+제한합니다.
 
-- `enableMotor`, `motorSpeed`, `maxMotorForce`: Drives the distance between the bodies.
+- `enableMotor`, `motorSpeed`, `maxMotorForce`: 바디 사이의 거리를 구동합니다.
 
 ```{warning}
-Do not use a zero or short length.
+길이를 0이나 짧은 값으로 사용하지 마세요.
 ```
 
 
 ### `FilterJoint`
 
-A `FilterJoint` doesn't constrain the bodies at all; its only purpose is to disable all collision
-between the two connected bodies.
+`FilterJoint`는 바디를 전혀 제약하지 않습니다. 유일한 목적은 연결된 두 바디 사이의
+모든 충돌을 비활성화하는 것입니다.
 
 ```dart
 world.physicsWorld.createFilterJoint(
@@ -92,14 +96,14 @@ world.physicsWorld.createFilterJoint(
 
 ### `MotorJoint`
 
-A `MotorJoint` is used to control the relative motion between two bodies. A typical usage is to
-control the movement of a dynamic body with respect to the fixed point, for example to create
-animations.
+`MotorJoint`는 두 바디 사이의 상대적인 움직임을 제어하는 데 사용합니다. 일반적인 용도는
+고정된 점을 기준으로 동적 바디의 움직임을 제어하는 것으로, 예를 들어 애니메이션을 만들 때
+사용합니다.
 
-A `MotorJoint` lets you control the motion of a body by specifying target position and rotation
-offsets. You can set the maximum motor force and torque that will be applied to reach the target
-position and rotation. If the body is blocked, it will stop and the contact forces will be
-proportional the maximum motor force and torque.
+`MotorJoint`를 사용하면 목표 위치와 회전 오프셋을 지정해 바디의 움직임을 제어할 수 있습니다.
+목표 위치와 회전에 도달하기 위해 적용할 최대 모터 힘과 토크를 설정할 수 있습니다. 바디가 막히면
+멈추며, 접촉 힘은 최대 모터 힘과 토크에
+비례합니다.
 
 ```dart
 final motorJoint = world.physicsWorld.createMotorJoint(
@@ -120,26 +124,26 @@ final motorJoint = world.physicsWorld.createMotorJoint(
 :show: code popup
 ```
 
-A `MotorJointDef` has these optional tuning parameters:
+`MotorJointDef`에는 다음과 같은 선택적 조정 파라미터가 있습니다.
 
-- `maxForce`: the maximum translational force which will be applied to the joined body to reach the
-target position.
+- `maxForce`: 목표 위치에 도달하기 위해 연결된 바디에 적용할 최대 병진
+힘입니다.
 
-- `maxTorque`: the maximum angular force which will be applied to the joined body to reach the
-target rotation.
+- `maxTorque`: 목표 회전에 도달하기 위해 연결된 바디에 적용할 최대 회전
+힘입니다.
 
-- `correctionFactor`: position correction factor in range [0, 1]. It adjusts the joint's response to
-deviation from target position. A higher value makes the joint respond faster, while a lower value
-makes it respond slower. If the value is set too high, the joint may overcompensate and oscillate,
-becoming unstable. If set too low, it may respond too slowly.
+- `correctionFactor`: [0, 1] 범위의 위치 보정 계수입니다. 목표 위치에서 벗어났을 때 조인트가 반응하는
+정도를 조정합니다. 값이 높을수록 조인트가 더 빠르게 반응하고, 값이 낮을수록
+더 느리게 반응합니다. 값을 너무 높게 설정하면 조인트가 과도하게 보정하며 진동해
+불안정해질 수 있습니다. 너무 낮게 설정하면 반응이 너무 느릴 수 있습니다.
 
-The linear and angular offsets are the target distance and angle that the bodies should achieve
-relative to each other's position and rotation. They can be passed to the `MotorJointDef` as
-`linearOffset` and `angularOffset`, or changed later through the setters with the same names on
-the `MotorJoint`.
+선형 오프셋과 각 오프셋은 바디들이 서로의 위치와 회전을 기준으로 도달해야 하는 목표 거리와
+각도입니다. `MotorJointDef`에 `linearOffset`과 `angularOffset`으로 전달하거나,
+나중에 `MotorJoint`의 같은 이름의 setter로
+변경할 수 있습니다.
 
-For example, this code increments the angular offset of the joint every update cycle, causing the
-body to rotate.
+예를 들어 다음 코드는 매 업데이트 주기마다 조인트의 각 오프셋을 증가시켜
+바디를 회전시킵니다.
 
 ```dart
 @override
@@ -153,20 +157,20 @@ void update(double dt) {
 
 ### `MouseJoint`
 
-The `MouseJoint` is used to manipulate bodies with the mouse. It attempts to drive a point on a body
-towards the current position of the cursor. There is no restriction on rotation.
+`MouseJoint`는 마우스로 바디를 조작하는 데 사용합니다. 바디 위의 한 점을 커서의 현재 위치로
+끌어가려고 합니다. 회전에는 제한이 없습니다.
 
-The `MouseJoint` definition has a target point, maximum force, hertz, and damping ratio. The
-target point initially coincides with the body's anchor point. The maximum force is used to prevent
-violent reactions when multiple dynamic bodies interact. You can make this as large as you like.
-The hertz and damping ratio are used to create a spring/damper effect similar to the distance
-joint.
+`MouseJoint` 정의에는 목표 점, 최대 힘, hertz, 감쇠 비율이 있습니다.
+목표 점은 처음에 바디의 앵커 점과 일치합니다. 최대 힘은 여러 동적 바디가 상호작용할 때
+격렬한 반응을 막기 위해 사용합니다. 원하는 만큼 크게 설정해도 됩니다.
+hertz와 감쇠 비율은 distance 조인트와 비슷한 스프링/댐퍼 효과를 만드는 데
+사용합니다.
 
 ```{warning}
-Many users have tried to adapt the mouse joint for game play. Users often want
-to achieve precise positioning and instantaneous response. The mouse joint 
-doesn't work very well in that context. You may wish to consider using 
-kinematic bodies instead.
+많은 사용자가 mouse 조인트를 게임 플레이에 맞게 활용하려고 시도했습니다. 사용자들은
+보통 정밀한 위치 지정과 즉각적인 반응을 원합니다. mouse 조인트는
+그런 상황에서 잘 동작하지 않습니다. 대신 kinematic 바디를
+사용하는 것을 고려해 보세요.
 ```
 
 ```dart
@@ -189,38 +193,38 @@ final mouseJoint = world.physicsWorld.createMouseJoint(
 :show: code popup
 ```
 
-- `maxForce`: This parameter defines the maximum constraint force that can be exerted to move the
-  candidate body. Usually you will express as some multiple of the weight
-  (multiplier *mass* gravity).
+- `maxForce`: 대상 바디를 움직이기 위해 가할 수 있는 최대 제약 힘을
+  정의합니다. 보통 무게의 배수로 표현합니다
+  (배수 *질량* 중력).
 
-- `dampingRatio`: This parameter defines how quickly the oscillation comes to rest. It ranges from
-  0 to 1, where 0 means no damping and 1 indicates critical damping.
+- `dampingRatio`: 진동이 얼마나 빨리 멈추는지를 정의합니다. 범위는
+  0에서 1까지이며, 0은 감쇠 없음, 1은 임계 감쇠를 의미합니다.
 
-- `hertz`: This parameter defines the response speed of the body, i.e. how quickly it tries to
-  reach the target position
+- `hertz`: 바디의 반응 속도, 즉 목표 위치에 얼마나 빨리 도달하려고 하는지를
+  정의합니다.
 
-- `target`: The initial world target point. This is assumed to coincide with the body anchor
-  initially. While dragging you update it through the `target` setter,
+- `target`: 초기 월드 목표 점입니다. 처음에는 바디 앵커와 일치한다고
+  가정합니다. 드래그하는 동안에는 `target` setter를 통해 업데이트합니다.
   `mouseJoint.target = newPosition;`.
 
 
 ### `PrismaticJoint`
 
-The `PrismaticJoint` provides a single degree of freedom, allowing for a relative translation of two
-bodies along an axis fixed in bodyA. Relative rotation is prevented.
+`PrismaticJoint`는 하나의 자유도를 제공하며, bodyA에 고정된 축을 따라 두 바디가 상대적으로
+평행 이동할 수 있게 합니다. 상대적인 회전은 막힙니다.
 
-`PrismaticJointDef` requires defining a line of motion using a local axis and anchor points.
-The definition uses local anchor points and a local axis so that the initial configuration
-can violate the constraint slightly.
+`PrismaticJointDef`는 로컬 축과 앵커 점을 사용해 운동 직선을 정의해야 합니다.
+정의에서 로컬 앵커 점과 로컬 축을 사용하므로 초기 구성이 제약 조건을
+약간 벗어나도 됩니다.
 
-The joint translation is zero when the local anchor points coincide in world space.
+로컬 앵커 점들이 월드 공간에서 일치할 때 조인트의 평행 이동 값은 0입니다.
 
 ```{warning}
-At least one body should be dynamic with a non-fixed rotation.
+적어도 하나의 바디는 회전이 고정되지 않은 동적 바디여야 합니다.
 ```
 
-The `PrismaticJoint` definition is similar to the [`RevoluteJoint`](#revolutejoint) definition, but
-instead of rotation, it uses translation.
+`PrismaticJoint` 정의는 [`RevoluteJoint`](#revolutejoint) 정의와 비슷하지만,
+회전 대신 평행 이동을 사용합니다.
 
 ```dart
 final prismaticJoint = world.physicsWorld.createPrismaticJoint(
@@ -239,15 +243,17 @@ final prismaticJoint = world.physicsWorld.createPrismaticJoint(
 :show: code popup
 ```
 
-- `bodyA`, `bodyB`: Bodies connected by the joint.
-- `localAnchorA`, `localAnchorB`: The anchor points relative to each body's origin.
-- `localAxisA`: The translation axis in bodyA's frame, along which the translation will be fixed.
+- `bodyA`, `bodyB`: 조인트로 연결되는 바디입니다.
+- `localAnchorA`, `localAnchorB`: 각 바디의 원점을 기준으로 한 앵커 점입니다.
+- `localAxisA`: bodyA 프레임에서의 평행 이동 축으로, 이 축을 따라 평행 이동이 고정됩니다.
 
 
-#### Prismatic Joint Limit
+<a id="prismatic-joint-limit"></a>
 
-You can limit the relative translation with a joint limit that specifies a lower and upper
-translation.
+#### Prismatic Joint 제한
+
+하한과 상한 평행 이동 값을 지정하는 조인트 제한으로 상대적인 평행 이동을
+제한할 수 있습니다.
 
 ```dart
 PrismaticJointDef(
@@ -258,21 +264,23 @@ PrismaticJointDef(
 );
 ```
 
-- `enableLimit`: Set to true to enable translation limits
-- `lowerTranslation`: The lower translation limit in meters
-- `upperTranslation`: The upper translation limit in meters
+- `enableLimit`: 평행 이동 제한을 활성화하려면 true로 설정합니다
+- `lowerTranslation`: 미터 단위의 평행 이동 하한입니다
+- `upperTranslation`: 미터 단위의 평행 이동 상한입니다
 
-You change the limits after the joint was created with this method:
+조인트를 생성한 후에는 다음 메서드로 제한을 변경할 수 있습니다.
 
 ```dart
 prismaticJoint.setLimits(lower: -10, upper: 10);
 ```
 
 
-#### Prismatic Joint Motor
+<a id="prismatic-joint-motor"></a>
 
-You can use a motor to drive the motion or to model joint friction. A maximum motor force is
-provided so that infinite forces are not generated.
+#### Prismatic Joint 모터
+
+모터를 사용해 움직임을 구동하거나 조인트 마찰을 모델링할 수 있습니다. 무한한 힘이 생성되지 않도록
+최대 모터 힘이 제공됩니다.
 
 ```dart
 PrismaticJointDef(
@@ -283,18 +291,18 @@ PrismaticJointDef(
 );
 ```
 
-- `enableMotor`: Set to true to enable the motor
-- `motorSpeed`: The desired motor speed in meters per second
-- `maxMotorForce`: The maximum motor force used to achieve the desired motor speed in N.
+- `enableMotor`: 모터를 활성화하려면 true로 설정합니다
+- `motorSpeed`: 초당 미터 단위의 목표 모터 속도입니다
+- `maxMotorForce`: 목표 모터 속도에 도달하는 데 사용하는 N 단위의 최대 모터 힘입니다.
 
-You change the motor's speed and force after the joint was created using these setters:
+조인트를 생성한 후에는 다음 setter로 모터의 속도와 힘을 변경할 수 있습니다.
 
 ```dart
 prismaticJoint.motorSpeed = 2;
 prismaticJoint.maxMotorForce = 200;
 ```
 
-Also, you can get the joint translation and speed using the following getters:
+또한 다음 getter로 조인트의 평행 이동 값과 속도를 가져올 수 있습니다.
 
 ```dart
 prismaticJoint.translation;
@@ -304,12 +312,12 @@ prismaticJoint.speed;
 
 ### `RevoluteJoint`
 
-A `RevoluteJoint` forces two bodies to share a common anchor point, often called a hinge point.
-The revolute joint has a single degree of freedom: the relative rotation of the two bodies.
+`RevoluteJoint`는 두 바디가 흔히 경첩 점이라고 부르는 공통 앵커 점을 공유하도록 강제합니다.
+revolute 조인트는 두 바디의 상대적인 회전이라는 하나의 자유도를 가집니다.
 
-To create a `RevoluteJoint`, provide two bodies and the local anchor points that coincide at the
-hinge point. The definition uses local anchor points so that the initial configuration can violate
-the constraint slightly.
+`RevoluteJoint`를 만들려면 두 바디와 경첩 점에서 일치하는 로컬 앵커 점을 제공합니다.
+정의에서 로컬 앵커 점을 사용하므로 초기 구성이 제약 조건을
+약간 벗어나도 됩니다.
 
 ```dart
 final revoluteJoint = world.physicsWorld.createRevoluteJoint(
@@ -329,13 +337,15 @@ final revoluteJoint = world.physicsWorld.createRevoluteJoint(
 :show: code popup
 ```
 
-In some cases you might wish to control the joint angle. For this, the `RevoluteJointDef` has
-optional parameters that allow you to simulate a joint limit and/or a motor.
+경우에 따라 조인트 각도를 제어하고 싶을 수 있습니다. 이를 위해 `RevoluteJointDef`에는
+조인트 제한 및/또는 모터를 시뮬레이션할 수 있는 선택적 파라미터가 있습니다.
 
 
-#### Revolute Joint Limit
+<a id="revolute-joint-limit"></a>
 
-You can limit the relative rotation with a joint limit that specifies a lower and upper angle.
+#### Revolute Joint 제한
+
+하한과 상한 각도를 지정하는 조인트 제한으로 상대적인 회전을 제한할 수 있습니다.
 
 ```dart
 RevoluteJointDef(
@@ -346,21 +356,23 @@ RevoluteJointDef(
 );
 ```
 
-- `enableLimit`: Set to true to enable angle limits
-- `lowerAngle`: The lower angle in radians
-- `upperAngle`: The upper angle in radians
+- `enableLimit`: 각도 제한을 활성화하려면 true로 설정합니다
+- `lowerAngle`: 라디안 단위의 하한 각도입니다
+- `upperAngle`: 라디안 단위의 상한 각도입니다
 
-You change the limits after the joint was created with this method:
+조인트를 생성한 후에는 다음 메서드로 제한을 변경할 수 있습니다.
 
 ```dart
 revoluteJoint.setLimits(lower: 0, upper: pi);
 ```
 
 
-#### Revolute Joint Motor
+<a id="revolute-joint-motor"></a>
 
-You can use a motor to drive the relative rotation about the shared point. A maximum motor torque is
-provided so that infinite forces are not generated.
+#### Revolute Joint 모터
+
+모터를 사용해 공유 점을 중심으로 한 상대적인 회전을 구동할 수 있습니다. 무한한 힘이 생성되지 않도록
+최대 모터 토크가 제공됩니다.
 
 ```dart
 RevoluteJointDef(
@@ -371,18 +383,18 @@ RevoluteJointDef(
 );
 ```
 
-- `enableMotor`: Set to true to enable the motor
-- `motorSpeed`: The desired motor speed in radians per second
-- `maxMotorTorque`: The maximum motor torque used to achieve the desired motor speed in N-m.
+- `enableMotor`: 모터를 활성화하려면 true로 설정합니다
+- `motorSpeed`: 초당 라디안 단위의 목표 모터 속도입니다
+- `maxMotorTorque`: 목표 모터 속도에 도달하는 데 사용하는 N-m 단위의 최대 모터 토크입니다.
 
-You change the motor's speed and torque after the joint was created using these setters:
+조인트를 생성한 후에는 다음 setter로 모터의 속도와 토크를 변경할 수 있습니다.
 
 ```dart
 revoluteJoint.motorSpeed = 2;
 revoluteJoint.maxMotorTorque = 200;
 ```
 
-Also, you can get the current joint angle:
+또한 현재 조인트 각도를 가져올 수 있습니다.
 
 ```dart
 revoluteJoint.angle;
@@ -391,11 +403,11 @@ revoluteJoint.angle;
 
 ### `WeldJoint`
 
-A `WeldJoint` is used to restrict all relative motion between two bodies, effectively joining them
-together.
+`WeldJoint`는 두 바디 사이의 모든 상대적인 움직임을 제한해 사실상 두 바디를 하나로
+붙이는 데 사용합니다.
 
-`WeldJointDef` requires two bodies that will be connected, and the local anchor points that
-coincide at the weld point:
+`WeldJointDef`에는 연결할 두 바디와 용접 점에서 일치하는 로컬 앵커 점이
+필요합니다.
 
 ```dart
 world.physicsWorld.createWeldJoint(
@@ -415,27 +427,29 @@ world.physicsWorld.createWeldJoint(
 :show: code popup
 ```
 
-- `bodyA`, `bodyB`: Two bodies that will be connected
+- `bodyA`, `bodyB`: 연결할 두 바디입니다
 
-- `localAnchorA`, `localAnchorB`: Anchor points relative to each body's origin, at which the two
-  bodies will be welded together
+- `localAnchorA`, `localAnchorB`: 각 바디의 원점을 기준으로 한 앵커 점으로, 이 점에서 두
+  바디가 용접됩니다
 
-The weld can also be made springy with the `linearHertz`, `angularHertz`, `linearDampingRatio`
-and `angularDampingRatio` parameters.
+`linearHertz`, `angularHertz`, `linearDampingRatio`, `angularDampingRatio` 파라미터로
+용접 부위에 탄성을 줄 수도 있습니다.
 
 
-#### Breakable Bodies and WeldJoint
+<a id="breakable-bodies-and-weldjoint"></a>
 
-Since the Forge2D constraint solver is iterative, joints are somewhat flexible. This means that the
-bodies connected by a WeldJoint may bend slightly. If you want to simulate a breakable body, it's
-better to create a single body with multiple shapes. When the body breaks, you can destroy a
-shape and recreate it on a new body instead of relying on a `WeldJoint`.
+#### 부서지는 바디와 WeldJoint
+
+Forge2D의 제약 솔버는 반복적으로 동작하므로 조인트에는 어느 정도 유연성이 있습니다. 즉,
+WeldJoint로 연결된 바디가 약간 휘어질 수 있습니다. 부서지는 바디를 시뮬레이션하려면
+여러 도형을 가진 하나의 바디를 만드는 것이 더 좋습니다. 바디가 부서질 때 `WeldJoint`에 의존하는 대신
+도형을 파괴하고 새 바디에 다시 생성하면 됩니다.
 
 
 ### `WheelJoint`
 
-A `WheelJoint` provides two degrees of freedom: translation along a spring-loaded axis fixed in
-bodyA, and rotation of bodyB. It is designed for vehicle suspensions.
+`WheelJoint`는 두 개의 자유도를 제공합니다. 하나는 bodyA에 고정된 스프링 축을 따른 평행 이동이고,
+다른 하나는 bodyB의 회전입니다. 차량 서스펜션용으로 설계되었습니다.
 
 ```dart
 world.physicsWorld.createWheelJoint(
@@ -453,7 +467,7 @@ world.physicsWorld.createWheelJoint(
 );
 ```
 
-- `localAxisA`: The suspension axis in bodyA's frame.
-- `enableSpring`, `hertz`, `dampingRatio`: The suspension spring configuration.
-- `enableLimit`, `lowerTranslation`, `upperTranslation`: Limits the suspension travel.
-- `enableMotor`, `motorSpeed`, `maxMotorTorque`: Drives the wheel's rotation.
+- `localAxisA`: bodyA 프레임에서의 서스펜션 축입니다.
+- `enableSpring`, `hertz`, `dampingRatio`: 서스펜션 스프링 설정입니다.
+- `enableLimit`, `lowerTranslation`, `upperTranslation`: 서스펜션 이동 범위를 제한합니다.
+- `enableMotor`, `motorSpeed`, `maxMotorTorque`: 바퀴의 회전을 구동합니다.

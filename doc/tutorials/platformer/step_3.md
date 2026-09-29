@@ -1,29 +1,33 @@
-# 3. Building the World
+<a id="3-building-the-world"></a>
+
+# 3. 월드 만들기
 
 
-## Creating Segments
+<a id="creating-segments"></a>
 
-For this world to be infinite, the best way to approach this is to create segments that can be
-reloaded over and over. To do this, we need a rough sketch of what our level segments will look
-like. I have created the following sketch to show what the segments would look like and how they can
-be repeated:
+## 세그먼트 만들기
 
-![Level Segment Sketch](../../images/tutorials/platformer/LevelSegmentSketch.jpg)
+이 월드를 무한하게 만들려면, 반복해서 다시 로드할 수 있는 세그먼트를 만드는 것이 가장 좋은 방법입니다.
+이를 위해 레벨 세그먼트가 어떻게 생겼는지 대략적인 스케치가 필요합니다. 세그먼트가 어떤 모습이고
+어떻게 반복될 수 있는지 보여 주기 위해 다음 스케치를 만들었습니다.
 
-Each segment is a 10x10 grid and each block is 64 pixels x 64 pixels. This means Ember Quest has a
-height of 640 with an infinite width. In my design, there must always be a ground
-block at the beginning and the end. Additionally, there must be at least 3 ground blocks that come
-before an enemy, including if the segment wraps to another segment. This is because the plan is to
-have the enemies traverse back and forth for 3 blocks. Now that we have a plan for the segments,
-let's create a segment manager class.
+![레벨 세그먼트 스케치](../../images/tutorials/platformer/LevelSegmentSketch.jpg)
+
+각 세그먼트는 10x10 격자이고 각 블록은 64픽셀 x 64픽셀입니다. 즉, Ember Quest는
+높이가 640이고 너비는 무한합니다. 제 디자인에서는 항상 시작과 끝에 땅(ground)
+블록이 있어야 합니다. 또한 세그먼트가 다른 세그먼트로 이어지는 경우를 포함해, 적 앞에는 최소 3개의 땅 블록이
+있어야 합니다. 적이 3블록 구간을 왔다 갔다 하도록 할 계획이기 때문입니다. 이제 세그먼트에 대한 계획이 섰으니,
+세그먼트 매니저 클래스를 만들어 봅시다.
 
 
-### Segment Manager
+<a id="segment-manager"></a>
 
-To get started, we have to understand that we will be referencing our blocks in the segment manager,
-so first create a new folder called `lib/objects`. In that folder, create 3 files called
-`ground_block.dart`, `platform_block.dart`, and `star.dart`. Those files just need basic
-boilerplate code for the class, so create the following in their respective files:
+### 세그먼트 매니저
+
+시작하려면 세그먼트 매니저에서 블록들을 참조하게 된다는 것을 이해해야 합니다.
+그러니 먼저 `lib/objects`라는 새 폴더를 만듭니다. 그 폴더 안에 `ground_block.dart`,
+`platform_block.dart`, `star.dart`라는 3개의 파일을 만듭니다. 이 파일들에는 클래스의 기본
+보일러플레이트 코드만 있으면 되므로, 각 파일에 다음을 작성합니다.
 
 ```dart
 class GroundBlock {}
@@ -33,23 +37,23 @@ class PlatformBlock {}
 class Star {}
 ```
 
-Also, create `water_enemy.dart` in the `lib/actors` folder using this boilerplate code:
+또한 `lib/actors` 폴더에 다음 보일러플레이트 코드로 `water_enemy.dart`를 만듭니다.
 
 ```dart
 class WaterEnemy {}
 ```
 
-Now we can create a file called `segment_manager.dart` which will be placed in a new folder called
-`lib/managers`. The segment manager is the heart and soul, if you will, of Ember Quest. This is
-where you can get as creative as you want. You do not have to follow my design, just remember that
-whatever you design, the segment must follow the rules outlined above. Add the following code to
-`segment_manager.dart`:
+이제 `lib/managers`라는 새 폴더에 `segment_manager.dart` 파일을 만들 수 있습니다.
+세그먼트 매니저는 말하자면 Ember Quest의 심장이자 영혼입니다. 여기서는
+원하는 만큼 창의력을 발휘할 수 있습니다. 제 디자인을 따를 필요는 없으며, 무엇을 디자인하든
+세그먼트가 위에서 설명한 규칙을 따라야 한다는 것만 기억하세요. `segment_manager.dart`에
+다음 코드를 추가합니다.
 
 ```dart
 class Block {
-  // gridPosition position is always segment based X,Y.
-  // 0,0 is the bottom left corner.
-  // 10,10 is the upper right corner.
+  // gridPosition 위치는 항상 세그먼트 기준의 X,Y입니다.
+  // 0,0은 왼쪽 아래 모서리입니다.
+  // 10,10은 오른쪽 위 모서리입니다.
   final Vector2 gridPosition;
   final Type blockType;
   Block(this.gridPosition, this.blockType);
@@ -64,20 +68,20 @@ final segment0 = [
 ];
 ```
 
-So what this does, is allows us to create segments (segment0, segment1, etc) in a list format that
-gets added to the `segments` list. The individual segments will be made up of multiple entries of the
-`Block` class. This information will allow us to translate the block position from a 10x10 grid to
-the actual pixel position in the game world. To create a segment, you need to create
-entries for each block that you wish to be rendered from the sketch.
+이 코드는 세그먼트(segment0, segment1 등)를 리스트 형식으로 만들어
+`segments` 리스트에 추가할 수 있게 해 줍니다. 개별 세그먼트는 `Block` 클래스의
+여러 항목으로 구성됩니다. 이 정보를 이용해 블록 위치를 10x10 격자에서
+게임 월드의 실제 픽셀 위치로 변환할 수 있습니다. 세그먼트를 만들려면 스케치에서
+렌더링하고 싶은 각 블록에 대한 항목을 만들어야 합니다.
 
-To understand each segment, if we start in the bottom left corner of the grid in the sketch, we see
-that we should place a `Block()` in the `segment0` list with a first parameter `gridPosition` of a
-`Vector2(0,0)` and a `blockType` of the `GroundBlock` class that we created earlier. Remember, the
-very bottom left cell is x=0 and y=0 thus the `Vector2(x,y)` is `Vector2(0,0)`.
+각 세그먼트를 이해하기 위해 스케치의 격자 왼쪽 아래 모서리에서 시작해 보면,
+`segment0` 리스트에 첫 번째 파라미터 `gridPosition`이 `Vector2(0,0)`이고
+`blockType`이 앞에서 만든 `GroundBlock` 클래스인 `Block()`을 넣어야 한다는 것을 알 수 있습니다. 기억하세요,
+가장 왼쪽 아래 칸은 x=0, y=0이므로 `Vector2(x,y)`는 `Vector2(0,0)`입니다.
 
-![Segment 0 Sketch](../../images/tutorials/platformer/Segment0Sketch.jpg)
+![세그먼트 0 스케치](../../images/tutorials/platformer/Segment0Sketch.jpg)
 
-The full segment would look like this:
+전체 세그먼트는 다음과 같습니다.
 
 ```dart
 final segment0 = [
@@ -99,7 +103,7 @@ final segment0 = [
 ];
 ```
 
-Proceed to build the remaining segments. The full segment manager should look like this:
+나머지 세그먼트도 만들어 봅니다. 전체 세그먼트 매니저는 다음과 같아야 합니다.
 
 ```dart
 import 'package:flame/components.dart';
@@ -110,9 +114,9 @@ import '../objects/platform_block.dart';
 import '../objects/star.dart';
 
 class Block {
-  // gridPosition position is always segment based X,Y.
-  // 0,0 is the bottom left corner.
-  // 10,10 is the upper right corner.
+  // gridPosition 위치는 항상 세그먼트 기준의 X,Y입니다.
+  // 0,0은 왼쪽 아래 모서리입니다.
+  // 10,10은 오른쪽 위 모서리입니다.
   final Vector2 gridPosition;
   final Type blockType;
   Block(this.gridPosition, this.blockType);
@@ -223,12 +227,14 @@ final segment4 = [
 ```
 
 
-### Loading the Segments into the World
+<a id="loading-the-segments-into-the-world"></a>
 
-Now that our segments are defined, we need to create a way to load these blocks into our world. To
-do that, we are going to start work in the `ember_quest.dart` file. We will create a `loadSegments`
-method that when given an index for the segments list, will then loop through that segment from
-our `segment_manager` and we will add the appropriate blocks later. It should look like this:
+### 세그먼트를 월드에 로드하기
+
+이제 세그먼트를 정의했으니, 이 블록들을 월드에 로드하는 방법을 만들어야 합니다.
+이를 위해 `ember_quest.dart` 파일에서 작업을 시작하겠습니다. 세그먼트 리스트의 인덱스가 주어지면
+`segment_manager`의 해당 세그먼트를 순회하는 `loadSegments` 메서드를 만들고,
+적절한 블록은 나중에 추가하겠습니다. 다음과 같아야 합니다.
 
 ```dart
 void loadGameSegments(int segmentIndex, double xPositionOffset) {
@@ -243,7 +249,7 @@ void loadGameSegments(int segmentIndex, double xPositionOffset) {
   }
 ```
 
-You will need to add the following imports if they were not auto-imported:
+자동으로 import되지 않았다면 다음 import를 추가해야 합니다.
 
 ```dart
 import 'actors/water_enemy.dart';
@@ -253,12 +259,12 @@ import 'objects/platform_block.dart';
 import 'objects/star.dart';
 ```
 
-Now we can refactor our game a bit and create an `initializeGame()` method which will call our
-`loadGameSegments` method.
+이제 게임을 조금 리팩터링해서 `loadGameSegments` 메서드를 호출하는 `initializeGame()` 메서드를
+만들 수 있습니다.
 
 ```dart
   void initializeGame() {
-    // Assume that size.x < 3200
+    // size.x < 3200이라고 가정합니다
     final segmentsToLoad = (size.x / 640).ceil();
     segmentsToLoad.clamp(0, segments.length);
 
@@ -273,15 +279,14 @@ Now we can refactor our game a bit and create an `initializeGame()` method which
   }
 ```
 
-We simply are taking the width of the game screen, divide that by 640 (10 blocks in a segment times
-64 pixels wide for each block), and round that up. As we only defined 5 segments total, we need to
-restrict that integer from 0 to the length of the segments list in case the user has a really wide
-screen. Then we simply loop through the number of `segmentsToLoad` and call `loadGameSegments` with
-the integer to load and then calculate the offset.
+단순히 게임 화면의 너비를 640(세그먼트당 블록 10개 곱하기 블록당
+너비 64픽셀)으로 나누고 올림합니다. 세그먼트는 총 5개만 정의했으므로, 사용자의 화면이 아주 넓은 경우를 대비해
+그 정수를 0부터 세그먼트 리스트의 길이까지로 제한해야 합니다. 그런 다음 `segmentsToLoad` 횟수만큼
+반복하면서 로드할 정수로 `loadGameSegments`를 호출하고 오프셋을 계산합니다.
 
-Additionally, I have moved the Ember-related code from the `onLoad` method to our new
-`initializeGame` method. This means I can now make the call in `onLoad` to `initializeGame` such
-as:
+또한 Ember 관련 코드를 `onLoad` 메서드에서 새로운 `initializeGame` 메서드로
+옮겼습니다. 이제 `onLoad`에서 다음과 같이 `initializeGame`을
+호출할 수 있습니다.
 
 ```dart
 @override
@@ -301,19 +306,20 @@ as:
   }
 ```
 
-At this point, you probably have errors for all the object classes and the enemy class, but don't
-worry, we will solve those right now.
+이 시점에서는 모든 오브젝트 클래스와 적 클래스에서 오류가 발생하겠지만, 걱정하지
+마세요. 지금 바로 해결할 것입니다.
 
 
-### The Platform Block
+<a id="the-platform-block"></a>
 
-One of the easiest blocks to start with is the Platform Block. There are two things that we need to
-develop beyond getting the sprite to be displayed; that is, we need to place it in the correct
-position and as Ember moves across the screen, we need to remove the blocks once they are off the
-screen. In Ember Quest, the player can only move forward, so this will keep the game lightweight as
-it's an infinite level.
+### 플랫폼 블록
 
-Open the `lib/objects/platform_block.dart` file and add the following code:
+시작하기 가장 쉬운 블록 중 하나는 플랫폼 블록입니다. 스프라이트를 표시하는 것 외에
+개발해야 할 것이 두 가지 있습니다. 올바른 위치에 배치해야 하고, Ember가 화면을 가로질러 이동하면서
+화면 밖으로 나간 블록을 제거해야 합니다. Ember Quest에서는 플레이어가 앞으로만 이동할 수 있으므로,
+무한 레벨인 만큼 이렇게 하면 게임을 가볍게 유지할 수 있습니다.
+
+`lib/objects/platform_block.dart` 파일을 열고 다음 코드를 추가합니다.
 
 ```dart
 import 'package:flame/collisions.dart';
@@ -341,27 +347,27 @@ class PlatformBlock extends SpriteComponent with HasGameRef<EmberQuestGame> {
 }
 ```
 
-We are going to extend the Flame `SpriteComponent` and we will need the `HasGameRef` mixin to access
-our game class just like we did before. We are starting with the empty `onLoad` and `update`
-methods and we will begin adding code to create the functionality that is necessary for the game.
+Flame의 `SpriteComponent`를 상속하며, 앞에서와 마찬가지로 게임 클래스에 접근하기 위해
+`HasGameRef` 믹스인이 필요합니다. 빈 `onLoad`와 `update`
+메서드로 시작하고, 게임에 필요한 기능을 만들기 위해 코드를 추가해 나가겠습니다.
 
-The secret to any gaming engine is the game loop. This is an infinite loop that calls all the
-objects in your game so you can provide updates. The `update` method is the hook into this and it
-uses a `double dt` to pass to your method the amount of time in seconds since it was last
-called. This `dt` variable then allows you to calculate how far your component needs to move
-on-screen.
+모든 게임 엔진의 비결은 게임 루프입니다. 게임 루프는 게임의 모든 오브젝트를 호출해
+업데이트할 수 있게 해 주는 무한 루프입니다. `update` 메서드가 여기에 연결되는 지점이며,
+`double dt`를 사용해 마지막으로 호출된 이후 경과한 시간을 초 단위로 메서드에
+전달합니다. 이 `dt` 변수를 이용해 컴포넌트가 화면에서 얼마나 이동해야 하는지
+계산할 수 있습니다.
 
-All components in our game will need to move at the same speed, so to do this, open
-`lib/ember_quest.dart`, and let's define a global variable called `objectSpeed`. At the top of the
-`EmberQuestGame` class, add:
+게임의 모든 컴포넌트는 같은 속도로 움직여야 합니다. 이를 위해
+`lib/ember_quest.dart`를 열고 `objectSpeed`라는 전역 변수를 정의해 봅시다.
+`EmberQuestGame` 클래스 맨 위에 다음을 추가합니다.
 
 ```dart
   late EmberPlayer _ember;
   double objectSpeed = 0.0;
 ```
 
-So to implement that movement, declare a variable at the top of the `PlatformBlock` class and make
-your `update` method look like this:
+이제 그 이동을 구현하기 위해 `PlatformBlock` 클래스 맨 위에 변수를 선언하고
+`update` 메서드를 다음과 같이 만듭니다.
 
 ```dart
 final Vector2 velocity = Vector2.zero();
@@ -377,18 +383,18 @@ final Vector2 velocity = Vector2.zero();
   }
 ```
 
-All that is happening is we define a base `velocity` that is instantiated at 0 on both axes and then
-we update `velocity` using the global `objectSpeed` variable for the x-axis. As this is our
-platform block, it will only scroll left and right, so our y-axis in the `velocity` will always be 0
-as do not want our blocks jumping.
+여기서 하는 일은 두 축 모두 0으로 초기화된 기본 `velocity`를 정의한 다음,
+x축에 대해 전역 `objectSpeed` 변수를 사용해 `velocity`를 업데이트하는 것뿐입니다. 이것은
+플랫폼 블록이므로 좌우로만 스크롤됩니다. 블록이 점프하는 것은 원하지 않으므로 `velocity`의 y축은
+항상 0입니다.
 
-Next, we update the `position` which is a special variable built into the Flame engine components.
-By multiplying the `velocity` vector by the `dt` we can move our component to the required amount.
+다음으로 Flame 엔진 컴포넌트에 내장된 특별한 변수인 `position`을 업데이트합니다.
+`velocity` 벡터에 `dt`를 곱하면 컴포넌트를 필요한 만큼 이동시킬 수 있습니다.
 
-Finally, if `x` value of position is `-size.x` (this means off the left side of the screen by the
-width of the image) then remove this platform block from the game entirely.
+마지막으로 위치의 `x` 값이 `-size.x`이면(즉, 이미지 너비만큼 화면 왼쪽 밖으로 나가면)
+이 플랫폼 블록을 게임에서 완전히 제거합니다.
 
-Now we just need to finish the `onLoad` method. So make your `onLoad` method look like this:
+이제 `onLoad` 메서드만 마무리하면 됩니다. `onLoad` 메서드를 다음과 같이 만듭니다.
 
 ```dart
   @override
@@ -402,26 +408,28 @@ Now we just need to finish the `onLoad` method. So make your `onLoad` method loo
   }
 ```
 
-First, we retrieve the image from cache as we did before, and because this is a `SpriteComponent`
-we can use the built-in `sprite` variable to assign the image to the component. Next, we need to
-calculate its starting position. This is where all the magic happens, so let's break this down.
+먼저 앞에서처럼 캐시에서 이미지를 가져오고, 이것은 `SpriteComponent`이므로
+내장된 `sprite` 변수를 사용해 컴포넌트에 이미지를 할당할 수 있습니다. 다음으로
+시작 위치를 계산해야 합니다. 모든 마법이 여기서 일어나므로 하나씩 살펴봅시다.
 
-Just like in the `update` method we will be setting the `position` variable to a `Vector2`. To
-determine where it needs to be, we need to calculate the x and y positions. Focusing on the x
-first, we can see that we are taking `gridPosition.x` times the width of the image and then we will
-add that to the `xOffset` that we pass in. With the y-axis, we will take the height of the
-game and we will subtract the `gridPosition.y` times the height of the image.
+`update` 메서드에서와 마찬가지로 `position` 변수를 `Vector2`로 설정합니다.
+어디에 있어야 하는지 정하려면 x와 y 위치를 계산해야 합니다. 먼저 x에
+집중해 보면, `gridPosition.x`에 이미지 너비를 곱한 다음 전달받은 `xOffset`을
+더합니다. y축은 게임의 높이에서 `gridPosition.y`에 이미지 높이를 곱한 값을
+뺍니다.
 
-Lastly, as we want Ember to be able to interact with the platform, we will add a `RectangleHitbox`
-with a `passive` `CollisionType`. Collisions will be explained more in a later chapter.
+마지막으로 Ember가 플랫폼과 상호작용할 수 있어야 하므로 `passive` `CollisionType`을 가진
+`RectangleHitbox`를 추가합니다. 충돌에 대해서는 이후 챕터에서 더 자세히 설명합니다.
 
 
-#### Display the Platform
+<a id="display-the-platform"></a>
 
-In our `loadGameSegments` method from earlier, we will need to add the call to add our block. We
-will need to define `gridPosition` and `xOffset` to be passed in. `gridPosition` will be a
-`Vector2` and `xOffset` is a double as that will be used to calculate the x-axis offset for
-the block in a `Vector2`. So add the following to your `loadGameSegments` method:
+#### 플랫폼 표시하기
+
+앞에서 만든 `loadGameSegments` 메서드에 블록을 추가하는 호출을 넣어야 합니다.
+전달할 `gridPosition`과 `xOffset`을 정의해야 합니다. `gridPosition`은
+`Vector2`이고, `xOffset`은 `Vector2`에서 블록의 x축 오프셋을 계산하는 데 사용되므로
+double입니다. `loadGameSegments` 메서드에 다음을 추가합니다.
 
 ```dart
 case PlatformBlock:
@@ -431,13 +439,13 @@ case PlatformBlock:
   ));
 ```
 
-If you run your code, you should now see:
+코드를 실행하면 이제 다음과 같이 보일 것입니다.
 
-![Platforms Displayed](../../images/tutorials/platformer/Step3Platforms.jpg)
+![표시된 플랫폼](../../images/tutorials/platformer/Step3Platforms.jpg)
 
-While this does run, the black just makes it look like Ember is in a dungeon. Let's change that
-background real quick so there is a nice blue sky. Just add the following code to
-`lib/ember_quest.dart`:
+실행은 되지만 검은 배경 때문에 Ember가 던전에 있는 것처럼 보입니다. 배경을 빠르게 바꿔
+멋진 파란 하늘을 만들어 봅시다. `lib/ember_quest.dart`에 다음 코드를
+추가하기만 하면 됩니다.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -448,7 +456,7 @@ Color backgroundColor() {
 }
 ```
 
-Excellent! Ember is now in front of a blue sky.
+훌륭합니다! 이제 Ember가 파란 하늘 앞에 있습니다.
 
-On to [](step_4.md), where we will add the rest of the components now that we have a basic
-understanding of what we are going to accomplish.
+이제 무엇을 구현할지 기본적으로 이해했으니, 나머지 컴포넌트를 추가할 [](step_4.md)로
+넘어갑시다.

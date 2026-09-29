@@ -1,13 +1,11 @@
 # `<<stop>>`
 
-The **\<\<stop\>\>** command: immediately stops evaluating the current node, as if you jumped to
-its end. This command takes no arguments.
+**\<\<stop\>\>** 명령은 마치 노드의 끝으로 점프한 것처럼 현재 노드의 평가를 즉시 중지합니다.
+이 명령은 인자를 받지 않습니다.
 
-Normally, the effect of this command is that it stops the dialogue. However, if you're only
-visiting the current node from a different one, then `<<stop>>` will only exit the current node,
-and the execution flow will return to the parent. Thus, the `<<stop>>` command is similar to
-`return;` in many programming languages.
-
+일반적으로 이 명령은 대화를 멈추는 효과를 가집니다. 하지만 다른 노드에서 현재 노드를 방문(visit)하고
+있는 경우라면 `<<stop>>`은 현재 노드만 빠져나오고, 실행 흐름은 부모로 돌아갑니다. 따라서 `<<stop>>`
+명령은 많은 프로그래밍 언어의 `return;`과 비슷합니다.
 ```yarn
 <<stop>>
 ```

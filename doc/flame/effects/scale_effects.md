@@ -1,17 +1,19 @@
-# Scale Effects
+<a id="scale-effects"></a>
 
-Scale effects are used to change the scale of a component over time. They can be used to make a
-component grow, shrink, or change its scale in a specific direction. The scale is specified as a
-`Vector2` value, where each x represents the width factor and y represents the height factor. The
-effects can be applied to any component that has a scale property, such as the `PositionComponent`.
-The difference between size effects and scale effects is that size only changes the size of the
-target component, while scale changes the "size" of all children too.
+# 스케일 이펙트
+
+스케일 이펙트는 시간에 따라 컴포넌트의 스케일을 변경하는 데 사용됩니다. 컴포넌트를 커지게 하거나,
+작아지게 하거나, 특정 방향으로 스케일을 바꾸는 데 사용할 수 있습니다. 스케일은 `Vector2` 값으로
+지정하며, x는 너비 배율을, y는 높이 배율을 나타냅니다. 이 이펙트는 `PositionComponent`처럼 스케일
+속성을 가진 모든 컴포넌트에 적용할 수 있습니다.
+크기 이펙트와 스케일 이펙트의 차이는, 크기 이펙트는 대상 컴포넌트의 크기만 변경하는 반면 스케일
+이펙트는 모든 자식들의 "크기"도 함께 변경한다는 점입니다.
 
 
 ## `ScaleEffect.by`
 
-This effect will change the target's scale by the specified amount. For example, this will cause
-the component to grow 50% larger:
+이 이펙트는 대상의 스케일을 지정된 양만큼 변경합니다. 예를 들어 다음은 컴포넌트를 50% 더 크게
+만듭니다.
 
  ```{flutter-app}
  :sources: ../flame/examples
@@ -31,7 +33,7 @@ final effect = ScaleEffect.by(
 
 ## `ScaleEffect.to`
 
-This effect works similar to `ScaleEffect.by`, but sets the absolute value of the target's scale.
+이 이펙트는 `ScaleEffect.by`와 비슷하게 동작하지만, 대상 스케일의 절대값을 설정합니다.
 
  ```{flutter-app}
  :sources: ../flame/examples

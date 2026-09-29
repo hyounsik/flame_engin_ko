@@ -1,29 +1,29 @@
 # DialogueOption
 
-The **DialogueOption** class represents a single [Option] line in the `.yarn` script. Multiple
-options will be grouped into [DialogueChoice] objects.
+**DialogueOption** 클래스는 `.yarn` 스크립트의 [옵션][Option] 줄 하나를 나타냅니다. 여러 옵션은
+[DialogueChoice] 객체로 묶입니다.
 
 
-## Properties
+<a id="properties"></a>
+
+## 속성
 
 **text** `String`
-: The computed text of the option, after evaluating the inline expressions, stripping the markup,
-  and processing the escape sequences.
+: 인라인 표현식을 평가하고, 마크업을 제거하고, 이스케이프 시퀀스를 처리한 뒤 계산된 옵션의 텍스트입니다.
 
 **tags** `List<String>`
-: The list of hashtags for this option. If there are no hashtags, the list will be empty. Each entry
-  in the list will be a simple string starting with `#`.
+: 이 옵션의 해시태그 목록입니다. 해시태그가 없으면 목록은 비어 있습니다. 목록의 각 항목은 `#`으로
+  시작하는 단순한 문자열입니다.
 
 **attributes** `List<MarkupAttribute>`
-: The list of markup spans associated with the option. Each [MarkupAttribute] corresponds to a
-  single span within the **text**, delineated with markup tags.
+: 옵션에 연결된 마크업 구간의 목록입니다. 각 [MarkupAttribute]는 **text** 안에서 마크업 태그로 구분된
+  하나의 구간에 해당합니다.
 
 **isAvailable** `bool`
-: The result of evaluating the *conditional* of this option. If the option has no conditional, this
-  will return `true`.
+: 이 옵션의 *조건문*을 평가한 결과입니다. 옵션에 조건문이 없으면 `true`를 반환합니다.
 
 **isDisabled** `bool`
-: Same as `!isAvailable`.
+: `!isAvailable`과 같습니다.
 
 
 [Option]: ../language/options.md

@@ -1,49 +1,55 @@
 # AudioPool
 
-An AudioPool is a provider of AudioPlayers that are pre-loaded with local assets to minimize audio
-playback delays. This is particularly useful in fast-paced games where sound effects need to trigger
-quickly and potentially overlap with each other.
+AudioPool은 오디오 재생 지연을 최소화하기 위해 로컬 에셋이 미리 로드된 AudioPlayer를 제공하는 공급자입니다.
+효과음이 빠르게 재생되어야 하고 서로 겹칠 수도 있는 빠른 템포의 게임에서
+특히 유용합니다.
 
-A single AudioPool always plays the same sound, usually a quick sound effect that might need to be
-played repeatedly or simultaneously, such as:
+하나의 AudioPool은 항상 같은 사운드를 재생합니다. 보통 반복적으로 또는 동시에 재생해야 할 수 있는
+짧은 효과음이며, 예를 들면 다음과 같습니다.
 
-- Shooting sounds in a space shooter
-- Jump sounds in a platformer
-- Explosion effects
-- Collecting coins or items
-- Enemy hit sounds
-
-
-## How It Works
-
-AudioPool works by creating and pre-loading a pool of AudioPlayer instances that are all configured
-to play the same sound. When you need to play the sound:
-
-1. The pool gives you an available player from its collection
-2. If no player is available, a new player is created on demand
-3. When a sound finishes playing or is stopped manually, the player is returned to the pool for reuse,
-   unless the pool already has reached its maximum size limit, in which case the player is released
-
-This approach significantly reduces latency compared to creating new AudioPlayer instances on demand,
-while also managing memory by limiting the maximum size of the pool.
+- 우주 슈팅 게임의 발사 소리
+- 플랫포머 게임의 점프 소리
+- 폭발 효과
+- 코인이나 아이템 획득
+- 적 피격 소리
 
 
-## Creating an AudioPool
+<a id="how-it-works"></a>
 
-There are multiple ways to create an AudioPool:
+## 동작 방식
+
+AudioPool은 모두 같은 사운드를 재생하도록 설정된 AudioPlayer 인스턴스의 풀을 생성하고 미리 로드하는 방식으로
+동작합니다. 사운드를 재생해야 할 때는 다음과 같이 진행됩니다.
+
+1. 풀이 보유한 플레이어 중 사용 가능한 플레이어를 제공합니다
+2. 사용 가능한 플레이어가 없으면 필요할 때 새 플레이어를 생성합니다
+3. 사운드 재생이 끝나거나 수동으로 정지되면 플레이어는 재사용을 위해 풀로 반환됩니다.
+   단, 풀이 이미 최대 크기 제한에 도달한 경우에는 플레이어가 해제됩니다
+
+이 방식은 필요할 때마다 새 AudioPlayer 인스턴스를 생성하는 것에 비해 지연 시간을 크게 줄이면서,
+풀의 최대 크기를 제한해 메모리도 관리합니다.
 
 
-### Using FlameAudio Helper
+<a id="creating-an-audiopool"></a>
 
-The simplest approach is to use the helper method in `FlameAudio`, which conveniently uses Flame's
-global audio cache:
+## AudioPool 생성하기
+
+AudioPool을 생성하는 방법은 여러 가지입니다.
+
+
+<a id="using-flameaudio-helper"></a>
+
+### FlameAudio 헬퍼 사용하기
+
+가장 간단한 방법은 `FlameAudio`의 헬퍼 메서드를 사용하는 것으로, Flame의 전역 오디오 캐시를
+편리하게 사용합니다.
 
 ```dart
 import 'package:flame_audio/flame_audio.dart';
 
 Future<void> loadSounds() async {
-  // Create a pool with minimum 1 player and maximum 2 players
-  // This automatically uses Flame's global audio cache
+  // 최소 1개, 최대 2개의 플레이어를 가진 풀을 생성합니다
+  // Flame의 전역 오디오 캐시를 자동으로 사용합니다
   AudioPool explosionSoundPool = await FlameAudio.createPool(
     'assets/audio/explosion.mp3',
     minPlayers: 1,
@@ -53,29 +59,33 @@ Future<void> loadSounds() async {
 ```
 
 
-### Creating Directly with Source
+<a id="creating-directly-with-source"></a>
 
-You can also create an AudioPool by directly using the static factory methods:
+### Source로 직접 생성하기
+
+정적 팩토리 메서드를 직접 사용해 AudioPool을 생성할 수도 있습니다.
 
 ```dart
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame_audio/flame_audio.dart';
 
 Future<void> loadSounds() async {
-  // Create a pool with a specific Source
+  // 특정 Source로 풀을 생성합니다
   AudioPool explosionSoundPool = await AudioPool.create(
     source: AssetSource('assets/audio/explosion.mp3'),
     minPlayers: 1,
     maxPlayers: 2,
-    audioCache: FlameAudio.audioCache, // Optional
+    audioCache: FlameAudio.audioCache, // 선택 사항
   );
 }
 ```
 
 
-### Creating from Asset Path
+<a id="creating-from-asset-path"></a>
 
-For convenience, you can create an AudioPool from just the asset path:
+### 에셋 경로로 생성하기
+
+편의를 위해 에셋 경로만으로 AudioPool을 생성할 수도 있습니다.
 
 ```dart
 import 'package:flame_audio/flame_audio.dart';
@@ -85,52 +95,58 @@ Future<void> loadSounds() async {
     path: 'assets/audio/explosion.mp3',
     minPlayers: 1,
     maxPlayers: 2,
-    audioCache: FlameAudio.audioCache, // Optional
+    audioCache: FlameAudio.audioCache, // 선택 사항
   );
 }
 ```
 
-The parameters are:
+파라미터는 다음과 같습니다.
 
-- `source` or `path`: The audio source to play (either as a Source object or asset path)
-- `minPlayers`: The initial number of AudioPlayers to create and preload (default: 1)
-- `maxPlayers`: The maximum number of AudioPlayers that can be kept in the pool
-- `audioCache`: Optional AudioCache instance to use
-- `audioContext`: Optional audio context to be used by all players in the pool
+- `source` 또는 `path`: 재생할 오디오 소스(Source 객체 또는 에셋 경로)
+- `minPlayers`: 처음에 생성하고 미리 로드할 AudioPlayer의 수(기본값: 1)
+- `maxPlayers`: 풀에 유지할 수 있는 AudioPlayer의 최대 수
+- `audioCache`: 사용할 AudioCache 인스턴스(선택 사항)
+- `audioContext`: 풀의 모든 플레이어가 사용할 오디오 컨텍스트(선택 사항)
 
 
-## Using an AudioPool
+<a id="using-an-audiopool"></a>
 
-Once you've created an AudioPool, you can start playing sounds:
+## AudioPool 사용하기
+
+AudioPool을 생성했으면 사운드를 재생할 수 있습니다.
 
 ```dart
-// Play the sound with default volume (1.0)
+// 기본 볼륨(1.0)으로 사운드를 재생합니다
 final stopFunction = await audioPool.start();
 
-// Play the sound with custom volume
+// 지정한 볼륨으로 사운드를 재생합니다
 final stopFunction = await audioPool.start(volume: 0.5);
 
-// Later, you can stop the sound if needed
+// 나중에 필요하면 사운드를 정지할 수 있습니다
 await stopFunction();
 ```
 
-The `start()` method returns a `StopFunction` that you can call to stop the sound before it completes
-naturally.
+`start()` 메서드는 `StopFunction`을 반환하며, 이를 호출하면 사운드가 자연스럽게 끝나기 전에
+정지할 수 있습니다.
 
 
-## Managing the Pool
+<a id="managing-the-pool"></a>
 
-AudioPool provides a `dispose()` method to release resources when you no longer need the pool:
+## 풀 관리하기
+
+AudioPool은 더 이상 풀이 필요하지 않을 때 리소스를 해제하는 `dispose()` 메서드를 제공합니다.
 
 ```dart
-// When you're done with the pool
+// 풀 사용이 끝났을 때
 await audioPool.dispose();
 ```
 
 
-## Example Usage
+<a id="example-usage"></a>
 
-Here's a complete example showing how to use AudioPools in a Flame game:
+## 사용 예제
+
+다음은 Flame 게임에서 AudioPool을 사용하는 방법을 보여 주는 전체 예제입니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -142,7 +158,7 @@ class MyGame extends FlameGame {
 
   @override
   Future<void> onLoad() async {
-    // Load sound effects into audio pools
+    // 효과음을 오디오 풀에 로드합니다
     laserSound = await FlameAudio.createPool(
       'assets/audio/laser.mp3',
       minPlayers: 3,
@@ -157,15 +173,15 @@ class MyGame extends FlameGame {
   }
 
   void fireLaser() async {
-    // Play the laser sound effect - can be called rapidly
+    // 레이저 효과음을 재생합니다 - 빠르게 연속 호출할 수 있습니다
     final stop = await laserSound.start();
 
-    // If you need to stop the sound early:
+    // 사운드를 일찍 정지해야 한다면:
     // await stop();
   }
 
   void enemyDestroyed() async {
-    // Play explosion sound effect
+    // 폭발 효과음을 재생합니다
     await explosionSound.start(volume: 0.7);
   }
 
@@ -173,11 +189,11 @@ class MyGame extends FlameGame {
   Future<void> onRemove() async {
     await super.onRemove();
 
-    // Clean up resources when the game component is removed
+    // 게임 컴포넌트가 제거될 때 리소스를 정리합니다
     await laserSound.dispose();
     await explosionSound.dispose();
   }
 }
 ```
 
-You can also find the interactive example in [Flame Basic](https://examples.flame-engine.org/)
+인터랙티브 예제는 [Flame Basic](https://examples.flame-engine.org/)에서도 확인할 수 있습니다.

@@ -1,16 +1,18 @@
-# Widget
+<a id="widget"></a>
+
+# 위젯
 
 
 ## RiverpodAwareGameWidget
 
-`RiverpodAwareGameWidget` is a GameWidget with a `State` object of type
-`RiverpodAwareGameWidgetState`.
+`RiverpodAwareGameWidget`은 `RiverpodAwareGameWidgetState` 타입의 `State` 객체를 가진
+GameWidget입니다.
 
-The required `GlobalKey` argument is used to provide `Component`s using `RiverpodComponentMixin`
-access to `Provider`s via `RiverpodAwareGameWidgetState`.
+필수 인자인 `GlobalKey`는 `RiverpodComponentMixin`을 사용하는 `Component`가
+`RiverpodAwareGameWidgetState`를 통해 `Provider`에 접근할 수 있도록 하는 데 사용됩니다.
 
 
 ## RiverpodAwareGameWidgetState
 
-`RiverpodAwareGameWidgetState` performs the duties associated with the
-`ConsumerStatefulElement` in `flutter_riverpod` and `GameWidgetState` in `flame`.
+`RiverpodAwareGameWidgetState`는 `flutter_riverpod`의 `ConsumerStatefulElement`와
+`flame`의 `GameWidgetState`가 담당하는 역할을 수행합니다.

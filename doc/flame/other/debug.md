@@ -1,44 +1,46 @@
-# Debug features
+<a id="debug-features"></a>
+
+# 디버그 기능
 
 
-## FlameGame features
+<a id="flamegame-features"></a>
 
-Flame provides some debugging features for the `FlameGame` class. These features are enabled when
-the `debugMode` property is set to `true` (or overridden to be `true`).
-When `debugMode` is enabled, each `PositionComponent` will be rendered with their bounding size, and
-have their positions written on the screen. This way, you can visually verify the components
-boundaries and positions.
+## FlameGame 기능
 
-Check out this [working example of the debugging features of the `FlameGame`](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/components/debug_example.dart).
+Flame은 `FlameGame` 클래스에 몇 가지 디버깅 기능을 제공합니다. 이 기능들은 `debugMode` 속성이
+`true`로 설정되어 있을 때(또는 `true`가 되도록 오버라이드했을 때) 활성화됩니다.
+`debugMode`가 활성화되면 각 `PositionComponent`는 자신의 경계 크기와 함께 렌더링되고, 화면에
+위치가 표시됩니다. 이렇게 하면 컴포넌트의 경계와 위치를 눈으로 확인할 수 있습니다.
+
+[`FlameGame`의 디버깅 기능을 보여 주는 동작 예제](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/components/debug_example.dart)를 확인해 보세요.
 
 
-## Devtools extension
+<a id="devtools-extension"></a>
 
-If you open the [Flutter DevTools](https://docs.flutter.dev/tools/devtools/overview), you will see a
-new tab called "Flame". This tab will show you information about the current game, for example a
-visualization of the component tree, the ability to play, pause and step the game, information
-about the selected component, and more.
+## Devtools 확장
+
+[Flutter DevTools](https://docs.flutter.dev/tools/devtools/overview)를 열면 "Flame"이라는 새
+탭이 보입니다. 이 탭에서는 현재 게임에 대한 정보를 보여 줍니다. 예를 들어 컴포넌트 트리 시각화,
+게임을 재생, 일시 정지, 한 단계씩 진행하는 기능, 선택한 컴포넌트에 대한 정보 등을 제공합니다.
 
 
 ## FPS
 
-The FPS reported from Flame might be a bit lower than what is reported from for example the Flutter
-DevTools, depending on which platform you are targeting. The source of truth for how many FPS your
-game is running in should be the FPS that we are reporting, since that is what our game loop is
-bound by.
+Flame이 보고하는 FPS는 대상 플랫폼에 따라 Flutter DevTools 등에서 보고하는 값보다 약간 낮을 수
+있습니다. 게임이 실제로 몇 FPS로 실행되고 있는지는 Flame이 보고하는 FPS를 기준으로 삼아야 합니다.
+게임 루프가 바로 그 값에 묶여 있기 때문입니다.
 
 
 ### FpsComponent
 
-The `FpsComponent` can be added to anywhere in the component tree and will keep track of how many
-FPS that the game is currently rendering in. If you want to display this as text in the game, use
-the [](#fpstextcomponent).
+`FpsComponent`는 컴포넌트 트리의 어디에든 추가할 수 있으며, 게임이 현재 몇 FPS로 렌더링되고 있는지
+추적합니다. 이 값을 게임 안에 텍스트로 표시하고 싶다면 [](#fpstextcomponent)를 사용하세요.
 
 
 ### FpsTextComponent
 
-The `FpsTextComponent` is simply a [TextComponent] that wraps an `FpsComponent`, since you most
-commonly want to show the current FPS somewhere when the `FpsComponent` is used.
+`FpsTextComponent`는 `FpsComponent`를 감싼 [TextComponent]일 뿐입니다. `FpsComponent`를 사용할
+때는 대개 현재 FPS를 어딘가에 표시하고 싶어 하기 때문입니다.
 
 
 [TextComponent]: ../rendering/text_rendering.md#textcomponent
@@ -46,10 +48,9 @@ commonly want to show the current FPS somewhere when the `FpsComponent` is used.
 
 ### ChildCounterComponent
 
-`ChildCounterComponent` is a component that renders the number of children of
-type `T` from a component (`target`) every second.
-So for example, the following will render the number of `SpriteAnimationComponent` that are
-children of the game `world`:
+`ChildCounterComponent`는 어떤 컴포넌트(`target`)가 가진 `T` 타입 자식의 수를 매초 렌더링하는
+컴포넌트입니다.
+예를 들어, 다음 코드는 게임 `world`의 자식인 `SpriteAnimationComponent`의 수를 렌더링합니다.
 
 ```dart
 add(
@@ -62,17 +63,17 @@ add(
 
 ### TimeTrackComponent
 
-This component allows developers to track time spent inside their code. This can be useful for
-performance debugging time spent in certain parts of the code.
+이 컴포넌트를 사용하면 개발자가 코드 안에서 소요된 시간을 추적할 수 있습니다. 코드의 특정 부분에서
+소요되는 시간을 성능 디버깅할 때 유용합니다.
 
-To use it, add it to your game somewhere (since this is a debug feature, we advise to only add the
-component in a debug build/flavor):
+사용하려면 게임의 어딘가에 추가합니다(디버그 기능이므로 디버그 빌드/플레이버에서만 컴포넌트를
+추가하기를 권장합니다).
 
 ```dart
 add(TimeTrackComponent());
 ```
 
-Then in the code section that you want to track time, do the following:
+그런 다음 시간을 추적하고 싶은 코드 구간에서 다음과 같이 합니다.
 
 ```dart
 void update(double dt) {
@@ -82,5 +83,4 @@ void update(double dt) {
 }
 ```
 
-With the calls above, the added `TimeTrackComponent` will render the elapsed time in
-microseconds.
+위와 같이 호출하면 추가된 `TimeTrackComponent`가 경과 시간을 마이크로초 단위로 렌더링합니다.

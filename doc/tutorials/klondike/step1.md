@@ -1,11 +1,13 @@
-# 1. Preparation
+<a id="1-preparation"></a>
 
-Before you begin any kind of game project, you need to give it a **name**. For
-this tutorial the name will be simply `klondike`.
+# 1. 준비
 
-Having this name in mind, please head over to the [tutorial](../bare_flame_game.md)
-and complete the necessary set up steps. When you come back, you should
-already have the `main.dart` file with the following content:
+어떤 게임 프로젝트든 시작하기 전에 먼저 **이름**을 정해야 합니다. 이
+튜토리얼에서는 이름을 간단히 `klondike`로 하겠습니다.
+
+이 이름을 정했다면 [튜토리얼](../bare_flame_game.md)로 가서
+필요한 설정 단계를 마치세요. 돌아왔을 때는 다음 내용이 담긴
+`main.dart` 파일이 이미 있어야 합니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -18,52 +20,56 @@ void main() {
 ```
 
 
-## Planning
+<a id="planning"></a>
 
-The start of any project usually feels overwhelming. Where even to begin?
-I always find it useful to create a rough sketch of what I am about to code,
-so that it can serve as a reference point. My sketch for the Klondike game is
-shown below:
+## 계획 세우기
+
+어떤 프로젝트든 시작은 보통 막막하게 느껴집니다. 대체 어디서부터 시작해야 할까요?
+저는 앞으로 코딩할 내용을 대략적으로 스케치해 두면 늘 도움이 된다고 느낍니다.
+스케치가 기준점 역할을 해 주기 때문입니다. 클론다이크 게임에 대한 제 스케치는
+아래와 같습니다.
 
 ![Sketch of the klondike card game](../../images/tutorials/klondike-sketch.webp)
 
-Here you can see both the general layout of the game, as well as names of
-various objects. These names are the [standard terminology] for solitaire games.
-Which is really lucky, because normally figuring out good names for various
-classes is quite a challenging task.
+여기서 게임의 전체 레이아웃과 여러 객체의 이름을 모두 확인할 수 있습니다. 이 이름들은
+솔리테어 게임의 [표준 용어][standard terminology]입니다.
+정말 다행스러운 일인데, 보통 여러 클래스에 좋은 이름을 붙이는 일은
+꽤 어려운 작업이기 때문입니다.
 
-Looking at this sketch, we can already imagine the high-level structure of the
-game. Obviously, there will be a `Card` class, but also the `Stock` class, the
-`Waste` class, a `Tableau` containing seven `Pile`s, and 4 `Foundation`s. There
-may also be a `Deck`. All of these components will be tied together via the
-`KlondikeGame` derived from the `FlameGame`.
+이 스케치를 보면 게임의 상위 구조를 벌써 그려 볼 수 있습니다. 당연히 `Card`
+클래스가 있을 것이고, 그 외에도 `Stock` 클래스,
+`Waste` 클래스, 일곱 개의 `Pile`을 담는 `Tableau`, 그리고 4개의 `Foundation`이 있을 것입니다.
+`Deck`도 있을 수 있습니다. 이 모든 컴포넌트는 `FlameGame`에서 파생된
+`KlondikeGame`을 통해 하나로 묶입니다.
 
 
-## Assets
+<a id="assets"></a>
 
-Another important aspect in any game development is the game's assets. These
-includes images, sprites, animations, sounds, textures, data files, and so on.
-In such a simple game as Klondike we won't need lots of fancy graphics, but
-still some sprites will be needed in order to draw the cards.
+## 에셋
 
-In order to prepare the graphic assets, I first took a physical playing card and
-measured it to be 63mm × 88mm, which is the ratio of approximately `10:14`.
-Thus, I decided that my in-game cards should be rendered at 1000×1400 pixels,
-and I should draw all my images with this scale in mind.
+게임 개발에서 또 하나 중요한 요소는 게임의 에셋입니다. 여기에는
+이미지, 스프라이트, 애니메이션, 사운드, 텍스처, 데이터 파일 등이 포함됩니다.
+클론다이크처럼 단순한 게임에는 화려한 그래픽이 많이 필요하지 않지만,
+카드를 그리려면 그래도 스프라이트가 몇 개 필요합니다.
 
-Note that the exact pixel dimensions are somewhat irrelevant here, since the
-images will in the end be scaled up or down, according to the device's actual
-resolution. Here I'm using probably a bigger resolution than necessary for
-phones, but it would also work nicely for larger devices like an iPad.
+그래픽 에셋을 준비하기 위해 먼저 실제 트럼프 카드 한 장을 가져와
+재 보았더니 63mm × 88mm였고, 이는 대략 `10:14`의 비율입니다.
+그래서 게임 속 카드를 1000×1400 픽셀로 렌더링하기로 하고,
+모든 이미지를 이 스케일에 맞춰 그리기로 했습니다.
 
-And now, without further ado, here's my graphic asset for the Klondike game
-(I'm not an artist, so don't judge too harshly):
+여기서 정확한 픽셀 크기는 크게 중요하지 않다는 점에 유의하세요. 이미지는
+결국 기기의 실제 해상도에 따라 확대되거나 축소되기 때문입니다. 여기서는
+아마 휴대폰에 필요한 것보다 큰 해상도를 쓰고 있겠지만, iPad 같은 더 큰 기기에서도
+잘 동작할 것입니다.
+
+그럼 더 지체하지 않고, 클론다이크 게임을 위한 제 그래픽 에셋을 소개합니다
+(저는 아티스트가 아니니 너무 엄격하게 평가하지는 말아 주세요).
 
 ![Klondike sprites](app/assets/images/klondike-sprites.png)
 
-Right-click the image, choose "Save as...", and store it in the `assets/images`
-folder of the project. At this point our project's structure looks like this
-(there are other files too, of course, but these are the important ones):
+이미지를 마우스 오른쪽 버튼으로 클릭하고 "다른 이름으로 저장..."을 선택한 다음, 프로젝트의 `assets/images`
+폴더에 저장하세요. 이 시점에서 프로젝트 구조는 다음과 같습니다
+(물론 다른 파일도 있지만, 중요한 것은 이것들입니다).
 
 ```text
 klondike/
@@ -75,31 +81,29 @@ klondike/
  └─pubspec.yaml
 ```
 
-By the way, this kind of file is called the **sprite sheet**: it's just a
-collection of multiple independent images in a single file. We are using a
-sprite sheet here for the simple reason that loading a single large image is
-faster than many small images. In addition, rendering sprites that were
-extracted from a single source image can be faster too, since Flutter will
-optimize multiple such drawing commands into a single `drawAtlas` command.
+참고로 이런 종류의 파일을 **스프라이트 시트**라고 합니다. 여러 개의 독립적인 이미지를
+하나의 파일에 모아 놓은 것일 뿐입니다. 여기서 스프라이트 시트를 사용하는 이유는 간단합니다.
+큰 이미지 하나를 불러오는 것이 작은 이미지 여러 개를 불러오는 것보다 빠르기 때문입니다. 또한
+하나의 원본 이미지에서 추출한 스프라이트를 렌더링하는 것도 더 빠를 수 있습니다.
+Flutter가 이런 여러 그리기 명령을 하나의 `drawAtlas` 명령으로 최적화하기 때문입니다.
 
-Here are the contents of my sprite sheet:
+제 스프라이트 시트에 담긴 내용은 다음과 같습니다.
 
-- Numerals 2, 3, 4, ..., K, A. In theory, we could have rendered these in the
-    game as text strings, but then we would need to also include a font as an
-    asset -- seems simpler to just have them as images instead.
-- Suit marks: ♥, ♦, ♣, ♠. Again, we could have used Unicode characters for
-    these, but images are much easier to position precisely.
-  - In case you're wondering why these are yellow/blue instead of red/black
-        -- turns out, black symbols don't look very nice on a dark background,
-        so I had to adjust the color scheme.
-- Flame logo, for use on the backs of the cards.
-- Pictures of a Jack, a Queen, and a King. Normally there would be four times
-    more of these, with a different character for each suite, but I got too
-    tired drawing these.
+- 숫자 2, 3, 4, ..., K, A. 이론상으로는 이것들을 게임 안에서
+    텍스트 문자열로 렌더링할 수도 있지만, 그러면 폰트도 에셋으로
+    포함해야 합니다. 그냥 이미지로 두는 편이 더 간단해 보입니다.
+- 무늬 기호: ♥, ♦, ♣, ♠. 마찬가지로 유니코드 문자를 쓸 수도 있었지만,
+    이미지가 정확한 위치에 배치하기 훨씬 쉽습니다.
+  - 왜 빨강/검정이 아니라 노랑/파랑인지 궁금하다면,
+        검은색 기호는 어두운 배경에서 보기 좋지 않아서
+        색 구성을 조정해야 했습니다.
+- 카드 뒷면에 사용할 Flame 로고.
+- 잭, 퀸, 킹 그림. 원래는 무늬마다 다른 인물을 넣어
+    이보다 네 배 많아야 하지만, 그리다가 너무 지쳐 버렸습니다.
 
-Also, you need to tell Flutter about this image (just having it inside the
-`assets` folder is not enough). In order to do this, let's add the following
-lines into the `pubspec.yaml` file:
+또한 Flutter에 이 이미지를 알려 주어야 합니다(`assets` 폴더 안에
+넣어 두는 것만으로는 충분하지 않습니다). 이를 위해 `pubspec.yaml` 파일에 다음
+줄을 추가합시다.
 
 ```yaml
 flutter:
@@ -107,7 +111,7 @@ flutter:
     - assets/images/
 ```
 
-Alright, enough with preparing -- onward to coding!
+좋습니다, 준비는 이 정도로 하고 이제 코딩으로 넘어갑시다!
 
 
 [standard terminology]: https://en.wikipedia.org/wiki/Solitaire_terminology

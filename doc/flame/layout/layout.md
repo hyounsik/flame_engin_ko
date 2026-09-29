@@ -1,16 +1,17 @@
-# Layout
+<a id="layout"></a>
 
-Positioning game elements manually with pixel coordinates works for simple cases, but quickly
-becomes tedious when building HUDs, menus, or any UI that needs to adapt to different screen
-sizes. Flame's layout components bring familiar concepts from Flutter's layout system (rows,
-columns, padding, alignment) into the game world, so you can arrange components declaratively
-rather than calculating positions by hand.
+# 레이아웃
 
-- [Align Component](align_component.md)
-- [Row Component](row_component.md)
-- [Column Component](column_component.md)
-- [Expanded Component](expanded_component.md)
-- [Padding Component](padding_component.md)
+픽셀 좌표로 게임 요소를 직접 배치하는 방식은 단순한 경우에는 잘 동작하지만, HUD나 메뉴처럼
+다양한 화면 크기에 맞춰야 하는 UI를 만들 때는 금방 번거로워집니다. Flame의 레이아웃 컴포넌트는
+Flutter 레이아웃 시스템의 익숙한 개념(row, column, padding, alignment)을 게임 월드로 가져와서,
+위치를 손으로 계산하는 대신 선언적으로 컴포넌트를 배치할 수 있게 해 줍니다.
+
+- [Align 컴포넌트](align_component.md)
+- [Row 컴포넌트](row_component.md)
+- [Column 컴포넌트](column_component.md)
+- [Expanded 컴포넌트](expanded_component.md)
+- [Padding 컴포넌트](padding_component.md)
 
 ```{toctree}
 :hidden:
@@ -18,6 +19,6 @@ rather than calculating positions by hand.
 AlignComponent     <align_component.md>
 RowComponent       <row_component.md>
 ColumnComponent    <column_component.md>
-Expanded Component <expanded_component.md>
-Padding Component  <padding_component.md>
+Expanded 컴포넌트  <expanded_component.md>
+Padding 컴포넌트   <padding_component.md>
 ```

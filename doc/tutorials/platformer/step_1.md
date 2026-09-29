@@ -1,12 +1,14 @@
-# 1. Preparation
+<a id="1-preparation"></a>
 
-Before you begin any kind of game project, you need an idea of what you want to make and I like to
-then give it a **name**. For this tutorial and game, Ember will be on a quest to gather as many
-(GitHub) stars as possible and I will call the game, `Ember Quest`.
+# 1. 준비
 
-Now it is time to get started, but first you need to go to the [bare flame game
-tutorial](../bare_flame_game.md) and complete the necessary setup steps. When you come back, you
-should already have the `main.dart` file with the following content:
+어떤 종류의 게임 프로젝트든 시작하기 전에 무엇을 만들고 싶은지 아이디어가 있어야 하고, 저는 그다음에
+**이름**을 붙이는 것을 좋아합니다. 이 튜토리얼과 게임에서 Ember는 (GitHub) 별을 최대한 많이 모으는
+모험을 떠나게 되며, 게임 이름은 `Ember Quest`라고 하겠습니다.
+
+이제 시작할 시간입니다. 하지만 먼저 [빈 Flame 게임
+튜토리얼](../bare_flame_game.md)로 가서 필요한 설정 단계를 마쳐야 합니다. 돌아오면
+다음 내용을 가진 `main.dart` 파일이 이미 있을 것입니다.
 
 ```dart
 import 'package:flame/game.dart';
@@ -19,46 +21,48 @@ void main() {
 ```
 
 
-## Planning
+<a id="planning"></a>
 
-Like in the [klondike](../klondike/klondike.md) tutorial, starting a new game can feel overwhelming.
-I like to first decide what platform I am trying to target. Will this be a mobile game, a desktop
-game, or maybe a web game, with Flutter and Flame, these are all possible. For this game though, I
-am going to focus on a web game. This means my users will interact with the game using their
-keyboards.
+## 계획
 
-Starting with a simple sketch (it doesn't have to be perfect as mine is very rough) is
-the best way to get an understanding of what will need to be accomplished. For the sketch below,
-we know we will need the following:
+[klondike](../klondike/klondike.md) 튜토리얼에서와 마찬가지로, 새 게임을 시작하는 것은 막막하게 느껴질 수 있습니다.
+저는 먼저 어떤 플랫폼을 대상으로 할지 정하는 것을 좋아합니다. 모바일 게임일까요, 데스크톱
+게임일까요, 아니면 웹 게임일까요? Flutter와 Flame이라면 모두 가능합니다. 하지만 이 게임에서는
+웹 게임에 집중하겠습니다. 즉, 사용자는 키보드를 사용해 게임과 상호작용하게 됩니다.
 
-- Player Class
-- Enemy Class
-- Star Class
-- Platform Class
-- Ground Class
-- HUD Class (health and stars collected)
+간단한 스케치로 시작하는 것(제 스케치는 매우 대충 그렸듯이 완벽할 필요는 없습니다)이
+무엇을 구현해야 하는지 파악하는 가장 좋은 방법입니다. 아래 스케치를 보면
+다음이 필요하다는 것을 알 수 있습니다.
 
-![Sketch of Ember Quest](../../images/tutorials/platformer/ember_quest_sketch.png)
+- Player 클래스
+- Enemy 클래스
+- Star 클래스
+- Platform 클래스
+- Ground 클래스
+- HUD 클래스 (체력과 모은 별)
 
-All of these will be brought together in `EmberQuestGame` derived from `FlameGame`.
+![Ember Quest 스케치](../../images/tutorials/platformer/ember_quest_sketch.png)
+
+이 모든 것은 `FlameGame`을 상속한 `EmberQuestGame`에서 하나로 합쳐집니다.
 
 
-## Assets
+<a id="assets"></a>
 
-Every game needs assets. Assets are images, sprites, animations, sounds, etc. Now, I am not an
-artist, but because I am basing this game on Ember, the flame mascot, and Ember is already designed,
-it sets the tone that this will be a pixel art game. There are numerous sites available that
-provide free pixel art that can be used in games, but please check and comply with the licensing and
-always provide valid creator attribution. For this game though, I am going to take a chance and
-make my artwork using an online pixel art tool. If you decide to use this tool, multiple online
-tutorials will assist you with the basic operations as well as exporting the assets. Now normally,
-most games will utilize sprite sheets. These combine many images into one larger image that can be
-sectioned and used as individual images. For this tutorial though, I specifically will save the
-images individually as I want to demonstrate the Flame engine's caching abilities. Ember and the
-water enemy are sprite sheets though as they contain multiple images to create animations.
+## 에셋
 
-Right-click the images below, choose "Save as...", and store them in the `assets/images` folder of the
-project. At this point our project's structure looks like this:
+모든 게임에는 에셋이 필요합니다. 에셋이란 이미지, 스프라이트, 애니메이션, 사운드 등을 말합니다. 저는
+아티스트가 아니지만, 이 게임은 Flame 마스코트인 Ember를 바탕으로 하고 Ember는 이미 디자인되어 있으므로,
+자연스럽게 픽셀 아트 게임이 됩니다. 게임에 사용할 수 있는 무료 픽셀 아트를 제공하는 사이트가
+많이 있지만, 반드시 라이선스를 확인하고 준수하며 항상 올바르게 제작자를 표기하세요. 하지만 이 게임에서는
+한번 도전해 보는 셈 치고 온라인 픽셀 아트 도구를 사용해 직접 아트워크를 만들겠습니다. 이 도구를 사용하기로
+했다면 기본 조작과 에셋 내보내기를 도와주는 온라인 튜토리얼이 여럿 있습니다. 보통
+대부분의 게임은 스프라이트 시트를 활용합니다. 스프라이트 시트는 많은 이미지를 하나의 큰 이미지로 합친 것으로,
+이를 나누어 개별 이미지로 사용할 수 있습니다. 하지만 이 튜토리얼에서는 Flame 엔진의 캐싱 기능을
+보여 주기 위해 일부러 이미지를 개별적으로 저장하겠습니다. 다만 Ember와
+물 적(water enemy)은 애니메이션을 만들기 위해 여러 이미지를 담고 있으므로 스프라이트 시트입니다.
+
+아래 이미지를 마우스 오른쪽 버튼으로 클릭하고 "다른 이름으로 저장..."을 선택해 프로젝트의 `assets/images` 폴더에
+저장합니다. 이 시점에서 프로젝트 구조는 다음과 같습니다.
 
 ```text
 emberquest/
@@ -76,25 +80,25 @@ emberquest/
  └─pubspec.yaml
 ```
 
-![Platform Block](app/assets/images/block.png)
-![Ember Animation](app/assets/images/ember.png)
-![Ground Block](app/assets/images/ground.png)
-![HUD Heart Half Opacity](app/assets/images/heart_half.png)
-![HUD Heart Full Opacity](app/assets/images/heart.png)
-![Star](app/assets/images/star.png)
-![Water Enemy Animation](app/assets/images/water_enemy.png)
+![플랫폼 블록](app/assets/images/block.png)
+![Ember 애니메이션](app/assets/images/ember.png)
+![땅 블록](app/assets/images/ground.png)
+![HUD 하트 반투명](app/assets/images/heart_half.png)
+![HUD 하트 불투명](app/assets/images/heart.png)
+![별](app/assets/images/star.png)
+![물 적 애니메이션](app/assets/images/water_enemy.png)
 
 ```{note}
-You may ask, why are the images different sizes?
+이미지 크기가 왜 제각각인지 궁금할 수 있습니다.
 
-As I was using the online tool to make the assets, I had trouble getting the
-detail I desired for the game in a 16x16 block. The heart worked out in 32x32 
-and the ground as well as the star were 64x64. Regardless, the asset size does
-not matter for the game as we will resize as needed.
+온라인 도구로 에셋을 만들면서 16x16 블록 안에서는 게임에 원하는 만큼의
+디테일을 표현하기 어려웠습니다. 하트는 32x32에서 괜찮게 나왔고
+땅과 별은 64x64로 만들었습니다. 어쨌든 필요에 따라 크기를 조정할 것이므로
+에셋 크기는 게임에 영향을 주지 않습니다.
 ```
 
-Also, you need to tell Flutter about these images (just having them inside the `assets` folder is
-not enough). To do this, let's add the following lines into the `pubspec.yaml` file:
+또한 이 이미지들을 Flutter에 알려 주어야 합니다(`assets` 폴더 안에 두는 것만으로는
+충분하지 않습니다). 이를 위해 `pubspec.yaml` 파일에 다음 줄을 추가합시다.
 
 ```yaml
 flutter:
@@ -102,4 +106,4 @@ flutter:
     - assets/images/
 ```
 
-Alright, enough with preparing -- onward to coding!
+자, 준비는 이 정도면 충분합니다. 이제 코딩하러 갑시다!

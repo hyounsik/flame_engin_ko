@@ -1,26 +1,24 @@
 # `<<character>>`
 
-The **\<\<character\>\>** command declares a character with the given name, and one or more aliases
-that can be used in the scripts.
+**\<\<character\>\>** 명령은 주어진 이름과, 스크립트에서 사용할 수 있는 하나 이상의 별칭(alias)을
+가진 캐릭터를 선언합니다.
 
-The command has several purposes:
+이 명령에는 여러 목적이 있습니다.
 
-- it protects you from accidentally misspelling a character's name in your script;
-- it allows a character to have *full name*, which doesn't have to be an ID;
-- it allows declaring multiple aliases for the same character, which can be used in different
-  nodes (an alias may even be in a different language than the full name);
-- you can associate additional data with each character, which will then be available at runtime.
+- 스크립트에서 캐릭터 이름의 철자를 실수로 틀리는 것을 막아 줍니다.
+- 캐릭터가 ID일 필요가 없는 *전체 이름*을 가질 수 있게 합니다.
+- 같은 캐릭터에 대해 여러 별칭을 선언하여 서로 다른 노드에서 사용할 수 있게 합니다(별칭은 전체
+  이름과 다른 언어일 수도 있습니다).
+- 각 캐릭터에 추가 데이터를 연결할 수 있으며, 이 데이터는 런타임에 사용할 수 있습니다.
 
-The format of this command is the following:
-
+이 명령의 형식은 다음과 같습니다.
 ```yarn
 <<character "FULL NAME" alias1 alias2...>>
 ```
 
-The *full name* here is optional: if given, it will be considered *the* name of the character.
-However, if the name is omitted, then the first alias will be considered the true character's name.
-Each *alias* must be a valid ID, and at least one alias must be provided. For example:
-
+여기서 *전체 이름(FULL NAME)*은 선택 사항입니다. 지정하면 그것이 캐릭터의 *진짜* 이름으로 간주됩니다.
+하지만 이름을 생략하면 첫 번째 별칭이 캐릭터의 진짜 이름으로 간주됩니다.
+각 *별칭*은 유효한 ID여야 하며, 별칭은 최소 하나 이상 제공해야 합니다. 예를 들면 다음과 같습니다.
 ```yarn
 // A well-mannered seven-year-old girl, who nevertheless always gets into
 // all kinds of zany adventures.
@@ -36,10 +34,9 @@ Each *alias* must be a valid ID, and at least one alias must be provided. For ex
 <<character "Queen of Hearts" Queen QoH QH>>
 ```
 
-After a character is declared, any of its aliases can be used in the script: they will all refer
-to the same `Character` object. At the same time, using a character without declaring it first is
-not allowed (unless a special flag in `YarnProject` is set to allow this).
-
+캐릭터를 선언하고 나면 스크립트에서 그 별칭 중 무엇이든 사용할 수 있으며, 모두 같은 `Character`
+객체를 가리킵니다. 반면 캐릭터를 먼저 선언하지 않고 사용하는 것은 허용되지 않습니다(`YarnProject`에서
+이를 허용하는 특별한 플래그를 설정한 경우는 예외입니다).
 ```yarn
 title: Alice_and_the_Cat
 ---

@@ -1,5 +1,5 @@
 # flame_svg
 
 ```{toctree}
-Overview    <svg.md>
+개요    <svg.md>
 ```

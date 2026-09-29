@@ -1,190 +1,209 @@
-# Migration Guides
+<a id="migration-guides"></a>
 
-This section describes the breaking changes that you need to be aware of when upgrading between
-major versions of Flame, together with the steps required to migrate your code.
+# 마이그레이션 가이드
+
+이 섹션에서는 Flame의 메이저 버전 간에 업그레이드할 때 알아야 할 호환성을 깨는 변경 사항(breaking
+change)과, 코드를 마이그레이션하는 데 필요한 단계를 설명합니다.
 
 
-## Migrating from v1.38.0 to v2.0.0
+<a id="migrating-from-v1380-to-v200"></a>
+
+## v1.38.0에서 v2.0.0으로 마이그레이션
 
 
-### Games are opaque to hit tests by default
+<a id="games-are-opaque-to-hit-tests-by-default"></a>
 
-`FlameGame` used to answer `containsEventHandlerAt` by walking the component tree and reporting a
-hit only where a component implemented `PointerInputCallbacks`. It now reports a hit everywhere,
-like the base `Game` class, and the tree walk is opt-in:
+### 게임은 기본적으로 히트 테스트에 대해 불투명합니다
+
+예전에 `FlameGame`은 컴포넌트 트리를 순회하면서 `PointerInputCallbacks`를 구현한 컴포넌트가 있는
+위치에서만 히트를 보고하는 방식으로 `containsEventHandlerAt`에 응답했습니다. 이제는 기본 `Game` 클래스처럼
+모든 위치에서 히트를 보고하며, 트리 순회는 옵트인(opt-in) 방식입니다.
 
 ```dart
-// Before: implicit, and paid for on every hit test under deferToChild
+// 이전: 암묵적으로 동작하며, deferToChild에서 히트 테스트마다 비용이 발생
 class MyGame extends FlameGame {}
 
-// After
+// 이후
 class MyGame extends FlameGame with DeferHitTestToComponents {}
 ```
 
-This only affects games built with `HitTestBehavior.deferToChild`, since `opaque` (the default) and
-`translucent` never consult the game. If you use `deferToChild` to let events reach widgets behind
-the `GameWidget`, add the mixin, or override `containsEventHandlerAt` with a cheaper rule of your
-own.
+이 변경은 `HitTestBehavior.deferToChild`로 만든 게임에만 영향을 줍니다. `opaque`(기본값)와
+`translucent`는 게임에 묻지 않기 때문입니다. `GameWidget` 뒤에 있는 위젯까지 이벤트가 전달되도록
+`deferToChild`를 사용하고 있다면, 믹스인을 추가하거나 더 저렴한 자체 규칙으로
+`containsEventHandlerAt`을 오버라이드하세요.
 
-Separately, `translucent` no longer consults the game either. Flutter's meaning for it is "hit me,
-and hit what is behind me too", so the game is now always a hit and the passthrough is left to
-Flutter. Previously a translucent game could not be hit at all wherever it had no interactive
-component.
+이와 별개로, 이제 `translucent`도 더 이상 게임에 묻지 않습니다. Flutter에서 이 값의 의미는 "나도
+히트되고, 내 뒤에 있는 것도 히트된다"이므로, 이제 게임은 항상 히트되고 통과 처리는 Flutter에
+맡겨집니다. 이전에는 translucent 게임이 상호작용 가능한 컴포넌트가 없는 위치에서는 전혀 히트될 수
+없었습니다.
 
-See [Hit Test Behavior](game_widget.md#hit-test-behavior) for the full picture.
-
-
-### The gesture listener interfaces removed
-
-`MultiTapListener`, `MultiDragListener` and `ScaleListener` have been removed, with no replacement.
-
-They existed so that one adapter could work with either of two implementations: the component-level
-mixins, or the matching game-level detector. Those detectors were removed earlier in the v2 rewrite,
-leaving each interface with a single implementation and nothing that consumed it as an interface.
-
-If you implemented one of these directly, use the `TapCallbacks`, `DragCallbacks` or
-`ScaleCallbacks` mixin on your component or game instead, which is what they already pointed you at.
-
-`FlameDragAdapter` is gone too, folded into `MultiDragScaleDispatcher` as a private class. It was
-already `@internal`, so it could not be constructed from outside Flame.
+전체 내용은 [Hit Test Behavior](game_widget.md#hit-test-behavior)를 참고하세요.
 
 
-### `HasGameReference` removed in favour of `HasGameRef`
+<a id="the-gesture-listener-interfaces-removed"></a>
 
-`HasGameReference` has been removed. Use `HasGameRef` instead, which is no longer deprecated and is
-now the one and only mixin used to access the game instance from a component. Its accessor is
-called `gameRef`, the `game` getter and setter are gone:
+### 제스처 리스너 인터페이스 제거
+
+`MultiTapListener`, `MultiDragListener`, `ScaleListener`가 대체 없이 제거되었습니다.
+
+이 인터페이스들은 하나의 어댑터가 두 가지 구현, 즉 컴포넌트 수준의 믹스인이나 그에 대응하는 게임
+수준의 디텍터 중 어느 쪽과도 동작할 수 있도록 하기 위해 존재했습니다. 그 디텍터들은 v2 재작성
+과정에서 먼저 제거되었고, 결국 각 인터페이스에는 구현이 하나씩만 남고 인터페이스로서 사용하는 곳은
+하나도 남지 않았습니다.
+
+이 인터페이스 중 하나를 직접 구현했다면, 대신 컴포넌트나 게임에 `TapCallbacks`, `DragCallbacks`
+또는 `ScaleCallbacks` 믹스인을 사용하세요. 이 인터페이스들이 이미 안내하던 대상이기도 합니다.
+
+`FlameDragAdapter`도 사라졌으며, `MultiDragScaleDispatcher` 안의 private 클래스로 합쳐졌습니다. 이미
+`@internal`이었기 때문에 Flame 외부에서는 생성할 수 없었습니다.
+
+
+<a id="hasgamereference-removed-in-favour-of-hasgameref"></a>
+
+### `HasGameReference`가 제거되고 `HasGameRef`로 대체
+
+`HasGameReference`가 제거되었습니다. 대신 `HasGameRef`를 사용하세요. `HasGameRef`는 더 이상 지원
+중단(deprecated) 상태가 아니며, 이제 컴포넌트에서 게임 인스턴스에 접근하는 데 사용하는 유일한
+믹스인입니다. 접근자의 이름은 `gameRef`이며, `game` getter와 setter는 사라졌습니다.
 
 ```dart
-// Before
+// 이전
 class MyComponent extends Component with HasGameReference<MyGame> {
   void doSomething() => game.score++;
 }
 
-// After
+// 이후
 class MyComponent extends Component with HasGameRef<MyGame> {
   void doSomething() => gameRef.score++;
 }
 ```
 
-If you were already using `HasGameRef`, no changes are required; its accessor remains `gameRef`.
+이미 `HasGameRef`를 사용하고 있었다면 변경할 것이 없습니다. 접근자는 여전히 `gameRef`입니다.
 
-Setting the game instance explicitly (useful for mocking in tests) is done through `gameRef` as
-well, and the `findGame()` override behaves exactly as before.
+게임 인스턴스를 명시적으로 설정하는 것(테스트에서 모킹할 때 유용)도 `gameRef`를 통해 하며,
+`findGame()` 오버라이드는 이전과 똑같이 동작합니다.
 
 
-### `HasWorldReference` renamed to `HasWorldRef`
+<a id="hasworldreference-renamed-to-hasworldref"></a>
 
-`HasWorldReference` has been renamed to `HasWorldRef`, and its accessor `world` has been renamed to
-`worldRef`, so that it mirrors `HasGameRef`/`gameRef` exactly. The old name is gone, there is no
-deprecated alias:
+### `HasWorldReference`의 이름이 `HasWorldRef`로 변경
+
+`HasWorldReference`의 이름이 `HasWorldRef`로 바뀌었고, 접근자 `world`의 이름도 `worldRef`로
+바뀌어서 `HasGameRef`/`gameRef`와 정확히 대응됩니다. 이전 이름은 사라졌으며, 지원 중단(deprecated)
+별칭도 없습니다.
 
 ```dart
-// Before
+// 이전
 class MyComponent extends Component with HasWorldReference<MyWorld> {
   void doSomething() => world.add(AnotherComponent());
 }
 
-// After
+// 이후
 class MyComponent extends Component with HasWorldRef<MyWorld> {
   void doSomething() => worldRef.add(AnotherComponent());
 }
 ```
 
-Note that this only affects the mixin's accessor; `FlameGame.world` and `CameraComponent.world` are
-unchanged. Setting the world instance explicitly (useful for mocking in tests) is now done through
-`worldRef`, and `findWorld()` behaves exactly as before.
+이 변경은 믹스인의 접근자에만 영향을 준다는 점에 유의하세요. `FlameGame.world`와
+`CameraComponent.world`는 바뀌지 않았습니다. 월드 인스턴스를 명시적으로 설정하는 것(테스트에서
+모킹할 때 유용)은 이제 `worldRef`를 통해 하며, `findWorld()`는 이전과 똑같이 동작합니다.
 
-Components that get the mixin indirectly are affected too: `Component3D` in `flame_3d` mixes in
-`HasWorldRef<World3D>`, so subclasses reaching for the enclosing world must use `worldRef`.
+믹스인을 간접적으로 얻는 컴포넌트도 영향을 받습니다. `flame_3d`의 `Component3D`는
+`HasWorldRef<World3D>`를 믹스인하므로, 자신을 감싸는 월드에 접근하는 하위 클래스는 `worldRef`를
+사용해야 합니다.
 
 
-### Asset prefix removed
+<a id="asset-prefix-removed"></a>
 
-`Images` and `AssetsCache` no longer prepend anything to the paths you give them. `Images` used to
-prepend `assets/images/` and `AssetsCache` used to prepend `assets/`, both configurable through a
-`prefix` property. That property is gone, along with the `prefix` constructor argument.
+### 에셋 prefix 제거
 
-Every asset is now addressed by its full path, exactly as declared in the `pubspec.yaml`:
+`Images`와 `AssetsCache`는 더 이상 전달받은 경로 앞에 아무것도 붙이지 않습니다. 이전에 `Images`는
+`assets/images/`를, `AssetsCache`는 `assets/`를 앞에 붙였으며, 둘 다 `prefix` 속성으로 설정할 수
+있었습니다. 이 속성은 `prefix` 생성자 인자와 함께 사라졌습니다.
+
+이제 모든 에셋은 `pubspec.yaml`에 선언한 그대로의 전체 경로로 지정합니다.
 
 ```dart
-// Before
+// 이전
 await Flame.images.load('player.png');
 final level = await Flame.assets.readJson('levels/level1.json');
 
-// After
+// 이후
 await Flame.images.load('assets/images/player.png');
 final level = await Flame.assets.readJson('assets/levels/level1.json');
 ```
 
-This applies to everything that loads through those caches, including `Sprite.load`,
-`SpriteAnimation.load`, `SpriteBatch.load`, `Game.loadSprite`, `Game.loadSpriteAnimation`, the
-`Parallax` loaders and `ParallaxImageData`/`ParallaxAnimationData`, and the `.asset` constructors of
-`SpriteWidget`, `SpriteAnimationWidget`, `NineTileBoxWidget` and `SpriteButton`.
+이는 해당 캐시를 통해 로드하는 모든 것에 적용됩니다. `Sprite.load`, `SpriteAnimation.load`,
+`SpriteBatch.load`, `Game.loadSprite`, `Game.loadSpriteAnimation`, `Parallax` 로더와
+`ParallaxImageData`/`ParallaxAnimationData`, 그리고 `SpriteWidget`, `SpriteAnimationWidget`,
+`NineTileBoxWidget`, `SpriteButton`의 `.asset` 생성자가 포함됩니다.
 
-If you relied on a custom prefix, there is nothing to replace it with, and nothing to configure:
-just write the paths you actually want.
+사용자 정의 prefix에 의존하고 있었다면, 이를 대체할 것도 설정할 것도 없습니다. 실제로 원하는 경로를
+그대로 쓰면 됩니다.
 
 ```dart
-// Before
+// 이전
 Flame.images.prefix = 'gfx/';
 await Flame.images.load('player.png');
 
-// After
+// 이후
 await Flame.images.load('gfx/player.png');
 ```
 
 
-#### Cache keys are now the full path
+<a id="cache-keys-are-now-the-full-path"></a>
 
-The path is also the key the asset is cached under, so anything that reads the cache by key needs
-the same full path:
+#### 이제 캐시 키는 전체 경로입니다
+
+경로는 에셋이 캐시되는 키이기도 하므로, 키로 캐시를 읽는 모든 곳에서도 같은 전체 경로가 필요합니다.
 
 ```dart
-// Before
+// 이전
 await Flame.images.load('player.png');
 final image = Flame.images.fromCache('player.png');
 
-// After
+// 이후
 await Flame.images.load('assets/images/player.png');
 final image = Flame.images.fromCache('assets/images/player.png');
 ```
 
-This affects `Images.fromCache`, `Images.containsKey`, `Images.clear`, `Images.keys`,
-`AssetsCache.fromCache` and `AssetsCache.clear`. It also affects `SpriteBatch`, whose internal
-`imageKey` is derived from the path you loaded with.
+이는 `Images.fromCache`, `Images.containsKey`, `Images.clear`, `Images.keys`,
+`AssetsCache.fromCache`, `AssetsCache.clear`에 영향을 줍니다. 로드할 때 사용한 경로로부터 내부
+`imageKey`를 만드는 `SpriteBatch`도 영향을 받습니다.
 
-One consequence is a bug fix: `Images.load` now includes the package in the cache key, matching what
-`AssetsCache` already did. Previously, loading the same filename from two different packages
-collided on one key and the second load silently returned the first package's image.
+그 결과 버그 하나가 수정되었습니다. 이제 `Images.load`는 `AssetsCache`가 이미 하던 것처럼 캐시 키에
+패키지를 포함합니다. 이전에는 서로 다른 두 패키지에서 같은 파일 이름을 로드하면 하나의 키에서
+충돌이 일어났고, 두 번째 로드는 아무 경고 없이 첫 번째 패키지의 이미지를 반환했습니다.
 
 
-#### `loadAllImages` and `loadAllFromPattern` require a directory
+<a id="loadallimages-and-loadallfrompattern-require-a-directory"></a>
 
-These two methods used the prefix both to filter the asset manifest and to strip it back off the
-resulting keys. They now take a required `directory` argument instead, and cache entries under their
-full manifest path. Pass an empty string to scan the whole bundle.
+#### `loadAllImages`와 `loadAllFromPattern`에 디렉터리 필요
+
+이 두 메서드는 prefix를 사용해 에셋 매니페스트를 필터링하고, 결과 키에서 다시 prefix를 떼어 냈습니다.
+이제는 대신 필수 인자인 `directory`를 받으며, 매니페스트의 전체 경로로 캐시 항목을 저장합니다. 번들
+전체를 탐색하려면 빈 문자열을 전달하세요.
 
 ```dart
-// Before
+// 이전
 await Flame.images.loadAllImages();
 
-// After
+// 이후
 await Flame.images.loadAllImages(directory: 'assets/images/');
 ```
 
 
 #### `flame_audio`
 
-The global `AudioCache` is now created with an empty prefix, so audio paths are full paths too.
-`FlameAudio.updatePrefix()` has been removed, as there is no longer a prefix to update.
+전역 `AudioCache`가 이제 빈 prefix로 생성되므로, 오디오 경로도 전체 경로입니다.
+더 이상 업데이트할 prefix가 없으므로 `FlameAudio.updatePrefix()`는 제거되었습니다.
 
 ```dart
-// Before
+// 이전
 FlameAudio.play('explosion.mp3');
 FlameAudio.bgm.play('music/theme.mp3');
 
-// After
+// 이후
 FlameAudio.play('assets/audio/explosion.mp3');
 FlameAudio.bgm.play('assets/audio/music/theme.mp3');
 ```
@@ -192,24 +211,24 @@ FlameAudio.bgm.play('assets/audio/music/theme.mp3');
 
 #### `flame_tiled`
 
-The `prefix` argument is gone from `TiledComponent.load`, `RenderableTiledMap.fromFile`,
-`RenderableTiledMap.fromString` and `FlameTsxProvider.parse`. The map's file name is now a full
-path, and the assertion that it must not contain path separators has been removed.
+`TiledComponent.load`, `RenderableTiledMap.fromFile`, `RenderableTiledMap.fromString`,
+`FlameTsxProvider.parse`에서 `prefix` 인자가 사라졌습니다. 이제 맵의 파일 이름은 전체 경로이며,
+파일 이름에 경로 구분자가 포함되면 안 된다는 assertion은 제거되었습니다.
 
-External `.tsx` tilesets are resolved relative to the map's own directory, derived from that path.
-`RenderableTiledMap.fromString` has no path to derive from, so its `prefix` argument became
-`tsxDirectory`.
+외부 `.tsx` 타일셋은 그 경로에서 얻은 맵 자체의 디렉터리를 기준으로 한 상대 경로로 해석됩니다.
+`RenderableTiledMap.fromString`에는 디렉터리를 얻을 경로가 없으므로, 이 메서드의 `prefix` 인자는
+`tsxDirectory`가 되었습니다.
 
-Watch out for these two, since they change behavior without failing to compile:
-`RenderableTiledMap.fromString`'s `tsxDirectory` and `FlameTsxProvider.parse`'s third argument both
-default to `''` now, where the old `prefix` defaulted to `assets/tiles/`. If you call either
-directly and rely on that default, pass the directory explicitly.
+다음 두 가지는 컴파일 오류 없이 동작만 바뀌므로 주의하세요.
+`RenderableTiledMap.fromString`의 `tsxDirectory`와 `FlameTsxProvider.parse`의 세 번째 인자는 이제
+둘 다 기본값이 `''`입니다. 이전 `prefix`의 기본값은 `assets/tiles/`였습니다. 둘 중 하나를 직접
+호출하면서 그 기본값에 의존하고 있었다면, 디렉터리를 명시적으로 전달하세요.
 
-Tileset and image-layer sources are resolved against a new `imagesDirectory` argument, which
-defaults to `assets/images/` and so preserves the previous behavior.
+타일셋과 이미지 레이어의 소스는 새 `imagesDirectory` 인자를 기준으로 해석됩니다. 이 인자의 기본값은
+`assets/images/`이므로 이전 동작이 유지됩니다.
 
 ```dart
-// Before
+// 이전
 await TiledComponent.load('map.tmx', Vector2.all(16));
 await TiledComponent.load(
   'map.tmx',
@@ -217,43 +236,43 @@ await TiledComponent.load(
   prefix: 'assets/maps/',
 );
 
-// After
+// 이후
 await TiledComponent.load('assets/tiles/map.tmx', Vector2.all(16));
 await TiledComponent.load('assets/maps/map.tmx', Vector2.all(16));
 ```
 
-Note that `TiledAtlas` cache keys are now scoped by `imagesDirectory`, so a key that was
-`tiles.png` is now `assets/images/tiles.png`.
+`TiledAtlas` 캐시 키는 이제 `imagesDirectory` 범위로 지정되므로, `tiles.png`였던 키는 이제
+`assets/images/tiles.png`가 된다는 점에 유의하세요.
 
 
 #### `flame_texturepacker`
 
-The `assetsPrefix` argument is gone from `atlasFromAssets`, `TexturePackerAtlas.load` and
-`TexturePackerAtlas.loadAtlas`. The atlas path is a full path, and page textures listed inside the
-atlas are resolved relative to the atlas's own directory.
+`atlasFromAssets`, `TexturePackerAtlas.load`, `TexturePackerAtlas.loadAtlas`에서 `assetsPrefix`
+인자가 사라졌습니다. 아틀라스 경로는 전체 경로이며, 아틀라스 안에 나열된 페이지 텍스처는 아틀라스
+자체의 디렉터리를 기준으로 한 상대 경로로 해석됩니다.
 
 ```dart
-// Before
+// 이전
 final atlas = await atlasFromAssets('atlas_map.atlas');
 
-// After
+// 이후
 final atlas = await atlasFromAssets('assets/images/atlas_map.atlas');
 ```
 
 
 #### `flame_sprite_fusion`
 
-The `tilemapPrefix` argument is gone from `SpriteFusionTilemapComponent.load`. Both `mapJsonFile`
-and `spriteSheetFile` are now full paths.
+`SpriteFusionTilemapComponent.load`에서 `tilemapPrefix` 인자가 사라졌습니다. 이제 `mapJsonFile`과
+`spriteSheetFile` 모두 전체 경로입니다.
 
 ```dart
-// Before
+// 이전
 await SpriteFusionTilemapComponent.load(
   mapJsonFile: 'map.json',
   spriteSheetFile: 'spritesheet.png',
 );
 
-// After
+// 이후
 await SpriteFusionTilemapComponent.load(
   mapJsonFile: 'assets/tiles/map.json',
   spriteSheetFile: 'assets/images/spritesheet.png',
@@ -261,69 +280,73 @@ await SpriteFusionTilemapComponent.load(
 ```
 
 
-### `VerticalDragDetector` and `HorizontalDragDetector` removed
+<a id="verticaldragdetector-and-horizontaldragdetector-removed"></a>
 
-Both game-level mixins have been removed, with no direct replacement in Flame.
+### `VerticalDragDetector`와 `HorizontalDragDetector` 제거
 
-They existed only to expose Flutter's `VerticalDragGestureRecognizer` and
-`HorizontalDragGestureRecognizer`, whose distinguishing feature is not the filtering itself but how
-they behave in Flutter's gesture arena: an axis-constrained recognizer yields to a competitor on the
-other axis. That matters when a `GameWidget` is nested inside a scrollable, which is a concern of
-the widget tree rather than of the game, and it is not something the component-level `DragCallbacks`
-can reproduce.
+두 게임 수준 믹스인이 제거되었으며, Flame에는 직접적인 대체재가 없습니다.
 
-If your game accepts drags on any axis, use `DragCallbacks`, which can be mixed directly into your
-game class:
+이 믹스인들은 Flutter의 `VerticalDragGestureRecognizer`와 `HorizontalDragGestureRecognizer`를
+노출하기 위해서만 존재했습니다. 이 인식기들의 특징은 필터링 자체가 아니라 Flutter의 제스처 아레나에서
+동작하는 방식에 있습니다. 축이 제한된 인식기는 다른 축의 경쟁 인식기에게 양보합니다. 이는
+`GameWidget`이 스크롤 가능한 위젯 안에 중첩되어 있을 때 중요한데, 이것은 게임이 아니라 위젯 트리의
+관심사이며, 컴포넌트 수준의 `DragCallbacks`로는 재현할 수 없습니다.
+
+게임이 모든 축의 드래그를 받는다면, 게임 클래스에 직접 믹스인할 수 있는 `DragCallbacks`를
+사용하세요.
 
 ```dart
-// Before
+// 이전
 class MyGame extends FlameGame with VerticalDragDetector {
   @override
   void onVerticalDragUpdate(DragUpdateInfo info) { /* ... */ }
 }
 
-// After
+// 이후
 class MyGame extends FlameGame with DragCallbacks {
   @override
   void onDragUpdate(DragUpdateEvent event) { /* ... */ }
 }
 ```
 
-If you specifically need the arena behavior, wrap your `GameWidget` in Flutter's own
-[`GestureDetector`](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html) and use its
-`onVerticalDragUpdate` / `onHorizontalDragUpdate` callbacks.
+아레나 동작이 꼭 필요하다면, `GameWidget`을 Flutter 자체의
+[`GestureDetector`](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)로 감싸고
+그 위젯의 `onVerticalDragUpdate` / `onHorizontalDragUpdate` 콜백을 사용하세요.
 
 
-### `ForcePressDetector` removed
+<a id="forcepressdetector-removed"></a>
 
-The `ForcePressDetector` mixin and its `ForcePressInfo` event class have been removed, with no
-replacement.
+### `ForcePressDetector` 제거
 
-It was a niche API, only available on some older Apple's 3D Touch devices; the iPhone XS and XS Max
-(2018) were the last models to include it (see Apple's
-[Models with 3D Touch](https://support.apple.com/guide/iphone/aside/iph945ccc462/14.0/ios/14.0),
-a list that Apple even stopped carrying forward after the iOS 14 guide). Every iPhone since,
-starting with the XR, uses Haptic Touch, which responds to how long a press lasts rather than how
-hard it is, and so never produces these callbacks. Only a handful of Android devices ever
-supported it, and some of those (such as the Pixel 2 and 3) have faux pressure sensors that never
-fired the callbacks anyway.
+`ForcePressDetector` 믹스인과 그 이벤트 클래스인 `ForcePressInfo`가 대체 없이
+제거되었습니다.
 
-Combined with force press being the last gesture without an equivalent on the component-level event
-system, maintaining it was no longer worth the surface area.
+이것은 일부 구형 Apple 3D Touch 기기에서만 사용할 수 있는 틈새 API였습니다. iPhone XS와 XS Max
+(2018)가 이 기능을 탑재한 마지막 모델입니다(Apple의
+[3D Touch 지원 모델](https://support.apple.com/guide/iphone/aside/iph945ccc462/14.0/ios/14.0)
+목록을 참고하세요. Apple은 iOS 14 가이드 이후로는 이 목록조차 이어서 싣지 않았습니다). XR부터 그 이후의
+모든 iPhone은 Haptic Touch를 사용하는데, 이는 얼마나 세게 누르는지가 아니라 얼마나 오래 누르는지에
+반응하므로 이 콜백을 전혀 발생시키지 않습니다. 이를 지원한 Android 기기는 극소수였고, 그중 일부(Pixel 2와
+3 등)는 어차피 콜백을 한 번도 발생시키지 않는 가짜 압력 센서를 가지고 있었습니다.
 
-If you do still target a 3D Touch device, the gesture remains fully available from Flutter: wrap
-your `GameWidget` in a
-[`GestureDetector`](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html) and use its
-`onForcePressStart`, `onForcePressPeak`, `onForcePressUpdate` and `onForcePressEnd` callbacks
-directly.
+게다가 포스 프레스는 컴포넌트 수준 이벤트 시스템에 대응하는 기능이 없는 마지막 제스처였기 때문에,
+이를 유지하는 것은 더 이상 API 표면적을 늘릴 만한 가치가 없었습니다.
+
+여전히 3D Touch 기기를 대상으로 한다면, 이 제스처는 Flutter에서 그대로 사용할 수 있습니다.
+`GameWidget`을
+[`GestureDetector`](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)로 감싸고
+그 위젯의 `onForcePressStart`, `onForcePressPeak`, `onForcePressUpdate`, `onForcePressEnd` 콜백을
+직접 사용하세요.
 
 
-### Deprecated tap and long press game detectors removed
+<a id="deprecated-tap-and-long-press-game-detectors-removed"></a>
 
-The game-level detector mixins that were deprecated in v1.38.0 have now been removed, together with
-the event classes that only they used:
+### 지원 중단된 탭 및 롱 프레스 게임 디텍터 제거
 
-| Removed                   | Use instead                |
+v1.38.0에서 지원 중단(deprecated)된 게임 수준 디텍터 믹스인이, 그 믹스인들만 사용하던 이벤트
+클래스와 함께 이제 제거되었습니다.
+
+| 제거됨                    | 대신 사용                  |
 | ------------------------- | -------------------------- |
 | `TapDetector`             | `TapCallbacks`             |
 | `SecondaryTapDetector`    | `SecondaryTapCallbacks`    |
@@ -334,11 +357,11 @@ the event classes that only they used:
 | `LongPressMoveUpdateInfo` | `LongPressMoveUpdateEvent` |
 | `LongPressEndInfo`        | `LongPressEndEvent`        |
 
-The replacements are mixed into a component rather than into the game, and each callback takes a
-single event object:
+대체재는 게임이 아니라 컴포넌트에 믹스인하며, 각 콜백은 이벤트 객체 하나를
+받습니다.
 
 ```dart
-// Before
+// 이전
 class MyGame extends FlameGame with TapDetector {
   @override
   void onTapDown(TapDownInfo info) {
@@ -346,7 +369,7 @@ class MyGame extends FlameGame with TapDetector {
   }
 }
 
-// After
+// 이후
 class MyComponent extends PositionComponent with TapCallbacks {
   @override
   void onTapDown(TapDownEvent event) {
@@ -355,38 +378,41 @@ class MyComponent extends PositionComponent with TapCallbacks {
 }
 ```
 
-Note that a component only receives events that occur on top of it, as determined by
-`containsLocalPoint()`, whereas the old game-level detectors received every event on the game
-surface. To keep the old whole-screen behavior, add the mixin to your `FlameGame` subclass directly
-— `FlameGame` is itself a `Component`.
+컴포넌트는 `containsLocalPoint()`로 판단했을 때 자신 위에서 발생한 이벤트만 받는다는 점에 유의하세요.
+반면 이전의 게임 수준 디텍터는 게임 표면에서 발생한 모든 이벤트를 받았습니다. 이전처럼 화면 전체에서
+동작하게 하려면 믹스인을 `FlameGame` 하위 클래스에 직접 추가하세요. `FlameGame` 자체도
+`Component`입니다.
 
-See [Tap Events](inputs/tap_events.md) and [Long Press Events](inputs/long_press_events.md) for the
-full replacement APIs.
+전체 대체 API는 [탭 이벤트](inputs/tap_events.md)와 [롱 프레스 이벤트](inputs/long_press_events.md)를
+참고하세요.
 
 
-### `ScaleDetector` removed
+<a id="scaledetector-removed"></a>
 
-The `ScaleDetector` game mixin has been removed, together with the event classes that only it used:
+### `ScaleDetector` 제거
 
-| Removed           | Use instead        |
+`ScaleDetector` 게임 믹스인이 그 믹스인만 사용하던 이벤트 클래스와 함께 제거되었습니다.
+
+| 제거됨            | 대신 사용          |
 | ----------------- | ------------------ |
 | `ScaleDetector`   | `ScaleCallbacks`   |
 | `ScaleStartInfo`  | `ScaleStartEvent`  |
 | `ScaleUpdateInfo` | `ScaleUpdateEvent` |
 | `ScaleEndInfo`    | `ScaleEndEvent`    |
 
-`ScaleUpdateEvent` is a strict superset of `ScaleUpdateInfo`: `info.scale.global.x` and
-`info.scale.global.y` become `event.horizontalScale` and `event.verticalScale`, and
-`info.delta.global` becomes `event.focalPointDelta`.
+`ScaleUpdateEvent`는 `ScaleUpdateInfo`의 엄격한 상위 집합입니다. `info.scale.global.x`와
+`info.scale.global.y`는 `event.horizontalScale`과 `event.verticalScale`이 되고,
+`info.delta.global`은 `event.focalPointDelta`가 됩니다.
 
-There is one behavioral difference to be aware of. The old detector was backed by Flutter's
-`ScaleGestureRecognizer`, which also emits scale events for a *single* pointer, with a scale factor
-of 1.0 — a quirk that games commonly relied on to pan the camera from within `onScaleUpdate`. The
-new `MultiDragScaleGestureRecognizer` only emits scale events once two or more pointers are down, so
-panning must now be handled with `DragCallbacks`, which can be combined freely with `ScaleCallbacks`:
+알아 두어야 할 동작 차이가 하나 있습니다. 이전 디텍터는 Flutter의 `ScaleGestureRecognizer`를 기반으로
+했는데, 이 인식기는 *단일* 포인터에 대해서도 스케일 팩터 1.0으로 스케일 이벤트를 발생시킵니다. 게임들은
+흔히 이 특이한 동작에 의존하여 `onScaleUpdate` 안에서 카메라를 이동(pan)시켰습니다. 새
+`MultiDragScaleGestureRecognizer`는 두 개 이상의 포인터가 눌렸을 때만 스케일 이벤트를 발생시키므로,
+이제 이동은 `DragCallbacks`로 처리해야 합니다. `DragCallbacks`는 `ScaleCallbacks`와 자유롭게 함께 사용할
+수 있습니다.
 
 ```dart
-// Before
+// 이전
 class MyGame extends FlameGame with ScaleDetector {
   @override
   void onScaleUpdate(ScaleUpdateInfo info) {
@@ -399,7 +425,7 @@ class MyGame extends FlameGame with ScaleDetector {
   }
 }
 
-// After
+// 이후
 class MyGame extends FlameGame with ScaleCallbacks, DragCallbacks {
   @override
   void onScaleUpdate(ScaleUpdateEvent event) {
@@ -408,7 +434,7 @@ class MyGame extends FlameGame with ScaleCallbacks, DragCallbacks {
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    // Two-finger pinches emit both drag and scale; skip pan while zooming
+    // 두 손가락 핀치는 드래그와 스케일을 모두 발생시키므로, 줌 중에는 이동을 건너뜁니다
     if (isScaling) {
       return;
     }
@@ -417,27 +443,29 @@ class MyGame extends FlameGame with ScaleCallbacks, DragCallbacks {
 }
 ```
 
-Note that trackpad pinch gestures are not currently recognized by the new system:
-`MultiDragScaleGestureRecognizer` does not yet handle Flutter's `PointerPanZoom` events, which is how
-a trackpad pinch reaches a scale recognizer. Touchscreen pinches are unaffected.
+현재 새 시스템에서는 트랙패드 핀치 제스처를 인식하지 못한다는 점에 유의하세요.
+`MultiDragScaleGestureRecognizer`는 아직 Flutter의 `PointerPanZoom` 이벤트를 처리하지 않는데, 트랙패드
+핀치는 이 이벤트를 통해 스케일 인식기에 전달됩니다. 터치스크린 핀치는 영향을 받지 않습니다.
 
-See [Scale Events](inputs/scale_events.md) for the full replacement API.
+전체 대체 API는 [스케일 이벤트](inputs/scale_events.md)를 참고하세요.
 
 
-### `MultiTouchTapDetector` and `MultiTouchDragDetector` removed
+<a id="multitouchtapdetector-and-multitouchdragdetector-removed"></a>
 
-Both game-level mixins have been removed:
+### `MultiTouchTapDetector`와 `MultiTouchDragDetector` 제거
 
-| Removed                  | Use instead     |
+두 게임 수준 믹스인이 제거되었습니다.
+
+| 제거됨                   | 대신 사용       |
 | ------------------------ | --------------- |
 | `MultiTouchTapDetector`  | `TapCallbacks`  |
 | `MultiTouchDragDetector` | `DragCallbacks` |
 
-The `pointerId` that used to be passed as a separate first argument is now carried on the event
-itself, so simultaneous touches can still be told apart:
+이전에 별도의 첫 번째 인자로 전달되던 `pointerId`는 이제 이벤트 자체에 담겨 있으므로, 동시에 일어나는
+터치를 여전히 구별할 수 있습니다.
 
 ```dart
-// Before
+// 이전
 class MyGame extends FlameGame with MultiTouchTapDetector {
   @override
   void onTapDown(int pointerId, TapDownInfo info) {
@@ -445,7 +473,7 @@ class MyGame extends FlameGame with MultiTouchTapDetector {
   }
 }
 
-// After
+// 이후
 class MyGame extends FlameGame with TapCallbacks {
   @override
   void onTapDown(TapDownEvent event) {
@@ -454,33 +482,35 @@ class MyGame extends FlameGame with TapCallbacks {
 }
 ```
 
-`TapCallbacks` has no equivalent of `MultiTouchTapDetector.onTap`, which was a direct passthrough of
-Flutter's "tap completed" callback on `MultiTapGestureRecognizer`. Use `onTapUp` instead, which fires
-at the same point in the gesture.
+`TapCallbacks`에는 `MultiTouchTapDetector.onTap`에 해당하는 것이 없습니다. 이 콜백은
+`MultiTapGestureRecognizer`의 "탭 완료" 콜백을 그대로 전달하는 것이었습니다. 대신 제스처의 같은
+시점에 발생하는 `onTapUp`을 사용하세요.
 
-Because the new mixins are routed through `MultiDragScaleDispatcher`, the assertion that used to
-guard against combining `MultiTouchDragDetector` with `PanDetector` in the gesture arena is gone
-(as is `PanDetector` itself; see below).
+새 믹스인은 `MultiDragScaleDispatcher`를 통해 라우팅되므로, 제스처 아레나에서
+`MultiTouchDragDetector`와 `PanDetector`를 함께 사용하지 못하도록 막던 assertion은 사라졌습니다
+(`PanDetector` 자체도 사라졌습니다. 아래를 참고하세요).
 
-See [Tap Events](inputs/tap_events.md) and [Drag Events](inputs/drag_events.md) for the full
-replacement APIs.
+전체 대체 API는 [탭 이벤트](inputs/tap_events.md)와 [드래그 이벤트](inputs/drag_events.md)를
+참고하세요.
 
 
-### `ScrollDetector` removed
+<a id="scrolldetector-removed"></a>
 
-The `ScrollDetector` game mixin has been removed, together with the event class that only it used:
+### `ScrollDetector` 제거
 
-| Removed             | Use instead       |
+`ScrollDetector` 게임 믹스인이 그 믹스인만 사용하던 이벤트 클래스와 함께 제거되었습니다.
+
+| 제거됨              | 대신 사용         |
 | ------------------- | ----------------- |
 | `ScrollDetector`    | `ScrollCallbacks` |
 | `PointerScrollInfo` | `ScrollEvent`     |
 
-The scroll delta is now read directly off the event rather than through a nested wrapper, and the
-event carries the usual `PositionEvent` fields, so the position where the scroll occurred is
-available as `devicePosition` / `canvasPosition` / `localPosition`:
+이제 스크롤 델타는 중첩된 래퍼를 거치지 않고 이벤트에서 직접 읽으며, 이벤트에는 일반적인
+`PositionEvent` 필드가 담겨 있으므로 스크롤이 발생한 위치를 `devicePosition` / `canvasPosition` /
+`localPosition`으로 얻을 수 있습니다.
 
 ```dart
-// Before
+// 이전
 class MyGame extends FlameGame with ScrollDetector {
   @override
   void onScroll(PointerScrollInfo info) {
@@ -488,7 +518,7 @@ class MyGame extends FlameGame with ScrollDetector {
   }
 }
 
-// After
+// 이후
 class MyGame extends FlameGame with ScrollCallbacks {
   @override
   void onScroll(ScrollEvent event) {
@@ -497,21 +527,23 @@ class MyGame extends FlameGame with ScrollCallbacks {
 }
 ```
 
-Unlike the old detector, which received every scroll event anywhere on the game surface,
-`ScrollCallbacks` is routed by position like the other component callbacks: a component only receives
-scrolls that occur on top of it, as determined by `containsLocalPoint()`. Mixing it into your
-`FlameGame` subclass directly, as above, keeps the old whole-surface behavior.
+게임 표면 어디에서든 발생한 모든 스크롤 이벤트를 받던 이전 디텍터와 달리, `ScrollCallbacks`는 다른
+컴포넌트 콜백처럼 위치에 따라 라우팅됩니다. 컴포넌트는 `containsLocalPoint()`로 판단했을 때 자신
+위에서 발생한 스크롤만 받습니다. 위 예시처럼 `FlameGame` 하위 클래스에 직접 믹스인하면 이전처럼 표면
+전체에서 동작합니다.
 
-See [Pointer Events](inputs/pointer_events.md) for the full replacement API.
+전체 대체 API는 [포인터 이벤트](inputs/pointer_events.md)를 참고하세요.
 
 
-### `MouseMovementDetector` removed and `PointerMove*` renamed to `MouseMove*`
+<a id="mousemovementdetector-removed-and-pointermove-renamed-to-mousemove"></a>
 
-The `MouseMovementDetector` game mixin has been removed, together with the event class that only it
-used. At the same time, the component-level API it is replaced by has been renamed from `PointerMove`
-to `MouseMove`:
+### `MouseMovementDetector` 제거 및 `PointerMove*`의 이름이 `MouseMove*`로 변경
 
-| Removed / renamed       | Use instead           |
+`MouseMovementDetector` 게임 믹스인이 그 믹스인만 사용하던 이벤트 클래스와 함께 제거되었습니다.
+동시에, 이를 대체하는 컴포넌트 수준 API의 이름이 `PointerMove`에서 `MouseMove`로
+바뀌었습니다.
+
+| 제거됨 / 이름 변경      | 대신 사용             |
 | ----------------------- | --------------------- |
 | `MouseMovementDetector` | `MouseMoveCallbacks`  |
 | `PointerHoverInfo`      | `MouseMoveEvent`      |
@@ -521,18 +553,18 @@ to `MouseMove`:
 | `onPointerMove`         | `onMouseMove`         |
 | `onPointerMoveStop`     | `onMouseMoveStop`     |
 
-The rename has two reasons. Flame's `PointerMoveEvent` collided with Flutter's class of the same
-name, forcing a `hide` on any file that imported both `package:flame/events.dart` and
-`package:flutter/material.dart`. And "mouse move" is simply more accurate: the event wraps Flutter's
-`PointerHoverEvent` and is delivered from a `MouseRegion`, so it is mouse movement specifically, not
-pointer movement in general. `MouseMoveDispatcherKey` was already named this way.
+이름을 바꾼 이유는 두 가지입니다. Flame의 `PointerMoveEvent`는 Flutter의 같은 이름의 클래스와
+충돌하여, `package:flame/events.dart`와 `package:flutter/material.dart`를 모두 import하는 파일에서는
+`hide`를 써야 했습니다. 그리고 "mouse move"가 단순히 더 정확합니다. 이 이벤트는 Flutter의
+`PointerHoverEvent`를 감싸며 `MouseRegion`에서 전달되므로, 일반적인 포인터 이동이 아니라 구체적으로
+마우스 이동입니다. `MouseMoveDispatcherKey`는 이미 이런 방식으로 이름이 지어져 있었습니다.
 
-Migrating from the detector, the callback keeps its `onMouseMove` name and only the parameter
-changes, with the position read directly off the event instead of through the nested `eventPosition`
-wrapper:
+디텍터에서 마이그레이션할 때 콜백의 이름은 `onMouseMove` 그대로이고 파라미터만 바뀝니다. 위치는
+중첩된 `eventPosition` 래퍼를 거치지 않고 이벤트에서 직접
+읽습니다.
 
 ```dart
-// Before
+// 이전
 class MyGame extends FlameGame with MouseMovementDetector {
   @override
   void onMouseMove(PointerHoverInfo info) {
@@ -540,7 +572,7 @@ class MyGame extends FlameGame with MouseMovementDetector {
   }
 }
 
-// After
+// 이후
 class MyGame extends FlameGame with MouseMoveCallbacks {
   @override
   void onMouseMove(MouseMoveEvent event) {
@@ -549,25 +581,28 @@ class MyGame extends FlameGame with MouseMoveCallbacks {
 }
 ```
 
-Unlike the old detector, which received every mouse movement anywhere on the game surface,
-`MouseMoveCallbacks` is routed by position like the other component callbacks: a component only
-receives movements that occur on top of it, as determined by `containsLocalPoint()`. Mixing it into
-your `FlameGame` subclass directly, as above, keeps the old whole-surface behavior.
-`MouseMoveCallbacks` additionally offers `onMouseMoveStop`, which has no equivalent on the old
-detector.
+게임 표면 어디에서든 발생한 모든 마우스 이동을 받던 이전 디텍터와 달리, `MouseMoveCallbacks`는 다른
+컴포넌트 콜백처럼 위치에 따라 라우팅됩니다. 컴포넌트는 `containsLocalPoint()`로 판단했을 때 자신
+위에서 발생한 이동만 받습니다. 위 예시처럼 `FlameGame` 하위 클래스에 직접 믹스인하면 이전처럼 표면
+전체에서 동작합니다.
+`MouseMoveCallbacks`는 추가로 `onMouseMoveStop`을 제공하는데, 이는 이전 디텍터에는 없던
+기능입니다.
 
-`flame_test`'s `createMouseMoveEvent` helper now returns a `MouseMoveEvent`, and if you were using
-`flame_behaviors`, note that it no longer re-exports the legacy `*Info` event classes.
+`flame_test`의 `createMouseMoveEvent` 헬퍼는 이제 `MouseMoveEvent`를 반환합니다. 또한
+`flame_behaviors`를 사용하고 있었다면, 이 패키지가 더 이상 레거시 `*Info` 이벤트 클래스를 다시
+export하지 않는다는 점에 유의하세요.
 
-See [Pointer Events](inputs/pointer_events.md) for the full replacement API.
+전체 대체 API는 [포인터 이벤트](inputs/pointer_events.md)를 참고하세요.
 
 
-### `PanDetector` removed, and with it the whole `*Info` event hierarchy
+<a id="pandetector-removed-and-with-it-the-whole-info-event-hierarchy"></a>
 
-`PanDetector` was the last of the game-level gesture detectors, so removing it also removes every
-event class that existed to serve them:
+### `PanDetector` 제거 및 이에 따른 `*Info` 이벤트 계층 전체 제거
 
-| Removed          | Use instead       |
+`PanDetector`는 마지막으로 남은 게임 수준 제스처 디텍터였으므로, 이를 제거하면서 디텍터들을 위해
+존재하던 모든 이벤트 클래스도 제거되었습니다.
+
+| 제거됨           | 대신 사용         |
 | ---------------- | ----------------- |
 | `PanDetector`    | `DragCallbacks`   |
 | `DragStartInfo`  | `DragStartEvent`  |
@@ -579,7 +614,7 @@ event class that existed to serve them:
 | `PositionInfo`   | `PositionEvent`   |
 
 ```dart
-// Before
+// 이전
 class MyGame extends FlameGame with PanDetector {
   @override
   void onPanStart(DragStartInfo info) {
@@ -597,7 +632,7 @@ class MyGame extends FlameGame with PanDetector {
   }
 }
 
-// After
+// 이후
 class MyGame extends FlameGame with DragCallbacks {
   @override
   void onDragStart(DragStartEvent event) {
@@ -618,55 +653,57 @@ class MyGame extends FlameGame with DragCallbacks {
 }
 ```
 
-A few differences to be aware of:
+알아 두어야 할 몇 가지 차이점이 있습니다.
 
-- `onDragStart`, `onDragEnd` and `onDragCancel` are `@mustCallSuper`, because they maintain the
-  `isDragged` flag; your overrides have to call `super` first.
-- There is no equivalent of `onPanDown`. Use `onDragStart`, which fires once the touch slop has been
-  exceeded, exactly like `onPanStart` did.
-- The nested position and delta wrappers are gone: `info.eventPosition.widget` becomes
-  `event.canvasPosition`, and `info.delta.global` becomes `event.localDelta` (or `event.canvasDelta`
-  if you want the delta before any camera transform is applied).
-- `DragEndEvent` exposes `velocity`, but there is no replacement for `DragEndInfo.primaryVelocity` —
-  it was permanently `null` anyway, since only axis-constrained recognizers ever set it.
-- Every drag event carries a `pointerId`, so simultaneous drags can be told apart. `PanDetector`
-  could only ever track one.
-- Like the other component callbacks, drags are routed by position: a component only receives a drag
-  that starts on top of it, as determined by `containsLocalPoint()`. Mixing `DragCallbacks` into
-  your `FlameGame` subclass directly, as above, keeps the old whole-surface behavior.
+- `onDragStart`, `onDragEnd`, `onDragCancel`은 `isDragged` 플래그를 관리하므로 `@mustCallSuper`입니다.
+  오버라이드할 때는 먼저 `super`를 호출해야 합니다.
+- `onPanDown`에 해당하는 것은 없습니다. 대신 `onDragStart`를 사용하세요. 이 콜백은 `onPanStart`와
+  똑같이 터치 슬롭(touch slop)을 넘어섰을 때 발생합니다.
+- 중첩된 위치 및 델타 래퍼가 사라졌습니다. `info.eventPosition.widget`은 `event.canvasPosition`이
+  되고, `info.delta.global`은 `event.localDelta`가 됩니다(카메라 변환이 적용되기 전의 델타가 필요하다면
+  `event.canvasDelta`).
+- `DragEndEvent`는 `velocity`를 제공하지만, `DragEndInfo.primaryVelocity`에 대한 대체는 없습니다.
+  축이 제한된 인식기만 이 값을 설정했으므로 어차피 항상 `null`이었습니다.
+- 모든 드래그 이벤트에는 `pointerId`가 담겨 있으므로, 동시에 일어나는 드래그를 구별할 수 있습니다.
+  `PanDetector`는 하나만 추적할 수 있었습니다.
+- 다른 컴포넌트 콜백처럼 드래그도 위치에 따라 라우팅됩니다. 컴포넌트는 `containsLocalPoint()`로
+  판단했을 때 자신 위에서 시작된 드래그만 받습니다. 위 예시처럼 `DragCallbacks`를 `FlameGame` 하위
+  클래스에 직접 믹스인하면 이전처럼 표면 전체에서 동작합니다.
 
-With this, `package:flame/events.dart` and `package:flame/input.dart` no longer export any `*Detector`
-mixin or `*Info` class, and `GestureDetectorBuilder.initializeGestures` - which existed only to wire
-those detectors up — has been removed.
+이로써 `package:flame/events.dart`와 `package:flame/input.dart`는 더 이상 어떤 `*Detector` 믹스인이나
+`*Info` 클래스도 export하지 않으며, 그 디텍터들을 연결하기 위해서만 존재하던
+`GestureDetectorBuilder.initializeGestures`도 제거되었습니다.
 
-See [Drag Events](inputs/drag_events.md) for the full replacement API.
+전체 대체 API는 [드래그 이벤트](inputs/drag_events.md)를 참고하세요.
 
 
-### `onDragCancel` no longer delegates to `onDragEnd`
+<a id="ondragcancel-no-longer-delegates-to-ondragend"></a>
 
-`DragCallbacks.onDragCancel` used to convert the cancellation into an `onDragEnd` event by default,
-which made a cancelled drag look exactly like a completed one. A cancellation means that the gesture
-was interrupted (another recognizer won the gesture arena, a second pointer triggered a scale
-takeover, a system event, etc.) and it carries no velocity, so components such as drag-to-dismiss
-would apply their action even though the drag never finished. This is not a rare event either, since
-with `MultiDragScaleDispatcher` every two finger pinch cancels the individual pointer drags.
+### `onDragCancel`이 더 이상 `onDragEnd`에 위임하지 않음
 
-The default implementation now only resets `isDragged`, which means that `onDragEnd` is no longer
-called when a drag is cancelled. If you were relying on the old behavior, override `onDragCancel`
-and forward the event yourself with `DragCancelEvent.toDragEnd`:
+예전에 `DragCallbacks.onDragCancel`은 기본적으로 취소를 `onDragEnd` 이벤트로 변환했기 때문에, 취소된
+드래그가 완료된 드래그와 똑같아 보였습니다. 취소는 제스처가 중단되었다는 뜻이며(다른 인식기가 제스처
+아레나에서 이겼거나, 두 번째 포인터가 스케일 전환을 일으켰거나, 시스템 이벤트가 발생한 경우 등) 속도
+정보도 없습니다. 그래서 드래그로 닫기(drag-to-dismiss) 같은 컴포넌트는 드래그가 끝나지 않았는데도
+동작을 수행하곤 했습니다. 이는 드문 일도 아닙니다. `MultiDragScaleDispatcher`에서는 두 손가락 핀치를
+할 때마다 개별 포인터 드래그가 취소되기 때문입니다.
+
+이제 기본 구현은 `isDragged`만 초기화합니다. 즉, 드래그가 취소되면 더 이상 `onDragEnd`가 호출되지
+않습니다. 이전 동작에 의존하고 있었다면 `onDragCancel`을 오버라이드하고
+`DragCancelEvent.toDragEnd`로 이벤트를 직접 전달하세요.
 
 ```dart
-// Before
+// 이전
 class MyComponent extends PositionComponent with DragCallbacks {
   @override
   void onDragEnd(DragEndEvent event) {
     super.onDragEnd(event);
-    // This also ran when the drag was cancelled.
+    // 드래그가 취소되었을 때도 실행되었습니다.
     dismiss();
   }
 }
 
-// After
+// 이후
 class MyComponent extends PositionComponent with DragCallbacks {
   @override
   void onDragEnd(DragEndEvent event) {
@@ -682,39 +719,42 @@ class MyComponent extends PositionComponent with DragCallbacks {
 }
 ```
 
-If a cancelled drag should instead be reverted, put that logic in `onDragCancel` without calling
-`onDragEnd`.
+취소된 드래그를 대신 되돌려야 한다면, `onDragEnd`를 호출하지 않고 그 로직을 `onDragCancel`에
+넣으세요.
 
 
-### `MultiDragDispatcher` removed
+<a id="multidragdispatcher-removed"></a>
 
-The deprecated `MultiDragDispatcher` and `MultiDragDispatcherKey` aliases have been removed. Use
-`MultiDragScaleDispatcher` and `MultiDragScaleDispatcherKey` instead, if you were using them
-directly at all (normally you should just use the mixins).
+### `MultiDragDispatcher` 제거
+
+지원 중단(deprecated)된 `MultiDragDispatcher`와 `MultiDragDispatcherKey` 별칭이 제거되었습니다. 이를
+직접 사용하고 있었다면 대신 `MultiDragScaleDispatcher`와 `MultiDragScaleDispatcherKey`를 사용하세요
+(보통은 믹스인만 사용하면 됩니다).
 
 ```dart
-// Before
+// 이전
 game.findByKey(const MultiDragDispatcherKey())
     as MultiDragDispatcher?;
 
-// After
+// 이후
 game.findByKey(const MultiDragScaleDispatcherKey())
     as MultiDragScaleDispatcher?;
 ```
 
 
-### `Event.handled` removed in favour of `continuePropagation`
+<a id="eventhandled-removed-in-favour-of-continuepropagation"></a>
 
-Events used to carry two independent booleans: `handled`, which Flame never set nor read, and
-`continuePropagation`, which actually controls whether an event keeps traversing down the component
-tree. The former has been removed; `continuePropagation` is now the single propagation flag on every
-event.
+### `Event.handled`가 제거되고 `continuePropagation`으로 대체
 
-By default, an event stops at the first component that can handle it, so a component that "consumes"
-an event does not need to do anything at all — the components below it will not see it:
+예전에는 이벤트에 서로 독립적인 두 개의 boolean이 있었습니다. Flame이 설정하지도 읽지도 않던
+`handled`와, 이벤트가 컴포넌트 트리 아래로 계속 전달될지를 실제로 제어하는 `continuePropagation`입니다.
+전자는 제거되었고, 이제 `continuePropagation`이 모든 이벤트의 유일한 전파 플래그입니다.
+
+기본적으로 이벤트는 처리할 수 있는 첫 번째 컴포넌트에서 멈추므로, 이벤트를 "소비"하는 컴포넌트는 아무
+것도 할 필요가 없습니다. 그 아래에 있는 컴포넌트는 이벤트를 보지 못합니다.
 
 ```dart
-// Before
+// 이전
 class Square extends RectangleComponent with TapCallbacks {
   @override
   void onTapDown(TapDownEvent event) {
@@ -732,7 +772,7 @@ class MyWorld extends World with TapCallbacks {
   }
 }
 
-// After
+// 이후
 class Square extends RectangleComponent with TapCallbacks {
   @override
   void onTapDown(TapDownEvent event) {
@@ -748,73 +788,77 @@ class MyWorld extends World with TapCallbacks {
 }
 ```
 
-If you were using `handled` to let an event reach several components, set
-`event.continuePropagation = true` in the components that should pass it along instead.
+`handled`를 사용해 이벤트가 여러 컴포넌트에 도달하도록 했다면, 대신 이벤트를 넘겨주어야 하는
+컴포넌트에서 `event.continuePropagation = true`를 설정하세요.
 
-The equivalent field on the deprecated `*Info` event classes (`TapDownInfo.handled` and friends) has
-been removed as well.
+지원 중단된 `*Info` 이벤트 클래스의 해당 필드(`TapDownInfo.handled` 등)도 함께
+제거되었습니다.
 
 
-### `add`, `addAll` and `addToParent` are now synchronous
+<a id="add-addall-and-addtoparent-are-now-synchronous"></a>
 
-`Component.add`, `Component.addAll` and `Component.addToParent` used to return a future, which made
-it look like you could await the addition. That future only covered the child's loading, never its
-mounting, so awaiting it was misleading, and forgetting to await it (or to wrap it in `unawaited`)
-tripped the `discarded_futures` lint in a lot of games. All three methods now return `void`.
+### `add`, `addAll`, `addToParent`가 이제 동기 방식
 
-Drop the `await`:
+예전에 `Component.add`, `Component.addAll`, `Component.addToParent`는 future를 반환했기 때문에, 추가
+작업을 await할 수 있는 것처럼 보였습니다. 그 future는 자식의 로딩만 다룰 뿐 마운트는 다루지 않았으므로
+await하는 것은 오해의 소지가 있었고, await하지 않거나 `unawaited`로 감싸지 않으면 많은 게임에서
+`discarded_futures` 린트에 걸렸습니다. 이제 세 메서드 모두 `void`를 반환합니다.
+
+`await`를 제거하세요.
 
 ```dart
-// Before
+// 이전
 await add(MyComponent());
 await addAll([MyComponent(), MyOtherComponent()]);
 
-// After
+// 이후
 add(MyComponent());
 addAll([MyComponent(), MyOtherComponent()]);
 ```
 
-If you were relying on the returned future to know when the child had loaded, await the child's
-`loaded` future instead:
+반환된 future로 자식이 로드된 시점을 알고 있었다면, 대신 자식의 `loaded` future를
+await하세요.
 
 ```dart
-// Before
+// 이전
 await add(crate);
 
-// After
+// 이후
 add(crate);
 await crate.loaded;
 ```
 
-For a batch of children, `loaded`, `mounted` and `removed` are also available on any
-`Iterable<Component>`:
+여러 자식을 한꺼번에 다룰 때는 모든 `Iterable<Component>`에서도 `loaded`, `mounted`, `removed`를
+사용할 수 있습니다.
 
 ```dart
-// Before
+// 이전
 await addAll(crates);
 
-// After
+// 이후
 addAll(crates);
 await crates.loaded;
 ```
 
-Or, when you need them to be present in `children` rather than just loaded, await
-`game.lifecycleEventsProcessed` once after adding them.
+또는 단순히 로드되는 것이 아니라 `children`에 실제로 존재해야 한다면, 추가한 뒤
+`game.lifecycleEventsProcessed`를 한 번 await하세요.
 
 
-#### Load errors are no longer reported by `GameWidget.errorBuilder`
+<a id="load-errors-are-no-longer-reported-by-gamewidgeterrorbuilder"></a>
 
-`GameWidget.errorBuilder` shows a widget when the *game's* loading fails, and it used to catch a
-failing child's `onLoad` as well, because `await add(child)` chained the child's error onto the
-game's own `onLoad` future. Since `add` no longer returns a future, that chain is gone: a child that
-throws in `onLoad` no longer reaches `errorBuilder`.
+#### 로드 오류가 더 이상 `GameWidget.errorBuilder`로 보고되지 않음
 
-The component itself is not added to the tree, and the rest of the game keeps running. The error is
-reported through the child's `loaded` future, and if nothing is awaiting it, it is handed to the
-current `Zone` as an uncaught error.
+`GameWidget.errorBuilder`는 *게임의* 로딩이 실패했을 때 위젯을 보여 줍니다. 예전에는
+`await add(child)`가 자식의 오류를 게임 자신의 `onLoad` future에 연결했기 때문에, 자식의 `onLoad`
+실패도 잡아냈습니다. 이제 `add`가 future를 반환하지 않으므로 그 연결은 사라졌습니다. `onLoad`에서
+예외를 던지는 자식은 더 이상 `errorBuilder`에 도달하지 않습니다.
 
-To get the old behavior for a specific child, await its `loaded` future inside the parent's
-`onLoad`, which puts the error back onto the future `errorBuilder` watches:
+해당 컴포넌트 자체는 트리에 추가되지 않으며, 게임의 나머지 부분은 계속 실행됩니다. 오류는 자식의
+`loaded` future를 통해 보고되며, 아무것도 이를 await하고 있지 않으면 처리되지 않은 오류로 현재
+`Zone`에 전달됩니다.
+
+특정 자식에 대해 이전 동작을 원한다면, 부모의 `onLoad` 안에서 그 자식의 `loaded` future를
+await하세요. 그러면 `errorBuilder`가 지켜보는 future에 오류가 다시 연결됩니다.
 
 ```dart
 class MyGame extends FlameGame {
@@ -822,90 +866,98 @@ class MyGame extends FlameGame {
   Future<void> onLoad() async {
     final level = Level();
     world.add(level);
-    // Throws here if Level.onLoad fails, so errorBuilder is shown.
+    // Level.onLoad가 실패하면 여기서 예외가 발생하므로 errorBuilder가 표시됩니다.
     await level.loaded;
   }
 }
 ```
 
 
-### `GameWidget.controlled` renamed to `GameWidget.managed`
+<a id="gamewidgetcontrolled-renamed-to-gamewidgetmanaged"></a>
 
-The `GameWidget.controlled` constructor has been renamed to `GameWidget.managed`. The behavior is
-unchanged; only the name is different.
+### `GameWidget.controlled`의 이름이 `GameWidget.managed`로 변경
 
-Replace every usage of `GameWidget.controlled` with `GameWidget.managed`:
+`GameWidget.controlled` 생성자의 이름이 `GameWidget.managed`로 바뀌었습니다. 동작은 그대로이며 이름만
+다릅니다.
+
+`GameWidget.controlled`를 사용하는 모든 곳을 `GameWidget.managed`로 바꾸세요.
 
 ```dart
-// Before
+// 이전
 GameWidget.controlled(
   gameFactory: MyGame.new,
 );
 
-// After
+// 이후
 GameWidget.managed(
   gameFactory: MyGame.new,
 );
 ```
 
 
-### `Game.paused` renamed to `Game.isPaused`
+<a id="gamepaused-renamed-to-gameispaused"></a>
 
-The `paused` getter and setter on `Game` have been renamed to `isPaused`, to be consistent with the
-other boolean properties in Flame. The behavior is unchanged; only the name is different.
+### `Game.paused`의 이름이 `Game.isPaused`로 변경
 
-Replace every usage of `game.paused` with `game.isPaused`:
+Flame의 다른 boolean 속성과 일관되도록 `Game`의 `paused` getter와 setter 이름이 `isPaused`로
+바뀌었습니다. 동작은 그대로이며 이름만 다릅니다.
+
+`game.paused`를 사용하는 모든 곳을 `game.isPaused`로 바꾸세요.
 
 ```dart
-// Before
+// 이전
 if (game.paused) {
   game.paused = false;
 }
 
-// After
+// 이후
 if (game.isPaused) {
   game.isPaused = false;
 }
 ```
 
 
-### `children` is now a `ComponentList` instead of an `OrderedSet`
+<a id="children-is-now-a-componentlist-instead-of-an-orderedset"></a>
 
-The `ordered_set` package is no longer used; children live in a Flame-owned `ComponentList`. The
-iterable surface, `query<T>()`, and `register<T>()` are unchanged, so most code compiles as is. If
-you imported `package:ordered_set` types to annotate variables, use `ComponentList` (from
-`package:flame/components.dart`) instead:
+### `children`이 이제 `OrderedSet` 대신 `ComponentList`
+
+`ordered_set` 패키지는 더 이상 사용되지 않으며, 자식들은 Flame이 소유한 `ComponentList`에 저장됩니다.
+iterable 인터페이스, `query<T>()`, `register<T>()`는 바뀌지 않았으므로 대부분의 코드는 그대로
+컴파일됩니다. 변수의 타입을 지정하기 위해 `package:ordered_set` 타입을 import했다면, 대신
+(`package:flame/components.dart`의) `ComponentList`를 사용하세요.
 
 ```dart
-// Before
+// 이전
 import 'package:ordered_set/ordered_set.dart';
 OrderedSet<Component> children = component.children;
 
-// After
+// 이후
 ComponentList children = component.children;
 ```
 
-Other changes to be aware of:
+알아 두어야 할 다른 변경 사항은 다음과 같습니다.
 
-- `children.reversed()` is now a getter: `children.reversed`.
-- `Component.strictQueryMode` is removed. Strict mode is off by default; to enable it for a
-  component, override `createComponentList()` to return `ComponentList(strictMode: true)`.
-- `query<T>()` results are now always in priority order.
-- Removing components while iterating `children` is allowed; reordering the list while iterating
-  it throws `ConcurrentModificationError`.
+- `children.reversed()`는 이제 getter인 `children.reversed`입니다.
+- `Component.strictQueryMode`가 제거되었습니다. strict 모드는 기본적으로 꺼져 있으며, 컴포넌트에서
+  활성화하려면 `createComponentList()`가 `ComponentList(strictMode: true)`를 반환하도록 오버라이드하세요.
+- `query<T>()` 결과는 이제 항상 우선순위 순서입니다.
+- `children`을 순회하는 동안 컴포넌트를 제거하는 것은 허용됩니다. 순회하는 동안 리스트의 순서를 바꾸면
+  `ConcurrentModificationError`가 발생합니다.
 
 
-### `Component.childrenFactory` is removed
+<a id="componentchildrenfactory-is-removed"></a>
 
-The global children-container factory is gone. Override `createComponentList()` on the component
-instead. The constructor accepts an optional `Comparator<Component>` that replaces priority
-ordering for that parent, which gives custom orderings such as y-sort a supported home:
+### `Component.childrenFactory` 제거
+
+전역 자식 컨테이너 팩토리가 사라졌습니다. 대신 컴포넌트에서 `createComponentList()`를
+오버라이드하세요. 생성자는 해당 부모의 우선순위 정렬을 대체하는 선택적 `Comparator<Component>`를
+받으므로, y-sort 같은 사용자 정의 정렬을 공식적으로 지원되는 방식으로 구현할 수 있습니다.
 
 ```dart
-// Before
+// 이전
 Component.childrenFactory = () => OrderedSet.mapping<num, Component>((c) => c.priority);
 
-// After
+// 이후
 class YSortedWorld extends World {
   @override
   ComponentList createComponentList() {
@@ -919,36 +971,39 @@ class YSortedWorld extends World {
 ```
 
 
-### `Component.updateTree` is non-virtual
+<a id="componentupdatetree-is-non-virtual"></a>
 
-The update pass runs over a flattened traversal list owned by the game, so `updateTree` can no
-longer be overridden. If you overrode it, mix in `CustomTraversal` and override its
-`updateSubtree` instead; call `super.updateSubtree(dt)` to run the standard traversal:
+### `Component.updateTree`는 이제 non-virtual
+
+업데이트 단계는 게임이 소유한 평탄화된 순회 리스트를 따라 실행되므로, 더 이상 `updateTree`를
+오버라이드할 수 없습니다. 이를 오버라이드하고 있었다면, 대신 `CustomTraversal`을 믹스인하고
+`updateSubtree`를 오버라이드하세요. 표준 순회를 실행하려면 `super.updateSubtree(dt)`를 호출합니다.
 
 ```dart
-// Before
+// 이전
 class SlowMotionArea extends Component {
   @override
   void updateTree(double dt) => super.updateTree(dt / 2);
 }
 
-// After
+// 이후
 class SlowMotionArea extends Component with CustomTraversal {
   @override
   void updateSubtree(double dt) => super.updateSubtree(dt / 2);
 }
 ```
 
-`HasTimeScale` is now declared `on CustomTraversal`, so components other than `FlameGame` (which
-already mixes it in) must mix in `CustomTraversal` before it:
+`HasTimeScale`은 이제 `on CustomTraversal`로 선언되므로, `FlameGame`(이미 이를 믹스인하고 있음)이 아닌
+컴포넌트는 그보다 먼저 `CustomTraversal`을 믹스인해야 합니다.
 
 ```dart
-// Before
+// 이전
 class SlowWorld extends World with HasTimeScale {}
 
-// After
+// 이후
 class SlowWorld extends World with CustomTraversal, HasTimeScale {}
 ```
 
-A `HasTimeScale` time scale of `0` (or `pause()`) now stops the update pass for the whole subtree
-instead of updating it with a `dt` of `0`, which is what `Route.stopTime()` relies on.
+`HasTimeScale`의 타임 스케일이 `0`이면(또는 `pause()`를 호출하면) 이제 하위 트리 전체의 업데이트
+단계가 `dt`를 `0`으로 해서 업데이트되는 대신 아예 멈춥니다. `Route.stopTime()`은 바로 이 동작에
+의존합니다.

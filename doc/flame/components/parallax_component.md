@@ -1,16 +1,14 @@
 # ParallaxComponent
 
-Parallax scrolling is a classic game development technique where background layers move at different
-speeds to create an illusion of depth. Objects closer to the camera appear to move faster than those
-far away. Just as when looking out a car window, nearby trees fly by while distant mountains barely
-move. This effect makes 2D game worlds feel more immersive and is commonly used in side-scrollers,
-platformers, and menu screens.
+패럴랙스 스크롤링은 배경 레이어를 서로 다른 속도로 움직여 깊이감을 만드는 고전적인 게임 개발
+기법입니다. 카메라에 가까운 물체는 멀리 있는 물체보다 더 빠르게 움직이는 것처럼 보입니다. 차창 밖을
+볼 때 가까운 나무는 휙휙 지나가지만 먼 산은 거의 움직이지 않는 것과 같습니다. 이 효과는 2D 게임
+월드를 더 몰입감 있게 만들어 주며, 횡스크롤 게임, 플랫포머, 메뉴 화면 등에서 흔히 사용됩니다.
 
-This `Component` can be used to render backgrounds with a depth feeling by drawing several
-transparent images on top of each other, where each image or animation (`ParallaxRenderer`) is
-moving with a different velocity.
+이 `Component`는 여러 장의 투명한 이미지를 겹쳐 그려 깊이감 있는 배경을 렌더링하는 데 사용할 수
+있으며, 각 이미지나 애니메이션(`ParallaxRenderer`)은 서로 다른 속도로 움직입니다.
 
-The simplest `ParallaxComponent` is created like this:
+가장 간단한 `ParallaxComponent`는 다음과 같이 만듭니다:
 
 ```dart
 @override
@@ -23,7 +21,7 @@ Future<void> onLoad() async {
 }
 ```
 
-A ParallaxComponent can also "load itself" by implementing the `onLoad` method:
+ParallaxComponent는 `onLoad` 메서드를 구현하여 "스스로 로드"할 수도 있습니다:
 
 ```dart
 class MyParallaxComponent extends ParallaxComponent<MyGame> {
@@ -44,13 +42,12 @@ class MyGame extends FlameGame {
 }
 ```
 
-This creates a static background. If you want a moving parallax (which is the whole point of a
-parallax), you can do it in a few different ways depending on how fine-grained you want to set the
-settings for each layer.
+이렇게 하면 정적인 배경이 만들어집니다. 움직이는 패럴랙스(패럴랙스의 핵심이 바로 이것입니다)를
+원한다면, 각 레이어의 설정을 얼마나 세밀하게 지정할지에 따라 몇 가지 방법으로 구현할 수 있습니다.
 
-The simplest way is to set the named optional parameters `baseVelocity` and
-`velocityMultiplierDelta` in the `load` helper function. For example if you want to move your
-background images along the X-axis with a faster speed the "closer" the image is:
+가장 간단한 방법은 `load` 헬퍼 함수에 이름 있는 선택적 파라미터 `baseVelocity`와
+`velocityMultiplierDelta`를 설정하는 것입니다. 예를 들어 배경 이미지를 X축을 따라 움직이되, 이미지가
+"가까울수록" 더 빠르게 움직이게 하려면 다음과 같이 합니다:
 
 ```dart
 @override
@@ -63,8 +60,7 @@ Future<void> onLoad() async {
 }
 ```
 
-You can set the baseSpeed and layerDelta at any time, for example if your character jumps or your
-game speeds up.
+baseSpeed와 layerDelta는 캐릭터가 점프하거나 게임 속도가 빨라질 때처럼 언제든지 설정할 수 있습니다.
 
 ```dart
 @override
@@ -75,13 +71,12 @@ void onLoad() {
 }
 ```
 
-By default, the images are aligned to the bottom left, repeated along the X-axis and scaled
-proportionally so that the image covers the height of the screen. If you want to change this
-behavior, for example if you are not making a side-scrolling game, you can set the `repeat`,
-`alignment` and `fill` parameters for each `ParallaxRenderer` and add them to `ParallaxLayer`s that
-you then pass in to the `ParallaxComponent`'s constructor.
+기본적으로 이미지는 왼쪽 아래에 정렬되고, X축을 따라 반복되며, 화면 높이를 덮도록 비율에 맞춰
+스케일링됩니다. 횡스크롤 게임을 만드는 것이 아닌 경우처럼 이 동작을 바꾸고 싶다면, 각
+`ParallaxRenderer`에 `repeat`, `alignment`, `fill` 파라미터를 설정하고 이를 `ParallaxLayer`에 추가한
+뒤 `ParallaxComponent`의 생성자에 전달하면 됩니다.
 
-Advanced example:
+고급 예제:
 
 ```dart
 final images = [
@@ -120,29 +115,29 @@ final parallaxComponent = ParallaxComponent.fromParallax(
 );
 ```
 
-- The stars image in this example will be repeatedly drawn in both axes, align in the center and be
- scaled to fill the screen width.
-- The planets image will be repeated in Y-axis, aligned to the bottom left of the screen and not be
- scaled.
-- The dust image will be repeated in X-axis, aligned to the top right and scaled to fill the screen
- height.
+- 이 예제에서 별(stars) 이미지는 두 축 모두로 반복해서 그려지고, 중앙에 정렬되며, 화면 너비를
+ 채우도록 스케일링됩니다.
+- 행성(planets) 이미지는 Y축으로 반복되고, 화면 왼쪽 아래에 정렬되며, 스케일링되지 않습니다.
+- 먼지(dust) 이미지는 X축으로 반복되고, 오른쪽 위에 정렬되며, 화면 높이를 채우도록 스케일링됩니다.
 
-Once you are done setting up your `ParallaxComponent`, add it to the game like with any other
-component (`game.add(parallaxComponent`).
-Also, don't forget to add your images to the `pubspec.yaml` file as assets or they won't be found.
+`ParallaxComponent` 설정을 마쳤다면 다른 컴포넌트와 마찬가지로 게임에 추가합니다
+(`game.add(parallaxComponent`).
+또한 이미지를 `pubspec.yaml` 파일에 에셋으로 추가하는 것을 잊지 마세요. 그렇지 않으면 이미지를 찾을
+수 없습니다.
 
-The `Parallax` file contains an extension of the game which adds `loadParallax`,
-`loadParallaxLayer`, `loadParallaxImage` and `loadParallaxAnimation` so that it automatically
-uses your game's image cache instead of the global one. The same goes for the `ParallaxComponent`
-file, but that provides `loadParallaxComponent`.
+`Parallax` 파일에는 게임의 확장(extension)이 들어 있어 `loadParallax`, `loadParallaxLayer`,
+`loadParallaxImage`, `loadParallaxAnimation`을 추가하며, 이들은 전역 이미지 캐시 대신 게임의 이미지
+캐시를 자동으로 사용합니다. `ParallaxComponent` 파일도 마찬가지이며, 이쪽은 `loadParallaxComponent`를
+제공합니다.
 
-If you want a fullscreen `ParallaxComponent` simply omit the `size` argument and it will take the
-size of the game, it will also resize to fullscreen when the game changes size or orientation.
+전체 화면 `ParallaxComponent`를 원한다면 `size` 인자를 생략하기만 하면 됩니다. 그러면 게임의 크기를
+따르며, 게임의 크기나 방향이 바뀔 때도 전체 화면에 맞게 크기가 조정됩니다.
 
-Flame provides two kinds of `ParallaxRenderer`: `ParallaxImage` and `ParallaxAnimation`,
-`ParallaxImage` is a static image renderer and `ParallaxAnimation` is, as its name implies, an
-animation and frame based renderer.
-It is also possible to create custom renderers by extending the `ParallaxRenderer` class.
+Flame은 두 종류의 `ParallaxRenderer`를 제공합니다. `ParallaxImage`와 `ParallaxAnimation`입니다.
+`ParallaxImage`는 정적 이미지 렌더러이고, `ParallaxAnimation`은 이름에서 알 수 있듯이 애니메이션 및
+프레임 기반 렌더러입니다.
+`ParallaxRenderer` 클래스를 상속하여 커스텀 렌더러를 만들 수도 있습니다.
 
-Three example implementations can be found in the
-[examples directory](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/parallax).
+세 가지 구현 예제는
+[examples 디렉터리](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/parallax)에서
+찾을 수 있습니다.

@@ -1,6 +1,8 @@
-# Layers
+<a id="layers"></a>
 
-At its simplest, layers can be retrieved from a Tilemap by invoking:
+# 레이어
+
+가장 간단하게는 다음을 호출해 Tilemap에서 레이어를 가져올 수 있습니다.
 
 ```dart
 getLayer<ObjectGroup>("myObjectGroupLayer");
@@ -9,36 +11,44 @@ getLayer<TileLayer>("myTileLayer");
 getLayer<Group>("myGroupLayer");
 ```
 
-These methods will either return the requested layer type or null if it does not exist.
+이 메서드들은 요청한 타입의 레이어를 반환하거나, 레이어가 없으면 null을 반환합니다.
 
 
-## Layer properties
+<a id="layer-properties"></a>
 
-The following Tiled properties are supported:
+## 레이어 속성
 
-- [x] Visible
-- [x] Opacity
-- [ ] Tint color
-- [x] Horizontal offset
-- [x] Vertical offset
-- [x] Parallax factor
-- [x] Custom properties
+다음 Tiled 속성을 지원합니다.
 
-
-## Tiles properties
-
-- Tiles can have custom properties accessible at `tile.properties`.
-- Tiles can have a custom `type` (or `class` starting in Tiled v1.9) accessible at `tile.type`.
+- [x] Visible(표시 여부)
+- [x] Opacity(불투명도)
+- [ ] Tint color(틴트 색상)
+- [x] Horizontal offset(가로 오프셋)
+- [x] Vertical offset(세로 오프셋)
+- [x] Parallax factor(패럴랙스 계수)
+- [x] Custom properties(커스텀 속성)
 
 
-## Other features
+<a id="tiles-properties"></a>
 
-Other advanced features are not yet supported, but you can easily read the objects and other
-features of the TMX and add custom behavior (eg regions for triggers and walking areas, custom
-animated objects).
+## 타일 속성
+
+- 타일은 `tile.properties`로 접근할 수 있는 커스텀 속성을 가질 수 있습니다.
+- 타일은 `tile.type`으로 접근할 수 있는 커스텀 `type`(Tiled v1.9부터는 `class`)을 가질 수 있습니다.
 
 
-## Full Example
+<a id="other-features"></a>
 
-You can check a working example
-[here](https://github.com/flame-engine/flame/tree/main/packages/flame_tiled/example).
+## 기타 기능
+
+그 밖의 고급 기능은 아직 지원하지 않지만, TMX의 오브젝트와 기타 기능을 쉽게 읽어
+커스텀 동작(예: 트리거 영역과 이동 가능 영역, 커스텀 애니메이션 오브젝트)을
+추가할 수 있습니다.
+
+
+<a id="full-example"></a>
+
+## 전체 예제
+
+동작하는 예제는
+[여기](https://github.com/flame-engine/flame/tree/main/packages/flame_tiled/example)에서 확인할 수 있습니다.
