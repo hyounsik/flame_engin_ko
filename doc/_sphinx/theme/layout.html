@@ -6,6 +6,9 @@
   {%- if meta_description %}
   <meta name="description" content="{{ meta_description|e }}" />
   {%- endif %}
+  {%- for name, token in (site_verifications or {}).items() %}
+  <meta name="{{ name|e }}" content="{{ token|e }}" />
+  {%- endfor %}
   <title>{{ title|striptags|e + " &#8212; "|safe + docstitle|e }}</title>
 
   {%- block css %}
